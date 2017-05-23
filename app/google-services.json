@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "754486934369",
+    "firebase_url": "https://kodery-c8bd3.firebaseio.com",
+    "project_id": "kodery-c8bd3",
+    "storage_bucket": "kodery-c8bd3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754486934369:android:6376c62a53eb8fc5",
+        "android_client_info": {
+          "package_name": "com.zacharyharris.kodery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "754486934369-5bduv00cobkaqo8s0v3jibakq6ljnker.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zacharyharris.kodery",
+            "certificate_hash": "091ef9a6006702d1592b089f435aa6ff4bb3fbd1"
+          }
+        },
+        {
+          "client_id": "754486934369-35aus1nma6m8c1v3jql9u41jvrf7k1t8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAW7YC3ylOJraOPHf1XJxVO4s2lEiR3Pac"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754486934369-35aus1nma6m8c1v3jql9u41jvrf7k1t8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
