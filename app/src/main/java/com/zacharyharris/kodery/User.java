@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 
 @IgnoreExtraProperties
-public class User implements Serializable{
+public class User{
 
     private String username;
     private String email;
@@ -23,17 +23,17 @@ public class User implements Serializable{
 
     public void setUsername(String username) { this.username = username; }
 
-    private String getEmail() { return email; }
+    public String getEmail() { return email; }
 
-    private void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) { this.email = email; }
 
-    private String getUid() { return uid; }
+    public String getUid() { return uid; }
 
-    private void setUid(String uid) { this.uid = uid;}
+    public void setUid(String uid) { this.uid = uid;}
 
-    private String getPhotoURL() { return photoURL; }
+    public String getPhotoURL() { return photoURL; }
 
-    private void setPhotoURL(String photoURL) { this.photoURL = photoURL; }
+    public void setPhotoURL(String photoURL) { this.photoURL = photoURL; }
 
     public User(String username, String email, String uid, String photoURL) {
         this.username = username;
