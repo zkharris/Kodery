@@ -144,7 +144,6 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
         adapter.notifyDataSetChanged();
 
-
     }
 
     public void addUser(User addedUser) {
@@ -152,13 +151,6 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         mDatabase.child("friendships").child(user.getUid()).child(id).setValue(true);
     }
-
-
-
-
-
-
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

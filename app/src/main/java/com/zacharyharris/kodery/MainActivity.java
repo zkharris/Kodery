@@ -96,6 +96,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 mFirebaseUser.getUid(), mFirebaseUser.getPhotoUrl().toString());
 
         mDatabase.child("users").child(mFirebaseUser.getUid()).setValue(currentUser);
+
+    }
+
+    public void goToCreateTask(View view){
+        Intent intent = new Intent(this, CreateTaskActivity.class);
+        startActivity(intent);
     }
 
 
