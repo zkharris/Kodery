@@ -94,7 +94,7 @@ public class FriendsListActivity extends AppCompatActivity implements GoogleApiC
             SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
             viewHolder.position = position;
             User user = friendsList.get(position);
-            ((SimpleItemViewHolder) holder).title.setText(user.getEmail());
+            ((SimpleItemViewHolder) holder).title.setText(user.getUsername());
             Glide.with(FriendsListActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
         }
 

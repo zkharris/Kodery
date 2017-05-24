@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--- This is what a single user item will look like with an add button next to it. seen in when
+     someone is trying to add a friend to a board or a task and in the users Activity -->
+
+</LinearLayout>

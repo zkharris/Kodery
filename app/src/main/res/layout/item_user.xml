@@ -7,8 +7,11 @@
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp">
 
+    <!--- This is what a single user item will look like with no add button next to it. seen in all
+    Friends List Activities -->
+
     <TextView
-        android:id="@+id/mTextView"
+        android:id="@+id/textView"
         android:layout_width="309dp"
         android:layout_height="30dp"
         android:gravity="center_vertical"
@@ -20,27 +23,29 @@
         tools:layout_constraintRight_creator="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintBottom_creator="1" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="46dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:srcCompat="@color/colorPrimary"
-        app:layout_constraintRight_toLeftOf="@+id/mTextView"
+        app:layout_constraintRight_toLeftOf="@+id/textView"
         tools:layout_constraintTop_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintBottom_creator="1"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="9dp"
         android:layout_marginTop="10dp"
         tools:layout_constraintLeft_creator="1"
         android:layout_marginBottom="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="24dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="9dp"
         app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintVertical_bias="0.0" />
 
