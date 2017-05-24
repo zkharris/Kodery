@@ -104,6 +104,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         startActivity(intent);
     }
 
+    public void goToUsers(View view){
+        Intent intent = new Intent(this, UsersActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToFriends(View view){
+        Intent intent = new Intent(this, FriendsListActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

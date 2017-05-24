@@ -10,10 +10,10 @@ import java.io.Serializable;
 @IgnoreExtraProperties
 public class User{
 
-    private String username;
-    private String email;
-    private String uid;
-    private String photoURL;
+    public String username;
+    public String email;
+    public String uid;
+    public String photoURL;
 
     public User() {
         // Default constructer
