@@ -1,4 +1,4 @@
-package com.zacharyharris.kodery;
+package com.zacharyharris.kodery.Model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 import java.io.Serializable;

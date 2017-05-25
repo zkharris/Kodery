@@ -9,17 +9,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".UI.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignInActivity" />
-        <activity android:name=".UsersActivity" />
-        <activity android:name=".CreateTaskActivity" />
-        <activity android:name=".FriendsListActivity" />
+        <activity android:name=".UI.SignInActivity" />
+        <activity android:name=".UI.UsersActivity" />
+        <activity android:name=".UI.CreateTaskActivity" />
+        <activity android:name=".UI.FriendsListActivity" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.zacharyharris.kodery;
+package com.zacharyharris.kodery.Model;
 
 import java.util.HashMap;
 
