@@ -1,5 +1,6 @@
 package com.zacharyharris.kodery.UI;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -10,6 +11,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
@@ -84,6 +88,39 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 mFirebaseUser.getUid(), mFirebaseUser.getPhotoUrl().toString());
 
         mDatabase.child("users").child(mFirebaseUser.getUid()).setValue(currentUser);
+
+        /* Create Add Board Button */
+
+        Button addBoard = (Button) findViewById(R.id.adButeon);
+        addBoard.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                View mview = getLayoutInflater().inflate(R.layout.activity_create_board, null);
+                final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
+                Button addleboard = (Button) mview.findViewById(R.id.createB);
+
+                addleboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mboardname.getText().toString().isEmpty()){
+                            Toast.makeText(MainActivity.this,
+                                    "Board Created!",
+                                    Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(MainActivity.this,
+                                    "Please name the board.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+            }
+        });
 
     }
 
