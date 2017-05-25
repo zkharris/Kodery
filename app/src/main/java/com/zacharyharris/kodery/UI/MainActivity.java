@@ -28,11 +28,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.R;
 import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
@@ -104,9 +107,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     @Override
                     public void onClick(View v) {
                         if(!mboardname.getText().toString().isEmpty()){
+                            saveBoard(mboardname.getText().toString());
                             Toast.makeText(MainActivity.this,
                                     "Board Created!",
                                     Toast.LENGTH_SHORT).show();
+                            // Get rid of the pop up go back to main activity
                         }else{
                             Toast.makeText(MainActivity.this,
                                     "Please name the board.",
@@ -124,7 +129,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    @Override
+    private void saveBoard(String name) {
+        String key = mDatabase.child("board").push().getKey();
+
+        Board board = new Board();
+        board.setName(name);
+        board.setOwner(mFirebaseUser.getDisplayName());
+        board.setBoardKey(key);
+        board.setOwnerUid(mFirebaseUser.getUid());
+
+        Map<String, Object> boardUpdates = new HashMap<>();
+        boardUpdates.put("/board/" + key, board.toFirebaseObject());
+        mDatabase.updateChildren(boardUpdates);
+    }
+
+    /*@Override
     protected  void onResume() {
         super.onResume();
 
@@ -144,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w("Kodery", "userUpdate:onCancelled", databaseError.toException());
             }
         });
-    }
+    }*/
 
     public void goToCreateTask(View view){
         Intent intent = new Intent(this, CreateTaskActivity.class);
