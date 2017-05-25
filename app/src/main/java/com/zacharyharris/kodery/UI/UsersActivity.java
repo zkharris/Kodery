@@ -1,5 +1,7 @@
 package com.zacharyharris.kodery.UI;
 
+import android.support.v7.widget.SearchView;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.SharedPreferences;
@@ -7,8 +9,11 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -52,6 +57,8 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
     RecycleAdapter adapter;
     ArrayList<User> userList;
+    ArrayList<User> userListCopy;
+
 
     class RecycleAdapter extends RecyclerView.Adapter {
 
@@ -59,7 +66,6 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
         public int getItemCount() {
             return userList.size();
         }
-
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -92,9 +98,37 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "Clicked user is "+ userList.get(position).getUsername() + " " + userList
-                    .get(position).getEmail());
+                Log.d(TAG, "Clicked user is " + userList.get(position).getUsername() + " " + userList
+                        .get(position).getEmail());
                 addUser(userList.get(position));
+            }
+        }
+
+        public void filter(String text) {
+            userList.clear();
+            Log.w(TAG, text);
+            if(text.isEmpty()){
+                userList.addAll(userListCopy);
+                Log.w(TAG, "User List: " + userList);
+            } else {
+                text = text.toLowerCase();
+                for(User user : userListCopy){
+                    if(user.getUsername().toLowerCase().equals(text) || user.getEmail().toLowerCase().equals(text)){
+                        userList.add(user);
+                        Log.w(TAG, "User List: " + userList);
+                    }
+                }
+            }
+            notifyDataSetChanged();
+        }
+
+        public void clear() {
+            int size = userList.size();
+            if(size > 0) {
+                for(int i = 0; i < size; i++) {
+                    userList.remove(0);
+                }
+                notifyItemRangeRemoved(0, size);
             }
         }
     }
@@ -103,6 +137,25 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
+
+        userList = new ArrayList<>();
+        userListCopy = new ArrayList<>();
+
+
+
+
+        /*RecyclerView recyclerView = (RecyclerView) findViewById(R.id.mRecycleView);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(llm);
+        adapter = new RecycleAdapter();
+        recyclerView.setAdapter(adapter);
+        adapter.clear();*/
+
+    }
+
+    @Override
+    protected  void onResume() {
+        super.onResume();
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -122,31 +175,24 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 FirebaseUser fuser = mFirebaseAuth.getCurrentUser();
-                for(DataSnapshot data: dataSnapshot.getChildren()) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
                     User user = data.getValue(User.class);
-                    if(!fUser.getUid().equals(user.getUid())) {
+                    if (!fuser.getUid().equals(user.getUid())) {
                         userList.add(user);
+                        userListCopy.add(user);
                     }
                 }
 
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
                 Log.d(TAG, "User List: " + userList);
+                Log.d(TAG, "User List copy: " + userListCopy);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w("TodoApp", "getUser:onCancelled", databaseError.toException());
             }
         });
-
-        userList = new ArrayList<>();
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.mRecycleView);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(llm);
-        adapter = new RecycleAdapter();
-        recyclerView.setAdapter(adapter);
-
-        adapter.notifyDataSetChanged();
-
     }
 
     public void addUser(User addedUser) {
@@ -159,4 +205,52 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
+
+    @Override
+    protected  void onStart() {
+        super.onStart();
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.mRecycleView);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(llm);
+        adapter = new RecycleAdapter();
+        recyclerView.setAdapter(adapter);
+        adapter.clear();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        Log.w(TAG, "options selected");
+        adapter.clear();
+
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.w(TAG, "Text submit");
+                adapter.clear();
+                adapter.filter(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.w(TAG, "Text change");
+                return true;
+            }
+        });
+
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w(TAG, "Search Clicked");
+                adapter.clear();
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
 }
+
