@@ -90,7 +90,8 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "Clicked user is "+ userList.get(position));
+                Log.d(TAG, "Clicked user is "+ userList.get(position).getUsername() + " " + userList
+                    .get(position).getEmail());
                 addUser(userList.get(position));
             }
         }

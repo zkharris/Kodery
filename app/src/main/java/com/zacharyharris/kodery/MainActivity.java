@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     //User data
     private String mUsername;
     private String mPhotoUrl;
+    ArrayList<Update> updateList;
 
 
     @Override
@@ -97,6 +98,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mDatabase.child("users").child(mFirebaseUser.getUid()).setValue(currentUser);
 
+    }
+
+    @Override
+    protected  void onResume() {
+        super.onResume();
+
+        // User updates
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference("updates/" + mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()){
+                    Update update = data.getValue(Update.class);
+                    updateList.add(update);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Kodery", "userUpdate:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     public void goToCreateTask(View view){
