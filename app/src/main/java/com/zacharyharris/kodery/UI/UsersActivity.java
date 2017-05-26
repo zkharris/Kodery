@@ -108,7 +108,6 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
             userList.clear();
             Log.w(TAG, text);
             if(text.isEmpty()){
-                userList.addAll(userListCopy);
                 Log.w(TAG, "User List: " + userList);
             } else {
                 text = text.toLowerCase();
@@ -140,17 +139,6 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
         userList = new ArrayList<>();
         userListCopy = new ArrayList<>();
-
-
-
-
-        /*RecyclerView recyclerView = (RecyclerView) findViewById(R.id.mRecycleView);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(llm);
-        adapter = new RecycleAdapter();
-        recyclerView.setAdapter(adapter);
-        adapter.clear();*/
-
     }
 
     @Override
@@ -238,6 +226,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.w(TAG, "Text change");
+                adapter.clear();
                 return true;
             }
         });
@@ -249,8 +238,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
                 adapter.clear();
             }
         });
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
-
 }
 
