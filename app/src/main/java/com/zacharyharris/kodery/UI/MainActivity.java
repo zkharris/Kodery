@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.String.valueOf;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = "MainActivity";
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private String mUsername;
     private String mPhotoUrl;
     ArrayList<Update> updateList;
+    ArrayList<Board> boardsList;
 
 
     @Override
@@ -139,20 +142,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         board.setOwnerUid(mFirebaseUser.getUid());
 
         Map<String, Object> boardUpdates = new HashMap<>();
-        boardUpdates.put("/board/" + key, board.toFirebaseObject());
+        boardUpdates.put("/boards/" + key, board.toFirebaseObject());
         mDatabase.updateChildren(boardUpdates);
     }
 
-    /*@Override
+    @Override
     protected  void onResume() {
         super.onResume();
 
-        // User updates
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        // User updates
         database.getReference("updates/" + mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot data : dataSnapshot.getChildren()){
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Update update = data.getValue(Update.class);
                     updateList.add(update);
                 }
@@ -160,10 +164,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w("Kodery", "userUpdate:onCancelled", databaseError.toException());
+                Log.w(TAG, "userUpdate:onCancelled", databaseError.toException());
             }
         });
-    }*/
+
+        // Board feed
+        database.getReference("boards").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boardsList.clear();
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Board boards = data.getValue(Board.class);
+                    Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
+                    if (boards.getOwnerUid().equals(mFirebaseUser.getUid())) {
+                        boardsList.add(boards);
+                    }
+                    if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
+                            .getValue() != null) {
+                        boardsList.add(boards);
+                    }
+                }
+                //adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
+            }
+        });
+    }
 
     public void goToCreateTask(View view){
         Intent intent = new Intent(this, CreateTaskActivity.class);
@@ -175,10 +204,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         startActivity(intent);
     }
 
-    public void goToFriends(View view){
-        Intent intent = new Intent(this, FriendsListActivity.class);
-        startActivity(intent);
-    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

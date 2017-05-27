@@ -184,9 +184,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     public void addUser(User addedUser) {
-        String id = addedUser.getUid();
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-        mDatabase.child("friendships").child(user.getUid()).child(id).setValue(true);
+        
     }
 
     @Override
@@ -217,7 +215,6 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.w(TAG, "Text submit");
                 adapter.clear();
                 adapter.filter(query);
                 return true;
@@ -225,7 +222,6 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.w(TAG, "Text change");
                 adapter.clear();
                 return true;
             }
