@@ -7,4 +7,8 @@
     <string name="agree">Accept</string>
     <string name="decline">Decline</string>
     <string name="invite_mssg">X invited you to Y</string>
+    <string name="nameof_task">Task</string>
+    <string name="membon_task">2 Members</string>
+    <string name="profile_name">John Smith</string>
+    <string name="add">Add</string>
 </resources>

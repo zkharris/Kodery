@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:layout_margin="12dp">
 
     <!--- This is what a single user item will look like with an add button next to it. seen in when
      someone is trying to add a friend to a board or a task and in the users Activity -->
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            app:srcCompat="@color/colorPrimary"
+            android:id="@+id/prof_pic"/>
+
+        <TextView
+            android:id="@+id/prof_name"
+            android:layout_width="195dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/profile_name"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/Add_friend"
+            android:layout_width="75dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/colorAccent"
+            android:textColor="@android:color/white"
+            android:text="@string/add" />
+
+
+    </LinearLayout>
+
+
+</android.support.v7.widget.CardView>
