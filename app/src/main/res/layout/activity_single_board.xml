@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.zacharyharris.kodery.UI.SingleBoardActivity">
+
+    <!-- This will appear when the user presses on a board from the main activity it will let display all the updates
+    pertaining to that board in a recycler view(on top) and all the lists in that board in another recyler view(below) -->
+
+</android.support.constraint.ConstraintLayout>
