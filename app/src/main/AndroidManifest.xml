@@ -19,7 +19,10 @@
         <activity android:name=".UI.SignInActivity" />
         <activity android:name=".UI.UsersActivity" />
         <activity android:name=".UI.CreateTaskActivity" />
-        <activity android:name=".UI.FriendsListActivity" />
+        <activity android:name=".UI.InvitesActivity" />
+        <activity android:name=".UI.SingleBoardActivity" />
+        <activity android:name=".UI.SingleListActivity" />
+        <activity android:name=".UI.BoardMembersActivity"></activity>
     </application>
 
 </manifest>
