@@ -17,10 +17,11 @@
         <TextView
             android:id="@+id/invite_lbl"
             android:layout_width="150dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/invite_mssg"
             android:textAlignment="center"
+            android:layout_gravity="center_vertical"
             android:textSize="24sp" />
 
         <Button
@@ -30,6 +31,8 @@
             android:layout_weight="1"
             android:background="@android:color/holo_green_light"
             android:textColor="@android:color/white"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
             android:text="@string/agree"/>
 
         <Button
@@ -39,6 +42,7 @@
             android:layout_weight="1"
             android:textColor="@android:color/white"
             android:background="@android:color/holo_red_light"
+            android:layout_gravity="center_vertical"
             android:text="@string/decline" />
     </LinearLayout>
 
