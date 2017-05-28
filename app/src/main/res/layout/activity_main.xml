@@ -6,9 +6,21 @@
     android:orientation="vertical"
     tools:context="com.zacharyharris.kodery.UI.MainActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/adButeon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Board" />
+
+    <Button
+        android:id="@+id/test_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onTestClicked"
+        android:text="[Test] Go to Invite Activity" />
 </LinearLayout>

@@ -12,6 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.zacharyharris.kodery.R;
+
+import java.util.ArrayList;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
@@ -110,7 +119,7 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
         });
     }
 
-    class RecycleAdapter extends RecyclerView.Adapter {
+    class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.ViewHolder> {
 
 
         @Override
@@ -119,21 +128,23 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            /*View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_invite, parent, false);
-            InvitesActivity.RecycleAdapter.SimpleItemViewHolder pvh = new InvitesActivity.RecycleAdapter.SimpleItemViewHolder(v);
-            return pvh;*/
-            return null;
+        public RecycleAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            // create a new view
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_invite, parent, false);
+            ViewHolder vh = new ViewHolder(v);
+            return vh;
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            InvitesActivity.RecycleAdapter.SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            InvitesActivity.RecycleAdapter.ViewHolder viewHolder = (ViewHolder) holder;
             viewHolder.position = position;
             Board boards = boardList.get(position);
-            ((SimpleItemViewHolder) holder).title.setText(boards.getName());
+            ((ViewHolder) holder).title.setText(boards.getName());
         }
 
+/*
         public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView title;
             public int position;
@@ -146,6 +157,21 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
 
             @Override
             public void onClick(View view) {
+                acceptInvite(mFirebaseUser.getUid(), boardList.get(position).getBoardKey());
+            }
+        }
+*/
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            TextView title;
+            public int position;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
                 acceptInvite(mFirebaseUser.getUid(), boardList.get(position).getBoardKey());
             }
         }

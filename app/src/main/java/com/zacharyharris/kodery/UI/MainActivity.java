@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.zacharyharris.kodery.Adapter.MainAdapter;
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.R;
 import com.zacharyharris.kodery.Model.Update;
@@ -42,6 +45,12 @@ import static java.lang.String.valueOf;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = "MainActivity";
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mlayoutManager;
+
+    /*can be deleted later*/
+    private ArrayList<String> mDataSet;
 
     private SharedPreferences mSharedPreferences;
 
@@ -62,6 +71,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /* Implementation of Horizontal Card & Recycler view */
+
+        mDataSet = new ArrayList<>();
+        for(int i=1; i<10; i++){
+            mDataSet.add("Project: "+i);
+        }
+
+        mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mlayoutManager);
+        mAdapter = new MainAdapter(mDataSet);
+        mRecyclerView.setAdapter(mAdapter);
 
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -167,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "userUpdate:onCancelled", databaseError.toException());
             }
         });
-
+/*
         // Board feed
         database.getReference("boards").addValueEventListener(new ValueEventListener() {
             @Override
@@ -192,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
         });
+*/
     }
 
     public void goToCreateTask(View view){
@@ -271,5 +295,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onTestClicked(View view){
+        Intent i = new Intent(this, InvitesActivity.class);
+        startActivity(i);
     }
 }

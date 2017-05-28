@@ -4,4 +4,7 @@
     <string name="action_search">Search</string>
     <string name="boardname">Board Name</string>
     <string name="description">description</string>
+    <string name="agree">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="invite_mssg">X invited you to Y</string>
 </resources>
