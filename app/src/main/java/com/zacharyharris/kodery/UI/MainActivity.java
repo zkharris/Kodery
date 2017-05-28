@@ -74,16 +74,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         /* Implementation of Horizontal Card & Recycler view */
 
-        mDataSet = new ArrayList<>();
+        /*mDataSet = new ArrayList<>();
         for(int i=1; i<10; i++){
             mDataSet.add("Project: "+i);
-        }
+        }*/
+
+        boardsList = new ArrayList<Board>();
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mlayoutManager);
-        mAdapter = new MainAdapter(mDataSet);
+        mAdapter = new MainAdapter(boardsList);
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         // User updates
-        database.getReference("updates/" + mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        /*database.getReference("updates/" + mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -189,8 +191,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "userUpdate:onCancelled", databaseError.toException());
             }
-        });
-/*
+        });*/
+
         // Board feed
         database.getReference("boards").addValueEventListener(new ValueEventListener() {
             @Override
@@ -207,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         boardsList.add(boards);
                     }
                 }
-                //adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -215,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
         });
-*/
     }
 
     public void goToCreateTask(View view){
