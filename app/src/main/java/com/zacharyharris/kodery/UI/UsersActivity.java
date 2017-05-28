@@ -69,7 +69,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_add_user, parent, false);
             SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
             return pvh;
         }
@@ -92,8 +92,8 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
-                title = (TextView) itemView.findViewById(R.id.textView);
-                image = (ImageView) itemView.findViewById(R.id.imageView);
+                title = (TextView) itemView.findViewById(R.id.prof_name);
+                image = (ImageView) itemView.findViewById(R.id.prof_pic);
             }
 
             @Override
@@ -101,6 +101,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
                 Log.d(TAG, "Clicked user is " + userList.get(position).getUsername() + " " + userList
                         .get(position).getEmail());
                 addUser(userList.get(position));
+                // Toast "invite sent"
             }
         }
 
@@ -170,7 +171,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
                         userListCopy.add(user);
                     }
                 }
-
+                adapter.clear();
                 //adapter.notifyDataSetChanged();
                 Log.d(TAG, "User List: " + userList);
                 Log.d(TAG, "User List copy: " + userListCopy);
