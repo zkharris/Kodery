@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(mlayoutManager);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new MainAdapter(boardsList);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -154,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             }
         });
-
     }
 
     private void saveBoard(String name) {
@@ -217,11 +217,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
         });
-    }
-
-    public void goToCreateTask(View view){
-        Intent intent = new Intent(this, CreateTaskActivity.class);
-        startActivity(intent);
     }
 
     public void goToUsers(View view){
