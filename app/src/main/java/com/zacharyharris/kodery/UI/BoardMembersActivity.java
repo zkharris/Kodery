@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class BoardMembersActivity extends AppCompatActivity {
 
     public static final String TAG = "BoardMembersActivity";
+    public static final String root = "testRoot";
 
     RecycleAdapter adapter;
 
@@ -122,7 +123,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         // Peep reference
-        database.getReference("boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -139,7 +140,7 @@ public class BoardMembersActivity extends AppCompatActivity {
 
     private void findUser(String peepUid) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("users/" + peepUid).addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
@@ -157,7 +158,7 @@ public class BoardMembersActivity extends AppCompatActivity {
 
     private User findOwner(final String ownerUid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("users/" + ownerUid).addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 owner = dataSnapshot.getValue(User.class);
@@ -172,7 +173,7 @@ public class BoardMembersActivity extends AppCompatActivity {
     }
 
     private void addTaskMembers(Task task, User user) {
-        mDatabase.child("tasks").child(task.getKey()).child("members").child(user.getUid()).setValue(true);
+        mDatabase.child(root).child("tasks").child(task.getKey()).child("members").child(user.getUid()).setValue(true);
         //Intent to Single Task view
     }
 }

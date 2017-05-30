@@ -49,6 +49,7 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
     private FirebaseUser mFirebaseUser;
     private GoogleApiClient mGoogleApiClient;
     private DatabaseReference mDatabase;
+    private static final String root = "testRoot";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("invites/" + mFirebaseUser.getUid()).addValueEventListener(
+        database.getReference(root + "/invites/" + mFirebaseUser.getUid()).addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -99,7 +100,7 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
 
     private void findBoard(final String boardKey) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("board").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/board").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot data: dataSnapshot.getChildren()) {

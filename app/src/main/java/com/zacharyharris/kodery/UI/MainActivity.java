@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     ArrayList<Update> updateList;
     ArrayList<Board> boardsList;
 
+    private static final String root = "testRoot";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         for(int i=1; i<10; i++){
             mDataSet.add("Project: "+i);
         }*/
+        
 
         boardsList = new ArrayList<Board>();
 
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         User currentUser = new User(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(),
                 mFirebaseUser.getUid(), mFirebaseUser.getPhotoUrl().toString());
 
-        mDatabase.child("users").child(mFirebaseUser.getUid()).setValue(currentUser);
+        mDatabase.child(root).child("users").child(mFirebaseUser.getUid()).setValue(currentUser);
 
         /* Create Add Board Button */
 
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         board.setOwnerUid(mFirebaseUser.getUid());
 
         Map<String, Object> boardUpdates = new HashMap<>();
-        boardUpdates.put("/boards/" + key, board.toFirebaseObject());
+        boardUpdates.put(root + "/boards/" + key, board.toFirebaseObject());
         mDatabase.updateChildren(boardUpdates);
     }
 
@@ -194,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });*/
 
         // Board feed
-        database.getReference("boards").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boardsList.clear();

@@ -39,6 +39,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
     public static final String TAG = "UsersActivity";
     public static final String ANONYMOUS = "anonymous";
+    private static final String root = "testRoot";
 
     public User currentUser;
 
@@ -160,7 +161,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
                 .build();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("users").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 FirebaseUser fuser = mFirebaseAuth.getCurrentUser();
