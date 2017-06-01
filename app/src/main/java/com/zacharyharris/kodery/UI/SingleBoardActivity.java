@@ -97,8 +97,8 @@ public class SingleBoardActivity extends AppCompatActivity {
             board = (Board)extras.get("board");
         }
 
-        //final TextView boardTitle = (TextView) findViewById(R.id.boardTitle);
-        //boardTitle.setText(board.getName());
+        final TextView boardTitle = (TextView) findViewById(R.id.boardname_view);
+        boardTitle.setText(board.getName());
 
         boardsList = new ArrayList<>();
 

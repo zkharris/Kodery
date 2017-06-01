@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }*/
 
 
-        boardsList = new ArrayList<Board>();
+        boardsList = new ArrayList<>();
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);

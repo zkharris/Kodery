@@ -42,6 +42,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(MainAdapter.ViewHolder holder, int position) {
         holder.mBoard.setText(boardsList.get(position).getName());
+        holder.position = position;
     }
 
     @Override
@@ -52,6 +53,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public TextView mBoard;
+        public int position;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -63,11 +65,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         public void onClick(View v) {
             Log.d(TAG, "onClick: Clicked!");
             Toast.makeText(v.getContext(), "Clicked",Toast.LENGTH_SHORT).show();
-/*
+
             Intent i = new Intent(v.getContext(), SingleBoardActivity.class);
-            i.putExtra("board", board);
+            i.putExtra("board", boardsList.get(position));
             v.getContext().startActivity(i);
-*/
+
         }
     }
 }
