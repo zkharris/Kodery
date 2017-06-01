@@ -170,34 +170,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         /* TEST TEST TEST TEST TEST TEST TEST FOR TASK */
 /*
         Button addTask = (Button) findViewById(R.id.test_button);
-        addBoard.setOnClickListener(new View.OnClickListener(){
+        addTask.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                View mview = getLayoutInflater().inflate(R.layout.activity_create_task, null);
-                final EditText mtaskname = (EditText) mview.findViewById(R.id.Taskname_edit);
-                final EditText mtaskdesc = (EditText) mview.findViewById(R.id.Taskndesc_edit);
-                Button addletask = (Button) mview.findViewById(R.id.createTsk);
+                View mview = getLayoutInflater().inflate(R.layout.create_task_popup, null);
+                final EditText mboardname = (EditText) mview.findViewById(R.id.taskname_edit);
+                Button addleboard = (Button) mview.findViewById(R.id.createTsk);
 
-                addletask.setOnClickListener(new View.OnClickListener() {
+                addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!mtaskname.getText().toString().isEmpty() ||
-                                !mtaskdesc.getText().toString().isEmpty()){
+                        if(!mboardname.getText().toString().isEmpty()){
                             Toast.makeText(MainActivity.this,
-                                    "Board Created!",
+                                    "Task Created!",
                                     Toast.LENGTH_SHORT).show();
                             // Get rid of the pop up go back to main activity
                         }else{
-                            if(!mtaskname.getText().toString().isEmpty()) {
                                 Toast.makeText(MainActivity.this,
                                         "Please name the task.",
                                         Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(MainActivity.this,
-                                        "Please add a desc.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
+
                         }
                     }
                 });
@@ -208,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             }
         });
-        */
+    */
     }
 
     private void saveBoard(String name) {
