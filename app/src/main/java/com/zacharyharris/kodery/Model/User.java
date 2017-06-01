@@ -3,10 +3,6 @@ package com.zacharyharris.kodery.Model;
 import com.google.firebase.database.IgnoreExtraProperties;
 import java.io.Serializable;
 
-/**
- * Created by zacharyharris on 5/23/17.
- */
-
 @IgnoreExtraProperties
 public class User{
 
@@ -14,6 +10,7 @@ public class User{
     public String email;
     public String uid;
     public String photoURL;
+    public String companyName;
 
     public User() {
         // Default constructer
@@ -34,6 +31,10 @@ public class User{
     public String getPhotoURL() { return photoURL; }
 
     public void setPhotoURL(String photoURL) { this.photoURL = photoURL; }
+
+    public String getCompanyName() { return companyName; }
+
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
 
     public User(String username, String email, String uid, String photoURL) {
         this.username = username;

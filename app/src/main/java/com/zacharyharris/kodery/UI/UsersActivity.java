@@ -33,6 +33,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.R;
 import com.zacharyharris.kodery.Model.User;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class UsersActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -80,20 +82,27 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
             SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
             viewHolder.position = position;
             User user = userList.get(position);
-            ((SimpleItemViewHolder) holder).title.setText(user.getUsername());
+            ((SimpleItemViewHolder) holder).username.setText(user.getUsername());
+            if(user.getCompanyName() != null) {
+                ((SimpleItemViewHolder) holder).compName.setText(user.getCompanyName());
+            } else {
+                ((SimpleItemViewHolder) holder).compName.setText(null);
+            }
             Glide.with(UsersActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
 
         }
 
         public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             ImageView image;
-            TextView title;
+            TextView username;
+            TextView compName;
             public int position;
 
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
-                title = (TextView) itemView.findViewById(R.id.prof_name);
+                username = (TextView) itemView.findViewById(R.id.prof_name);
+                compName = (TextView) itemView.findViewById(R.id.comp_name);
                 image = (ImageView) itemView.findViewById(R.id.prof_pic);
             }
 
