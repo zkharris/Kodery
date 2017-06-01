@@ -1,15 +1,21 @@
 package com.zacharyharris.kodery.Adapter;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.R;
+import com.zacharyharris.kodery.UI.SingleBoardActivity;
 
 import java.util.ArrayList;
+
+import static com.zacharyharris.kodery.R.id.board;
 
 /**
  * Created by AlexLue on 5/24/17.
@@ -43,14 +49,25 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         return boardsList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public TextView mBoard;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mBoard =(TextView) itemView.findViewById(R.id.board);
+            itemView.setOnClickListener(this);
+            mBoard =(TextView) itemView.findViewById(board);
         }
 
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG, "onClick: Clicked!");
+            Toast.makeText(v.getContext(), "Clicked",Toast.LENGTH_SHORT).show();
+/*
+            Intent i = new Intent(v.getContext(), SingleBoardActivity.class);
+            i.putExtra("board", board);
+            v.getContext().startActivity(i);
+*/
+        }
     }
 }
