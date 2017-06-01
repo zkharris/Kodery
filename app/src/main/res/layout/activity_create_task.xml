@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,41 +7,57 @@
     tools:layout_editor_absoluteY="25dp"
     tools:layout_editor_absoluteX="0dp"
     android:orientation="vertical"
-    android:paddingTop="50dp"
-    android:paddingLeft="40dp"
-    android:paddingRight="40dp">
+    android:weightSum="1">
 
-
-    <EditText
-        android:id="@+id/nameEditText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:ems="10"
-        android:hint="Name"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:paddingTop="50dp"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:paddingBottom="10dp"
+        android:layout_weight="0.97">
 
-    <EditText
-        android:id="@+id/descEditText"
-        style="@style/Widget.AppCompat.Light.AutoCompleteTextView"
-        android:ems="10"
-        android:hint="Description"
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:ems="10"
+            android:hint="Name"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/descEditText"
+            style="@style/Widget.AppCompat.Light.AutoCompleteTextView"
+            android:ems="10"
+            android:hint="Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:selectAllOnFocus="true"
+            android:background="#00000000" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="260dp"
-        android:selectAllOnFocus="true"
-        android:background="#00000000"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginTop="10dp"
+        android:orientation="vertical">
 
-        android:clickable="true"
-        app:fabSize="mini"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="25dp"
+
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@android:drawable/ic_menu_add" />
+    </LinearLayout>
 
 </LinearLayout>
