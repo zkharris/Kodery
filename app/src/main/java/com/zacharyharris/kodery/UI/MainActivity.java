@@ -2,6 +2,7 @@ package com.zacharyharris.kodery.UI;
 
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,8 +52,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mlayoutManager;
 
-    /*can be deleted later*/
-    private ArrayList<String> mDataSet;
 
     private SharedPreferences mSharedPreferences;
 
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+<<<<<<< Updated upstream
 
         android.support.v7.app.ActionBar menu = getSupportActionBar();
         menu.setDisplayShowHomeEnabled(true);
@@ -86,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             mDataSet.add("Project: "+i);
         }*/
 
+=======
+        
+>>>>>>> Stashed changes
 
         boardsList = new ArrayList<Board>();
 
@@ -95,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new MainAdapter(boardsList);
         mRecyclerView.setAdapter(mAdapter);
+       // mtoolbar =(Toolbar) findViewById(R.id.nav_drwr);
+       // setSupportActionBar(mtoolbar);
 
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -162,6 +168,50 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             }
         });
+
+
+        /* TEST TEST TEST TEST TEST TEST TEST FOR TASK */
+/*
+        Button addTask = (Button) findViewById(R.id.test_button);
+        addBoard.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                View mview = getLayoutInflater().inflate(R.layout.activity_create_task, null);
+                final EditText mtaskname = (EditText) mview.findViewById(R.id.Taskname_edit);
+                final EditText mtaskdesc = (EditText) mview.findViewById(R.id.Taskndesc_edit);
+                Button addletask = (Button) mview.findViewById(R.id.createTsk);
+
+                addletask.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mtaskname.getText().toString().isEmpty() ||
+                                !mtaskdesc.getText().toString().isEmpty()){
+                            Toast.makeText(MainActivity.this,
+                                    "Board Created!",
+                                    Toast.LENGTH_SHORT).show();
+                            // Get rid of the pop up go back to main activity
+                        }else{
+                            if(!mtaskname.getText().toString().isEmpty()) {
+                                Toast.makeText(MainActivity.this,
+                                        "Please name the task.",
+                                        Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(MainActivity.this,
+                                        "Please add a desc.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+            }
+        });
+        */
     }
 
     private void saveBoard(String name) {

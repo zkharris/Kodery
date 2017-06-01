@@ -101,8 +101,8 @@ public class FriendsListActivity extends AppCompatActivity implements GoogleApiC
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
-                title = (TextView) itemView.findViewById(R.id.textView);
-                image = (ImageView) itemView.findViewById(R.id.imageView);
+                title = (TextView) itemView.findViewById(R.id.usr_name);
+                image = (ImageView) itemView.findViewById(R.id.usr_pic);
             }
 
             @Override
