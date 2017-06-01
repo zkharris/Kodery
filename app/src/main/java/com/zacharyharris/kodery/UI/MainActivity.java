@@ -74,13 +74,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        android.support.v7.app.ActionBar menu = getSupportActionBar();
+        menu.setDisplayShowHomeEnabled(true);
+        menu.setLogo(R.mipmap.ic_launcher_round);
+        menu.setDisplayUseLogoEnabled(true);
+
         /* Implementation of Horizontal Card & Recycler view */
 
         /*mDataSet = new ArrayList<>();
         for(int i=1; i<10; i++){
             mDataSet.add("Project: "+i);
         }*/
-        
+
 
         boardsList = new ArrayList<Board>();
 
