@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onClick(View v){
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                View mview = getLayoutInflater().inflate(R.layout.activity_create_board, null);
+                View mview = getLayoutInflater().inflate(R.layout.create_board_popup, null);
                 final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createB);
 
