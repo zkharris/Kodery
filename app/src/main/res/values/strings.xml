@@ -11,4 +11,5 @@
     <string name="membon_task">2 Members</string>
     <string name="profile_name">John Smith</string>
     <string name="add">Add</string>
+    <string name="nameof_list">List</string>
 </resources>
