@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-<<<<<<< Updated upstream
+
 
         android.support.v7.app.ActionBar menu = getSupportActionBar();
         menu.setDisplayShowHomeEnabled(true);
@@ -87,9 +87,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             mDataSet.add("Project: "+i);
         }*/
 
-=======
-        
->>>>>>> Stashed changes
 
         boardsList = new ArrayList<Board>();
 
