@@ -9,17 +9,18 @@
     <!-- This will appear when a user presses on a list in a board, It will just have a recycler view of tasks -->
 
     <TextView
-        android:id="@+id/task_name"
+        android:id="@+id/list_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:ems="10"
-        android:text="Task Name"
+        android:text="List Name"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/list_desc"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:layout_marginLeft="16dp"
@@ -28,6 +29,7 @@
         android:textAlignment="center" />
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/tasks_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
