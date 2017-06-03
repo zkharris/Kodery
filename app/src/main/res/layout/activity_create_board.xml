@@ -47,8 +47,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="10dp"
-        android:weightSum="1.0">
+        android:weightSum="1.0"
+        android:layout_marginTop="10dp">
 
         <Button
             android:id="@+id/delBoard"
@@ -57,12 +57,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@android:color/holo_red_light"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
             android:text="Delete"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:layout_marginRight="5dp"/>
+            android:textSize="14sp"/>
 
         <Button
             android:id="@+id/saveBoard"
@@ -71,12 +68,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@android:color/holo_green_light"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
             android:text="Save"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:layout_marginLeft="5dp"/>
+            android:textSize="14sp"/>
     </LinearLayout>
 
 </LinearLayout>
