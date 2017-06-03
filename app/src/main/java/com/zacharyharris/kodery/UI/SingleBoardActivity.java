@@ -160,4 +160,10 @@ public class SingleBoardActivity extends AppCompatActivity {
         });
 
     }
+
+    public void goToChat(View view) {
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("board", board);
+        startActivity(intent);
+    }
 }
