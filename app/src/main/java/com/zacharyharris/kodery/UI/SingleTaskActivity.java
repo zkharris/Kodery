@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,8 @@ import com.zacharyharris.kodery.Model.Task;
 import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -86,25 +89,28 @@ public class SingleTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_task);
 
+        final TextView nameText = (TextView)findViewById(R.id.task_name);
+        final TextView descText = (TextView)findViewById(R.id.task_desc);
+
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
             task = (Task)extras.get("todo");
             list = (boardList) extras.get("list");
             board = (Board)extras.get("board");
-            //Log.w(TAG, board.getName());
+            Log.w(TAG, board.getName());
             if (task != null) {
-                //nameEdtText.setText(task.getName());
-                //descEdtText.setText(task.getDescription());
+                nameText.setText(task.getName());
+                descText.setText(task.getDescription());
             }
         }
 
         memberList = new ArrayList<>();
 
-        //RecyclerView recyclerView = (RecyclerView)findViewById(R.id.memberRecyclerView);
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.member_list_task);
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        //recyclerView.setLayoutManager(llm);
+        recyclerView.setLayoutManager(llm);
         adapter = new RecycleAdapter();
-        //recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
     }

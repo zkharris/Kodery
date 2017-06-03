@@ -22,6 +22,8 @@ import com.zacharyharris.kodery.R;
 
 import java.util.ArrayList;
 
+import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
+
 public class SingleListActivity extends AppCompatActivity {
 
     public static final String TAG = "SingleListActivity";
@@ -93,11 +95,11 @@ public class SingleListActivity extends AppCompatActivity {
 
         taskList = new ArrayList<>();
 
-        //RecyclerView recyclerView = (RecyclerView)findViewById(R.id.TaskRecycleView);
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.tasks_list);
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        //recyclerView.setLayoutManager(llm);
+        recyclerView.setLayoutManager(llm);
         adapter = new RecycleAdapter();
-        //recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
     }
@@ -107,7 +109,7 @@ public class SingleListActivity extends AppCompatActivity {
         super.onResume();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("lists/" + list.getKey()).addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "lists/" + list.getKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 taskList.clear();
@@ -127,7 +129,7 @@ public class SingleListActivity extends AppCompatActivity {
 
     private void findTask(final String taskKey) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("tasks").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot data : dataSnapshot.getChildren()) {

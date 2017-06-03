@@ -3,15 +3,12 @@ package com.zacharyharris.kodery.Model;
 import java.io.Serializable;
 import java.util.HashMap;
 
-/**
- * Created by zacharyharris on 5/24/17.
- */
-
 public class boardList implements Serializable {
 
     public String name;
     public String key;
     public String board;
+    public String description;
 
     public boardList(){}
 
@@ -27,12 +24,15 @@ public class boardList implements Serializable {
 
     public void setBoard(String board) { this.board = board; }
 
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
     public HashMap<String,String> toFirebaseObject() {
         HashMap<String, String> list = new HashMap<String, String>();
         list.put("name", name);
         list.put("key", key);
         list.put("board", board);
-
         return list;
     }
 }
