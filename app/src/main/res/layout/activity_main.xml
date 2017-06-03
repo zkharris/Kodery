@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
     tools:context="com.zacharyharris.kodery.UI.MainActivity"
     android:weightSum="1">
 
@@ -26,16 +25,19 @@
             android:id="@+id/adButeon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="5dp"
             android:text="Add Board" />
-
+<!--
         <Button
             android:id="@+id/test_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="[Test] Go to Invite Activity" />
-
+-->
     </LinearLayout>
-
+<!--
     <android.support.design.widget.NavigationView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,5 +47,5 @@
         android:fitsSystemWindows="true">
 
 
-    </android.support.design.widget.NavigationView>
+    </android.support.design.widget.NavigationView>-->
 </android.support.v4.widget.DrawerLayout>
