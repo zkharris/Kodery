@@ -42,11 +42,14 @@ import com.zacharyharris.kodery.R;
 import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.zacharyharris.kodery.R.id.board;
+import static com.zacharyharris.kodery.R.id.start;
 import static java.lang.String.valueOf;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -90,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         for(int i=1; i<10; i++){
             mDataSet.add("Project: "+i);
         }*/
-
 
         boardsList = new ArrayList<>();
 
@@ -405,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Intent i = new Intent(v.getContext(), CreateBoardActivity.class);
                 i.putExtra("board", boardsList.get(position));
                 v.getContext().startActivity(i);
-/*
+
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(v.getContext());
                 View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_board, null);
                 final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
@@ -420,12 +422,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             Toast.makeText(v.getContext(),
                                     "Board Edited!",
                                     Toast.LENGTH_SHORT).show();
+                            updateBoard(boardsList.get(position), mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
                             Toast.makeText(v.getContext(),
                                     "Please name the board.",
                                     Toast.LENGTH_SHORT).show();
-
                         }
                     }
                 });
@@ -436,6 +438,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         Toast.makeText(v.getContext(),
                                 "Board Deleted.",
                                 Toast.LENGTH_SHORT).show();
+                        deleteBoard(boardsList.get(position));
 
                     }
                 });
@@ -443,12 +446,46 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 mBuilder.setView(mview);
                 AlertDialog dialog = mBuilder.create();
                 dialog.show();
-*/
+
                 return true;
             }
         }
     }
 
+    private void updateBoard(Board board, String boardName) {
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).child("name").setValue(boardName);
+        String updateText = (board.getName() + " renamed " + boardName);
+        update(board, updateText);
+    }
+
+    private void update(Board board, String updateText) {
+        final String key = mDatabase.child("update").child(mFirebaseUser.getUid()).push().getKey();
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy hh:mm aa");
+        String dateString = format.format(calendar.getTime());
+
+        final Update update = new Update();
+        update.setText(updateText);
+        update.setBoard(board.getBoardKey());
+        update.setKey(key);
+        update.setDate(dateString);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
+    }
+
+    private void deleteBoard(Board board) {
+        if(board != null){
+            mDatabase.child(root).child("boards").child(board.getBoardKey()).removeValue();
+            mDatabase.child(root).child("updates").child(board.getBoardKey()).removeValue();
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
 
 
 }
