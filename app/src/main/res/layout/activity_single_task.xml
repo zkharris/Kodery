@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.zacharyharris.kodery.UI.SingleTaskActivity">
+    android:layout_height="match_parent">
 
     <!-- This will be the activity when a user presses on a Task, It will let them change the name, add a description
     and add members which will be displayed as a recycler view of users -->
+
+    <!-- THIS TASK IS FOR EDITS -->
+
+
 
 </android.support.constraint.ConstraintLayout>

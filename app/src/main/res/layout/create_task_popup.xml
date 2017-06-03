@@ -24,7 +24,16 @@
             android:id="@+id/taskname_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/boardname"
+            android:hint="Name"
+            android:paddingTop="10dp"
+            android:textAlignment="viewStart"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/taskdesc_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Optional: Description"
             android:paddingTop="10dp"
             android:textAlignment="viewStart"
             android:textSize="18sp" />
@@ -34,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@color/colorAccent"
+            android:background="@color/colorPrimary"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="Create!"

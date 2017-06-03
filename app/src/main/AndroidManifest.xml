@@ -22,7 +22,8 @@
         <activity android:name=".UI.SingleBoardActivity" />
         <activity android:name=".UI.SingleListActivity" />
         <activity android:name=".UI.BoardMembersActivity" />
-        <activity android:name=".UI.SingleTaskActivity"></activity>
+        <activity android:name=".UI.SingleTaskActivity" />
+        <activity android:name=".UI.CreateBoardActivity"></activity>
     </application>
 
 </manifest>
