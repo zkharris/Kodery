@@ -1,23 +1,39 @@
 package com.zacharyharris.kodery.UI;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.Message;
 import com.zacharyharris.kodery.R;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +48,50 @@ public class ChatActivity extends AppCompatActivity {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+    ArrayList<Message> messageList;
+    RecycleAdapter adapter;
+
+
+    class RecycleAdapter extends RecyclerView.Adapter {
+
+        @Override
+        public int getItemCount() {
+            return messageList.size();
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
+            SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
+            return pvh;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
+            viewHolder.position = position;
+            Message message = messageList.get(position);
+            ((SimpleItemViewHolder) holder).author.setText(message.getAuthor());
+            ((SimpleItemViewHolder) holder).text.setText(message.getText());
+            Glide.with(ChatActivity.this).load(message.getMessagePhotoURL()).into(viewHolder.image);
+        }
+
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+            TextView text;
+            TextView author;
+            ImageView image;
+            public int position;
+
+            public SimpleItemViewHolder(View itemView) {
+                super(itemView);
+                text = (TextView) itemView.findViewById(R.id.message_text);
+                author = (TextView) itemView.findViewById(R.id.prof_name);
+                image = (ImageView) itemView.findViewById(R.id.prof_pic);
+            }
+        }
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +104,16 @@ public class ChatActivity extends AppCompatActivity {
             Bundle extras = getIntent().getExtras();
             board = (Board)extras.get("board");
         }
+
+        messageList = new ArrayList<>();
+
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(llm);
+        adapter = new RecycleAdapter();
+        recyclerView.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
 
         final EditText editText = (EditText) findViewById(message_edit);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -66,6 +136,43 @@ public class ChatActivity extends AppCompatActivity {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
 
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/message/" + board.getBoardKey() + "/messages").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Message message = dataSnapshot.getValue(Message.class);
+                messageList.add(message);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.w(TAG, "messageRef:onCancelled");
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.w(TAG, "messageRef:onCancelled");
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                Log.w(TAG, "messageRef:onCancelled");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "messageRef:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private void sendMessage(String text) {
@@ -76,6 +183,8 @@ public class ChatActivity extends AppCompatActivity {
         Message message = new Message();
         message.setMessageKey(key);
         message.setAuthor(mFirebaseUser.getDisplayName());
+        message.setAuthorUid(mFirebaseUser.getUid());
+        message.setMessagePhotoURL(mFirebaseUser.getPhotoUrl().toString());
         message.setText(text);
 
         Map<String, Object> childUpdates = new HashMap<>();
