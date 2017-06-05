@@ -99,12 +99,11 @@ public class SingleBoardActivity extends AppCompatActivity {
                             Log.w(TAG, String.valueOf(data.getKey()));
                             findList(String.valueOf(data.getKey()));
                         }
-                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.w("TodoApp", "getUser:onCancelled", databaseError.toException());
+                        Log.w(TAG, "getLists:onCancelled", databaseError.toException());
                     }
                 });
 
