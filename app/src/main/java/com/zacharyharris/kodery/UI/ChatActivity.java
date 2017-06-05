@@ -53,6 +53,51 @@ public class ChatActivity extends AppCompatActivity {
     ArrayList<Message> messageList;
     MessageRecycleAdapter messageAdapter;
     private Channel currChannel;
+    ChannelRecycleAdapter channelAdapter;
+    ArrayList<Channel> channelList;
+
+    class ChannelRecycleAdapter extends RecyclerView.Adapter {
+
+        @Override
+        public int getItemCount() {
+            return channelList.size();
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_channel, parent, false);
+            SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
+            return pvh;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
+            viewHolder.position = position;
+            Channel channel = channelList.get(position);
+            ((SimpleItemViewHolder) holder).title.setText("#" + channel.getName());
+        }
+
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            TextView title;
+            int position;
+
+            public SimpleItemViewHolder(View itemView) {
+                super(itemView);
+                itemView.setOnClickListener(this);
+                title = (TextView) itemView.findViewById(R.id.channel_name);
+
+            }
+
+            @Override
+            public void onClick(View v) {
+                Log.w(TAG, channelList.get(position).getName());
+                currChannel = channelList.get(position);
+                channelFeed(currChannel);
+            }
+        }
+
+    }
 
 
     class MessageRecycleAdapter extends RecyclerView.Adapter {
@@ -109,17 +154,26 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         messageList = new ArrayList<>();
+        channelList = new ArrayList<>();
 
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(llm);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                llm.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        //Message recycler View
+        RecyclerView messagerecyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);
+        LinearLayoutManager mllm = new LinearLayoutManager(this);
+        messagerecyclerView.setLayoutManager(mllm);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(messagerecyclerView.getContext(),
+                mllm.getOrientation());
+        messagerecyclerView.addItemDecoration(dividerItemDecoration);
         messageAdapter = new MessageRecycleAdapter();
-        recyclerView.setAdapter(messageAdapter);
+        messagerecyclerView.setAdapter(messageAdapter);
 
         messageAdapter.notifyDataSetChanged();
+
+        //Channel recycler View
+        RecyclerView channelrecyclerView = (RecyclerView)findViewById(R.id.channelRecycleView);
+        LinearLayoutManager cllm = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        channelrecyclerView.setLayoutManager(cllm);
+        channelAdapter = new ChannelRecycleAdapter();
+        channelrecyclerView.setAdapter(channelAdapter);
 
         final EditText editText = (EditText) findViewById(message_edit);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -141,17 +195,78 @@ public class ChatActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
+        // set default channel to general
+        setGeneralChannel();
 
 
 
+    }
+
+    private void setGeneralChannel() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/channels/" + board.getBoardKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Channel channel = data.getValue(Channel.class);
+                    if(channel.getName().equals("general")) {
+                        currChannel = channel;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        //Display Channels
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/message/" + board.getBoardKey() + "/messages").addChildEventListener(new ChildEventListener() {
+        database.getReference(root + "/channels/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Channel channel = data.getValue(Channel.class);
+                    channelList.add(channel);
+                    Log.w(TAG, String.valueOf(channel.getName()));
+                }
+                channelAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void sendMessage(Channel channel, String text) {
+        Log.w(TAG, "message sent");
+
+        String key = mDatabase.child(root).child("message").child(board.getBoardKey()).child("messages").push().getKey();
+
+        Message message = new Message();
+        message.setMessageKey(key);
+        message.setAuthor(mFirebaseUser.getDisplayName());
+        message.setAuthorUid(mFirebaseUser.getUid());
+        message.setMessagePhotoURL(mFirebaseUser.getPhotoUrl().toString());
+        message.setText(text);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/channels/" + board.getBoardKey() + "/" + currChannel.getChannelKey() + "/messages/" + key, message.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
+    }
+
+    private void channelFeed(Channel channel) {
+        // put this in channelFeed functoin
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/channels/" + board.getBoardKey() + "/" + channel.getChannelKey() + "/messages").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Message message = dataSnapshot.getValue(Message.class);
@@ -176,38 +291,5 @@ public class ChatActivity extends AppCompatActivity {
                 Log.w(TAG, "messageRef:onCancelled", databaseError.toException());
             }
         });
-
-        //Find Current Channel
-        /*database.getReference(root + "/channels/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    Channel channel = data.getValue(Channel.class);
-                    if(channel.getChannelKey().equals(selectedChannel.getChannelKey()))
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        })*/
-    }
-
-    private void sendMessage(Channel channel, String text) {
-        Log.w(TAG, "message sent");
-
-        String key = mDatabase.child(root).child("message").child(board.getBoardKey()).child("messages").push().getKey();
-
-        Message message = new Message();
-        message.setMessageKey(key);
-        message.setAuthor(mFirebaseUser.getDisplayName());
-        message.setAuthorUid(mFirebaseUser.getUid());
-        message.setMessagePhotoURL(mFirebaseUser.getPhotoUrl().toString());
-        message.setText(text);
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/channels/" + board.getBoardKey() + "/" + currChannel.getChannelKey() + "/messages/" + key, message.toFirebaseObject());
-        mDatabase.updateChildren(childUpdates);
     }
 }
