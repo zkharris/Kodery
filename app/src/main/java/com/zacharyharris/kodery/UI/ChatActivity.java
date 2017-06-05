@@ -101,6 +101,10 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                Log.w(TAG, channelList.get(position).getName());
+                messageList.clear();
+                currChannel = channelList.get(position);
+                channelFeed(currChannel);
                 tap_num++;
                 android.os.Handler mHandler = new android.os.Handler();
                 mHandler.postDelayed(new Runnable() {
@@ -173,7 +177,6 @@ public class ChatActivity extends AppCompatActivity {
         }
 
     }
-
 
     class MessageRecycleAdapter extends RecyclerView.Adapter {
 
@@ -256,7 +259,7 @@ public class ChatActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendMessage(currChannel, editText.getText().toString());
+                    sendMessage(editText.getText().toString());
                     handled = true;
                     //Clears the keyboard and hides it when enter is pressed
                     editText.setText("");
@@ -271,41 +274,11 @@ public class ChatActivity extends AppCompatActivity {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         // set default channel to general
-        setGeneralChannel();
-
-
-
-    }
-
-    private void setGeneralChannel() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/channels/" + board.getBoardKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    Channel channel = data.getValue(Channel.class);
-                    if(channel.getName().equals("general")) {
-                        currChannel = channel;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        //Display Channels
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/channels/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                channelList.clear();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Channel channel = data.getValue(Channel.class);
                     channelList.add(channel);
@@ -316,12 +289,12 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.w(TAG, "getChannels:onCancelled", databaseError.toException());
             }
         });
     }
 
-    private void sendMessage(Channel channel, String text) {
+    private void sendMessage(String text) {
         Log.w(TAG, "message sent");
 
         String key = mDatabase.child(root).child("message").child(board.getBoardKey()).child("messages").push().getKey();
@@ -339,7 +312,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void channelFeed(Channel channel) {
-        // put this in channelFeed functoin
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/channels/" + board.getBoardKey() + "/" + channel.getChannelKey() + "/messages").addChildEventListener(new ChildEventListener() {
             @Override

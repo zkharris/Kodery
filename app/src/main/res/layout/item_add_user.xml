@@ -58,7 +58,7 @@
             android:background="@drawable/ic_person_add_black_48dp"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorPrimary" />
 
 
     </LinearLayout>
