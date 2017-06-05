@@ -171,43 +171,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             }
         });
-
-
-        /* TEST TEST TEST TEST TEST TEST TEST FOR TASK */
-/*
-        Button addTask = (Button) findViewById(R.id.test_button);
-        addTask.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                View mview = getLayoutInflater().inflate(R.layout.create_task_popup, null);
-                final EditText mboardname = (EditText) mview.findViewById(R.id.taskname_edit);
-                Button addleboard = (Button) mview.findViewById(R.id.createTsk);
-
-                addleboard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(!mboardname.getText().toString().isEmpty()){
-                            Toast.makeText(MainActivity.this,
-                                    "Task Created!",
-                                    Toast.LENGTH_SHORT).show();
-                            // Get rid of the pop up go back to main activity
-                        }else{
-                                Toast.makeText(MainActivity.this,
-                                        "Please name the task.",
-                                        Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-                });
-
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
-                dialog.show();
-
-            }
-        });
-    */
     }
 
     private void saveBoard(String name) {
@@ -402,12 +365,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public boolean onLongClick(View v) {
                 Toast.makeText(v.getContext(), "LONG Click",Toast.LENGTH_SHORT).show();
-
+/*
                 //check if its owner
                 Intent i = new Intent(v.getContext(), CreateBoardActivity.class);
                 i.putExtra("board", boardsList.get(position));
                 v.getContext().startActivity(i);
-
+*/
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(v.getContext());
                 View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_board, null);
                 final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);

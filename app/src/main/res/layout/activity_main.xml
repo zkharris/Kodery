@@ -27,7 +27,6 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:textColor="@android:color/white"
-            android:layout_marginTop="5dp"
             android:text="Add Board" />
 <!--
         <Button
