@@ -16,8 +16,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
@@ -96,6 +98,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
             ImageView image;
             TextView username;
             TextView compName;
+            Button mbutton;
             public int position;
 
             public SimpleItemViewHolder(View itemView) {
@@ -104,6 +107,15 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
                 username = (TextView) itemView.findViewById(R.id.prof_name);
                 compName = (TextView) itemView.findViewById(R.id.comp_name);
                 image = (ImageView) itemView.findViewById(R.id.prof_pic);
+                mbutton = (Button) itemView.findViewById(R.id.Add_friend);
+                mbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(v.getContext(), username.getText()+" added!",Toast.LENGTH_SHORT).show();
+                        addUser(userList.get(position));
+                    }
+                });
+
             }
 
             @Override
