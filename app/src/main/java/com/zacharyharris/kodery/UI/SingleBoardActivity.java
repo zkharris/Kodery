@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.builders.Actions;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,6 +53,8 @@ public class SingleBoardActivity extends AppCompatActivity {
 
     private Board board;
     private DatabaseReference mDatabase;
+
+    private FirebaseUser mFirebaseUser;
     private Task task;
 
 
@@ -172,7 +175,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                             saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
                         }else{
                             Toast.makeText(SingleBoardActivity.this,
-                                    "Please name the task.",
+                                    "Please name the list.",
                                     Toast.LENGTH_SHORT).show();
 
                         }
@@ -296,7 +299,7 @@ public class SingleBoardActivity extends AppCompatActivity {
             }
         }
 
-        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
             TextView title;
             TextView subtitle;
             public int position;
@@ -304,6 +307,7 @@ public class SingleBoardActivity extends AppCompatActivity {
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
+                itemView.setOnLongClickListener(this);
                 title = (TextView) itemView.findViewById(R.id.list_name);
                 subtitle = (TextView) itemView.findViewById(R.id.list_subt);
             }
@@ -320,6 +324,51 @@ public class SingleBoardActivity extends AppCompatActivity {
                     mDatabase.child("task").child(task.getKey()).child("list")
                             .setValue(boardsList.get(position).getKey());
                 }
+            }
+
+            @Override
+            public boolean onLongClick(View v) {
+
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(v.getContext());
+                View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_list_item, null);
+                final EditText mboardname = (EditText) mview.findViewById(R.id.listname_edit);
+                final EditText mlistdesc = (EditText) mview.findViewById(R.id.listdesc_edit);
+                Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
+                Button delboard = (Button) mview.findViewById(R.id.delBoard);
+
+                saveleboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mboardname.getText().toString().isEmpty()){
+                            Toast.makeText(v.getContext(),
+                                    mboardname.getText()+" saved!",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateBoard(boardsList.get(position), mboardname.getText().toString());
+                            // Get rid of the pop up go back to main activity
+                        }else{
+                            Toast.makeText(v.getContext(),
+                                    "Please name the list.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                delboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(v.getContext(),
+                                mboardname.getText()+" deleted.",
+                                Toast.LENGTH_SHORT).show();
+                        //deleteBoard(boardsList.get(position));
+
+                    }
+                });
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+                return true;
             }
         }
     }

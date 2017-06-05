@@ -2,32 +2,30 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:layout_margin="12dp">
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/list_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="List"
-            android:textAlignment="center"
             android:textSize="30sp"
-            android:layout_margin="5dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
 
         <TextView
             android:id="@+id/list_subt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="15 Tasks"
-            android:textAlignment="center" />
+            android:text="15 Tasks" />
     </LinearLayout>
 
     <!--- A card with the name of the task and the # of members in the task -->
