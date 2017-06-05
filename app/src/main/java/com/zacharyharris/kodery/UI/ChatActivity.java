@@ -2,6 +2,7 @@ package com.zacharyharris.kodery.UI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -10,13 +11,18 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.os.Handler;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.Channel;
@@ -38,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LogRecord;
 
 import static com.zacharyharris.kodery.R.id.message_edit;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
@@ -47,6 +55,7 @@ public class ChatActivity extends AppCompatActivity {
     private String TAG = "ChatActivity";
     private DatabaseReference mDatabase;
     public Board board;
+    int tap_num = 0;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -78,22 +87,88 @@ public class ChatActivity extends AppCompatActivity {
             ((SimpleItemViewHolder) holder).title.setText("#" + channel.getName());
         }
 
-        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
             TextView title;
             int position;
 
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
+                itemView.setOnLongClickListener(this);
                 title = (TextView) itemView.findViewById(R.id.channel_name);
 
             }
 
             @Override
             public void onClick(View v) {
-                Log.w(TAG, channelList.get(position).getName());
-                currChannel = channelList.get(position);
-                channelFeed(currChannel);
+                tap_num++;
+                android.os.Handler mHandler = new android.os.Handler();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(tap_num==1){
+                            Log.w(TAG, channelList.get(position).getName());
+                            currChannel = channelList.get(position);
+                            channelFeed(currChannel);
+                        } else if (tap_num==2){
+                            Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
+
+                            /* THIS ACTION WILL TAKE YOU TO MEMBERS ACTIVITY. WHERE MEMBERS OF THE CHANNEL WILL BE */
+
+                        }
+
+                        tap_num=0;
+                    }
+                }, 500);
+            }
+
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(ChatActivity.this, "long clicked", Toast.LENGTH_SHORT).show();
+
+                /* THIS TAKES YOU TO EDIT POPUP FOR CHANNEL */
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(ChatActivity.this);
+                View mview = getLayoutInflater().inflate(R.layout.edit_channel, null);
+                final EditText mboardname = (EditText) mview.findViewById(R.id.Channelname);
+                final TextView mtitle = (TextView) mview.findViewById(R.id.edit_channel_tag);
+                Button saveleboard = (Button) mview.findViewById(R.id.saveChannel);
+                Button delboard = (Button) mview.findViewById(R.id.delChannel);
+                final Channel mchannel= channelList.get(position);
+                mtitle.setText("Rename "+mchannel.getName());
+                mboardname.setText(mchannel.getName());
+
+                saveleboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mboardname.getText().toString().isEmpty()
+                                || !(mboardname.getText().toString().equals(mchannel.getName()))){
+                            Toast.makeText(ChatActivity.this,
+                                    mchannel.getName()+" renamed to "+mboardname.getText()+"!",
+                                    Toast.LENGTH_SHORT).show();
+                            // Get rid of the pop up go back to main activity
+                        }else{
+                            Toast.makeText(ChatActivity.this,
+                                    "Please rename the channel.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                delboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(v.getContext(),
+                                "#"+mchannel.getName()+" deleted.",
+                                Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+                return true;
             }
         }
 
@@ -291,5 +366,50 @@ public class ChatActivity extends AppCompatActivity {
                 Log.w(TAG, "messageRef:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.add_item, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch(id){
+            case R.id.add_item:
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(ChatActivity.this);
+                View mview = getLayoutInflater().inflate(R.layout.create_channel_popup, null);
+                final EditText mboardname = (EditText) mview.findViewById(R.id.Channelname);
+                Button addleboard = (Button) mview.findViewById(R.id.createChannel);
+
+                addleboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mboardname.getText().toString().isEmpty()){
+                            Toast.makeText(ChatActivity.this,
+                                    mboardname.getText()+" created!",
+                                    Toast.LENGTH_SHORT).show();
+                            // Get rid of the pop up go back to main activity
+                        }else{
+                            Toast.makeText(ChatActivity.this,
+                                    "Please add a channel.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
