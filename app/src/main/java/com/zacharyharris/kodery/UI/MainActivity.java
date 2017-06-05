@@ -38,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 //import com.zacharyharris.kodery.Adapter.MainAdapter;
 import com.zacharyharris.kodery.Model.Board;
+import com.zacharyharris.kodery.Model.Channel;
 import com.zacharyharris.kodery.R;
 import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
@@ -185,6 +186,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Map<String, Object> boardUpdates = new HashMap<>();
         boardUpdates.put(root + "/boards/" + key, board.toFirebaseObject());
         mDatabase.updateChildren(boardUpdates);
+
+        // Create General Chat channel
+        String generalKey = mDatabase.child(root).child("channels").child(board.getBoardKey()).push().getKey();
+        Channel generalchannel = new Channel();
+        generalchannel.setName("general");
+        generalchannel.setChannelKey(generalKey);
+
+        mDatabase.child(root).child("channels").child(board.getBoardKey()).child(generalKey).setValue(generalchannel);
     }
 
     @Override
@@ -208,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "userUpdate:onCancelled", databaseError.toException());
             }
         });*/
+
 
         // Board feed
         database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
@@ -425,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         final String key = mDatabase.child("update").child(mFirebaseUser.getUid()).push().getKey();
 
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy hh:mm aa");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm aa");
         String dateString = format.format(calendar.getTime());
 
         final Update update = new Update();
