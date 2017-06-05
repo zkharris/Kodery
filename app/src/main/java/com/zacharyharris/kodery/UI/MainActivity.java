@@ -1,5 +1,6 @@
 package com.zacharyharris.kodery.UI;
 
+import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         if(!mboardname.getText().toString().isEmpty()){
                             saveBoard(mboardname.getText().toString());
                             Toast.makeText(MainActivity.this,
-                                    "Board Created!",
+                                    mboardname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
                             // Get rid of the pop up go back to main activity
                         }else{
@@ -364,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Clicked!");
-                Toast.makeText(v.getContext(), "Clicked",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), "Clicked",Toast.LENGTH_SHORT).show();
 
                 Intent i = new Intent(v.getContext(), SingleBoardActivity.class);
                 i.putExtra("board", boardsList.get(position));
@@ -374,32 +375,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(v.getContext(), "LONG Click",Toast.LENGTH_SHORT).show();
-/*
-                //check if its owner
-                Intent i = new Intent(v.getContext(), CreateBoardActivity.class);
-                i.putExtra("board", boardsList.get(position));
-                v.getContext().startActivity(i);
-*/
+                //Toast.makeText(v.getContext(), "Edit Board",Toast.LENGTH_SHORT).show();
+
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(v.getContext());
                 View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_board, null);
                 final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
-
+                final Board test = boardsList.get(position);
+                final TextView mtextview = (TextView) mview.findViewById(R.id.edit_board_title);
+                mtextview.setText("Edit "+test.getName());
+                mboardname.setText(test.getName());
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
 
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!mboardname.getText().toString().isEmpty()){
+                        if(!mboardname.getText().toString().isEmpty()
+                                && !(mboardname.getText().toString().equals(test.getName()))){
                             Toast.makeText(v.getContext(),
-                                    "Board Edited!",
+                                    mboardname.getText()+" renamed.",
                                     Toast.LENGTH_SHORT).show();
                             updateBoard(boardsList.get(position), mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
                             Toast.makeText(v.getContext(),
-                                    "Please name the board.",
+                                    "Please rename the board.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }

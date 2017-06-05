@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -333,22 +335,35 @@ public class SingleBoardActivity extends AppCompatActivity {
                 View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_list_item, null);
                 final EditText mboardname = (EditText) mview.findViewById(R.id.listname_edit);
                 final EditText mlistdesc = (EditText) mview.findViewById(R.id.listdesc_edit);
+                final ListofTasks test = boardsList.get(position);
+                final TextView mtextview = (TextView) mview.findViewById(R.id.edit_list_item_title);
+                mtextview.setText("Edit "+test.getName());
+                mboardname.setText(test.getName());
+                mlistdesc.setText(test.getDescription());
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
 
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!mboardname.getText().toString().isEmpty()){
+                        if(!mboardname.getText().toString().isEmpty()
+                                && !(mboardname.getText().toString().equals(test.getName())
+                                && mlistdesc.getText().toString().equals(test.getDescription()))){
                             Toast.makeText(v.getContext(),
                                     mboardname.getText()+" saved!",
                                     Toast.LENGTH_SHORT).show();
                             //updateBoard(boardsList.get(position), mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
-                            Toast.makeText(v.getContext(),
-                                    "Please name the list.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast t = Toast.makeText(v.getContext(),
+                                    "Please change the name or description of "+test.getName(),
+                                    Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
                         }
                     }
                 });

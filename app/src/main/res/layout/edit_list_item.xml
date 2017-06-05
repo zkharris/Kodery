@@ -11,6 +11,7 @@
         android:padding="5dp">
 
         <TextView
+            android:id="@+id/edit_list_item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-smallcaps"
