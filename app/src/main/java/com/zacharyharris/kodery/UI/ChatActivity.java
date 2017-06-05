@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
+import com.zacharyharris.kodery.Model.Channel;
 import com.zacharyharris.kodery.Model.Message;
 import com.zacharyharris.kodery.R;
 
@@ -49,10 +51,11 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     ArrayList<Message> messageList;
-    RecycleAdapter adapter;
+    MessageRecycleAdapter messageAdapter;
+    private Channel currChannel;
 
 
-    class RecycleAdapter extends RecyclerView.Adapter {
+    class MessageRecycleAdapter extends RecyclerView.Adapter {
 
         @Override
         public int getItemCount() {
@@ -110,10 +113,13 @@ public class ChatActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
-        adapter = new RecycleAdapter();
-        recyclerView.setAdapter(adapter);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                llm.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        messageAdapter = new MessageRecycleAdapter();
+        recyclerView.setAdapter(messageAdapter);
 
-        adapter.notifyDataSetChanged();
+        messageAdapter.notifyDataSetChanged();
 
         final EditText editText = (EditText) findViewById(message_edit);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -121,7 +127,7 @@ public class ChatActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendMessage(editText.getText().toString());
+                    sendMessage(currChannel, editText.getText().toString());
                     handled = true;
                     //Clears the keyboard and hides it when enter is pressed
                     editText.setText("");
@@ -150,22 +156,19 @@ public class ChatActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Message message = dataSnapshot.getValue(Message.class);
                 messageList.add(message);
-                adapter.notifyDataSetChanged();
+                messageAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.w(TAG, "messageRef:onCancelled");
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.w(TAG, "messageRef:onCancelled");
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Log.w(TAG, "messageRef:onCancelled");
             }
 
             @Override
@@ -173,9 +176,25 @@ public class ChatActivity extends AppCompatActivity {
                 Log.w(TAG, "messageRef:onCancelled", databaseError.toException());
             }
         });
+
+        //Find Current Channel
+        /*database.getReference(root + "/channels/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Channel channel = data.getValue(Channel.class);
+                    if(channel.getChannelKey().equals(selectedChannel.getChannelKey()))
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        })*/
     }
 
-    private void sendMessage(String text) {
+    private void sendMessage(Channel channel, String text) {
         Log.w(TAG, "message sent");
 
         String key = mDatabase.child(root).child("message").child(board.getBoardKey()).child("messages").push().getKey();
@@ -188,7 +207,7 @@ public class ChatActivity extends AppCompatActivity {
         message.setText(text);
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/message/" + board.getBoardKey() + "/messages/" + key, message.toFirebaseObject());
+        childUpdates.put(root + "/channels/" + board.getBoardKey() + "/" + currChannel.getChannelKey() + "/messages/" + key, message.toFirebaseObject());
         mDatabase.updateChildren(childUpdates);
     }
 }

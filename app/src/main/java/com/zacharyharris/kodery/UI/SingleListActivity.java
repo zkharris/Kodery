@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
+import com.zacharyharris.kodery.Model.ListofTasks;
 import com.zacharyharris.kodery.Model.Task;
 import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
@@ -31,7 +32,7 @@ public class SingleListActivity extends AppCompatActivity {
     RecycleAdapter adapter;
     ArrayList<Task> taskList;
 
-    private boardList list;
+    private ListofTasks list;
     private Board board;
 
     class RecycleAdapter extends RecyclerView.Adapter {
@@ -55,16 +56,22 @@ public class SingleListActivity extends AppCompatActivity {
             viewHolder.position = position;
             Task task = taskList.get(position);
             ((SimpleItemViewHolder) holder).title.setText(task.getName());
+            // set number of members in each task
+            if(task.getNumMembers() != null) {
+                ((SimpleItemViewHolder) holder).subtitle.setText(task.getNumMembers() + " members");
+            }
         }
 
         public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView title;
+            TextView subtitle;
             public int position;
 
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
-                //title = (TextView) itemView.findViewById(R.id.myTextView);
+                title = (TextView) itemView.findViewById(R.id.task_name);
+                subtitle = (TextView) itemView.findViewById(R.id.task_desc);
             }
 
             @Override
@@ -89,9 +96,15 @@ public class SingleListActivity extends AppCompatActivity {
 
         if(getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
-            list = (boardList)extras.get("list");
+            list = (ListofTasks)extras.get("list");
             board = (Board)extras.get("board");
         }
+
+        final TextView listTitle = (TextView) findViewById(R.id.list_name);
+        listTitle.setText(list.getName());
+
+        final TextView listDesc = (TextView) findViewById(R.id.list_desc);
+        listDesc.setText(list.getDescription());
 
         taskList = new ArrayList<>();
 

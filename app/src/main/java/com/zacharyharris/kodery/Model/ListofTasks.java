@@ -13,6 +13,7 @@ public class ListofTasks implements Serializable {
     public String key;
     public String board;
     public String description;
+    public String numTasks;
 
     public String getName() { return name; }
 
@@ -30,11 +31,16 @@ public class ListofTasks implements Serializable {
 
     public void setDescription(String description) { this.description = description; }
 
+    public String getNumTasks() { return numTasks; }
+
+    public void setNumTasks(String numTasks) { this.numTasks = numTasks; }
+
     public HashMap<String,String> toFirebaseObject() {
         HashMap<String, String> list = new HashMap<String, String>();
         list.put("name", name);
         list.put("key", key);
         list.put("board", board);
+        list.put("description", description);
         return list;
     }
 }

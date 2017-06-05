@@ -3,10 +3,6 @@ package com.zacharyharris.kodery.Model;
 import java.io.Serializable;
 import java.util.HashMap;
 
-/**
- * Created by zacharyharris on 5/23/17.
- */
-
 public class Task implements Serializable {
 
 
@@ -15,6 +11,7 @@ public class Task implements Serializable {
     private String description;
     private String list;
     private String board;
+    private String numMembers;
 
     public Task() {
 
@@ -45,9 +42,13 @@ public class Task implements Serializable {
 
     public void setList(String list) { this.list = list; }
 
-    public String board() { return board; }
+    public String getBoard() { return board; }
 
     public void setBoard(String board) { this.board = board; }
+
+    public String getNumMembers() { return numMembers; }
+
+    public void setNumMembers(String numMembers) { this.numMembers = numMembers; }
 
 
     public HashMap<String,String> toFirebaseObject() {

@@ -3,10 +3,6 @@ package com.zacharyharris.kodery.Model;
 import java.io.Serializable;
 import java.util.HashMap;
 
-/**
- * Created by zacharyharris on 5/24/17.
- */
-
 public class Board implements Serializable {
 
     public String name;
