@@ -393,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         if(!mboardname.getText().toString().isEmpty()
                                 && !(mboardname.getText().toString().equals(test.getName()))){
                             Toast.makeText(v.getContext(),
-                                    mboardname.getText()+" renamed.",
+                                    test.getName()+" renamed to "+mboardname.getText()+"!",
                                     Toast.LENGTH_SHORT).show();
                             updateBoard(boardsList.get(position), mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
@@ -409,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(v.getContext(),
-                                "Board Deleted.",
+                                test.getName()+" deleted.",
                                 Toast.LENGTH_SHORT).show();
                         deleteBoard(boardsList.get(position));
 
