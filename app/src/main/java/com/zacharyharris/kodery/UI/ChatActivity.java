@@ -103,8 +103,6 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.w(TAG, channelList.get(position).getName());
                 messageList.clear();
-                currChannel = channelList.get(position);
-                channelFeed(currChannel);
                 tap_num++;
                 android.os.Handler mHandler = new android.os.Handler();
                 mHandler.postDelayed(new Runnable() {
@@ -117,7 +115,7 @@ public class ChatActivity extends AppCompatActivity {
                         } else if (tap_num==2){
                             Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
 
-                            /* THIS ACTION WILL TAKE YOU TO MEMBERS ACTIVITY. WHERE MEMBERS OF THE CHANNEL WILL BE */
+                            /* THIS ACTION WILL TAKE YOU TO EDITCHANNEL ACTIVITY. WHERE CHAT SETTINGS AND MEMBERS OF THE CHANNEL WILL BE */
 
                         }
 
