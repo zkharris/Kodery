@@ -47,7 +47,7 @@ public class SingleBoardActivity extends AppCompatActivity {
 
     public static final String TAG = "SingleBoardActivity";
 
-    RecycleAdapter adapter;
+    ListsRecycleAdapter listAdapter;
     ArrayList<ListofTasks> boardsList;
 
     private Board board;
@@ -75,13 +75,13 @@ public class SingleBoardActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.board_lists_recyclerView);
+        RecyclerView ListrecyclerView = (RecyclerView)findViewById(R.id.board_lists_recyclerView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(llm);
-        adapter = new RecycleAdapter();
-        recyclerView.setAdapter(adapter);
+        ListrecyclerView.setLayoutManager(llm);
+        listAdapter = new ListsRecycleAdapter();
+        ListrecyclerView.setAdapter(listAdapter);
 
-        adapter.notifyDataSetChanged();
+        listAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -122,7 +122,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                 }
 
                 boardsList.add(list);
-                adapter.notifyDataSetChanged();
+                listAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -166,7 +166,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if(!mlistname.getText().toString().isEmpty()){
                             Toast.makeText(SingleBoardActivity.this,
-                                    "Task Created!",
+                                    "List Created!",
                                     Toast.LENGTH_SHORT).show();
                             /* CODE TO ADD NAME AND DESC OF LIST */
                             saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
@@ -267,7 +267,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    class RecycleAdapter extends RecyclerView.Adapter {
+    class ListsRecycleAdapter extends RecyclerView.Adapter {
 
 
         @Override
