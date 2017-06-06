@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.LogRecord;
 
+import static com.zacharyharris.kodery.R.id.item_touch_helper_previous_elevation;
 import static com.zacharyharris.kodery.R.id.message_edit;
 import static com.zacharyharris.kodery.R.id.saveChannel;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
