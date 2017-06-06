@@ -292,6 +292,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 mUsername = "anonymous";
                 mPhotoUrl = null;
                 startActivity(new Intent(this, SignInActivity.class));
+                break;
+            case R.id.invites:
+                startActivity(new Intent(this, InvitesActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

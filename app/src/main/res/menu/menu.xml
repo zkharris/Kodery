@@ -7,4 +7,10 @@
         android:title="Sign Out"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/invites"
+        android:orderInCategory="100"
+        android:title="Invites"
+        app:showAsAction="always" />
+
 </menu>
