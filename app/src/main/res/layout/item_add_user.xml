@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:layout_margin="12dp">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginLeft="5dp">
 
     <!--- This is what a single user item will look like with an add button next to it. seen in when
      someone is trying to add a friend to a board or a task and in the users Activity -->
@@ -13,20 +15,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/prof_pic"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             app:srcCompat="@color/colorPrimary" />
 
         <LinearLayout
-            android:layout_width="196dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:weightSum="1">
@@ -51,8 +54,8 @@
         <Button
             android:id="@+id/Add_friend"
             style="@android:style/Widget.Holo.Light.Button.Toggle"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="10dp"
             android:background="@drawable/ic_person_add_black_48dp"
