@@ -246,8 +246,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
     }
 
-    public void goToUsers(View view){
-        Intent intent = new Intent(this, UsersActivity.class);
+    public void goToInvites(View view){
+        Intent intent = new Intent(this, InvitesActivity.class);
         startActivity(intent);
     }
 

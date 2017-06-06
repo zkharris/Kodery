@@ -106,8 +106,9 @@ public class BoardMembersActivity extends AppCompatActivity {
         // Initialize Database
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        owner = findOwner(board.getOwnerUid());
         memberList = new ArrayList<>();
+
+        findOwner(board.getOwnerUid());
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.memberRecycleView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -130,6 +131,7 @@ public class BoardMembersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    memberList.clear();
                     findUser(String.valueOf(data.getKey()));
                 }
             }
@@ -159,12 +161,13 @@ public class BoardMembersActivity extends AppCompatActivity {
         });
     }
 
-    private User findOwner(final String ownerUid) {
+    private void findOwner(final String ownerUid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                owner = dataSnapshot.getValue(User.class);
+                User owner = dataSnapshot.getValue(User.class);
+                memberList.add(owner);
             }
 
             @Override
@@ -172,7 +175,7 @@ public class BoardMembersActivity extends AppCompatActivity {
                 Log.w(TAG, "findOwner:onCancelled", databaseError.toException());
             }
         });
-        return owner;
+
     }
 
     private void addTaskMembers(Task task, User user) {
@@ -196,7 +199,9 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         switch(id){
             case R.id.add_item:
-                startActivity(new Intent(this, UsersActivity.class));
+                Intent intent = new Intent(this, UsersActivity.class);
+                intent.putExtra("board", board);
+                startActivity(intent);
 
         }
 

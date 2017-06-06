@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.R;
 import com.zacharyharris.kodery.Model.User;
 
@@ -63,6 +64,7 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
     RecycleAdapter adapter;
     ArrayList<User> userList;
     ArrayList<User> userListCopy;
+    public Board board;
 
 
     class RecycleAdapter extends RecyclerView.Adapter {
@@ -162,6 +164,11 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
 
         userList = new ArrayList<>();
         userListCopy = new ArrayList<>();
+
+        if (getIntent().getExtras() != null) {
+            Bundle extras = getIntent().getExtras();
+            board = (Board)extras.get("board");
+        }
     }
 
     @Override
@@ -207,7 +214,8 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     public void addUser(User addedUser) {
-        
+        String id = addedUser.getUid();
+        mDatabase.child(root).child("invites").child(id).child(board.getBoardKey()).setValue(true);
     }
 
     @Override
