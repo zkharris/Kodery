@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.logging.LogRecord;
 
 import static com.zacharyharris.kodery.R.id.message_edit;
+import static com.zacharyharris.kodery.R.id.saveChannel;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class ChatActivity extends AppCompatActivity {
@@ -112,6 +113,7 @@ public class ChatActivity extends AppCompatActivity {
                         if(tap_num==1){
                             Log.w(TAG, channelList.get(position).getName());
                             currChannel = channelList.get(position);
+                            Log.w(TAG, currChannel.getName());
                             channelFeed(currChannel);
                         } else if (tap_num==2){
                             Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
@@ -310,13 +312,15 @@ public class ChatActivity extends AppCompatActivity {
         message.setText(text);
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/channels/" + board.getBoardKey() + "/" + currChannel.getChannelKey() + "/messages/" + key, message.toFirebaseObject());
+        childUpdates.put(root + "/channels/" + board.getBoardKey() + "/" + currChannel.getKey() + "/messages/" + key, message.toFirebaseObject());
         mDatabase.updateChildren(childUpdates);
     }
 
     private void channelFeed(Channel channel) {
+        messageList.clear();
+        messageAdapter.notifyDataSetChanged();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/channels/" + board.getBoardKey() + "/" + channel.getChannelKey() + "/messages").addChildEventListener(new ChildEventListener() {
+        database.getReference(root + "/channels/" + board.getBoardKey() + "/" + channel.getKey() + "/messages").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Message message = dataSnapshot.getValue(Message.class);
@@ -368,10 +372,12 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if(!mboardname.getText().toString().isEmpty()){
+                            saveChannel(mboardname.getText().toString());
                             Toast.makeText(ChatActivity.this,
                                     mboardname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
                             // Get rid of the pop up go back to main activity
+
                         }else{
                             Toast.makeText(ChatActivity.this,
                                     "Please add a channel.",
@@ -386,5 +392,19 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void saveChannel(String name) {
+        String key = mDatabase.child(root).child("channels").child(board.getBoardKey()).push().getKey();
+
+        Channel channel = new Channel();
+        channel.setName(name);
+        channel.setKey(key);
+
+        Map<String, Object> channelUpdates = new HashMap<>();
+        channelUpdates.put(root + "/channels/" + "/" + board.getBoardKey() + "/" +key,
+                channel.toFirebaseObject());
+        mDatabase.updateChildren(channelUpdates);
+
     }
 }
