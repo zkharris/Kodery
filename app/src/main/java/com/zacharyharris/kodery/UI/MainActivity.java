@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onClick(View v){
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                View mview = getLayoutInflater().inflate(R.layout.create_board_popup, null);
+                final View mview = getLayoutInflater().inflate(R.layout.create_board_popup, null);
                 final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createB);
 
@@ -173,53 +173,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             }
         });
-    }
-
-    private void saveBoard(String name) {
-        String key = mDatabase.child("board").push().getKey();
-
-        Board board = new Board();
-        board.setName(name);
-        board.setOwner(mFirebaseUser.getDisplayName());
-        board.setBoardKey(key);
-        board.setOwnerUid(mFirebaseUser.getUid());
-
-        Map<String, Object> boardUpdates = new HashMap<>();
-        boardUpdates.put(root + "/boards/" + key, board.toFirebaseObject());
-        mDatabase.updateChildren(boardUpdates);
-
-        // Create General Chat channel
-        String generalKey = mDatabase.child(root).child("channels").child(board.getBoardKey()).push().getKey();
-        Channel generalchannel = new Channel();
-        generalchannel.setName("general");
-        generalchannel.setChannelKey(generalKey);
-
-        mDatabase.child(root).child("channels").child(board.getBoardKey()).child(generalKey).setValue(generalchannel);
-    }
-
-    @Override
-    protected  void onResume() {
-        super.onResume();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-        // User updates
-        /*database.getReference("updates/" + mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    Update update = data.getValue(Update.class);
-                    updateList.add(update);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "userUpdate:onCancelled", databaseError.toException());
-            }
-        });*/
-
-
         // Board feed
         database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
             @Override
@@ -244,6 +199,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    private void saveBoard(String name) {
+        String key = mDatabase.child("board").push().getKey();
+
+        Board board = new Board();
+        board.setName(name);
+        board.setOwner(mFirebaseUser.getDisplayName());
+        board.setBoardKey(key);
+        board.setOwnerUid(mFirebaseUser.getUid());
+
+        Map<String, Object> boardUpdates = new HashMap<>();
+        boardUpdates.put(root + "/boards/" + key, board.toFirebaseObject());
+        mDatabase.updateChildren(boardUpdates);
+
+        // Create General Chat channel
+        String generalKey = mDatabase.child(root).child("channels").child(board.getBoardKey()).push().getKey();
+        Channel generalchannel = new Channel();
+        generalchannel.setName("general");
+        generalchannel.setChannelKey(generalKey);
+
+        mDatabase.child(root).child("channels").child(board.getBoardKey()).child(generalKey).setValue(generalchannel);
     }
 
     public void goToInvites(View view){
@@ -408,10 +385,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 delboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(v.getContext(),
-                                test.getName()+" deleted.",
-                                Toast.LENGTH_SHORT).show();
-                        deleteBoard(boardsList.get(position));
+
+                        if(mFirebaseUser.getUid().equals(boardsList.get(position).getOwnerUid())) {
+                            deleteBoard(boardsList.get(position));
+                            Toast.makeText(v.getContext(),
+                                    test.getName()+" deleted.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(v.getContext(), "Only owner can delete boards",
+                                    Toast.LENGTH_SHORT).show();
+                        }
 
                     }
                 });
@@ -450,10 +433,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void deleteBoard(Board board) {
-        if(board != null){
-            mDatabase.child(root).child("boards").child(board.getBoardKey()).removeValue();
-            mDatabase.child(root).child("updates").child(board.getBoardKey()).removeValue();
-        }
+        // Delete Lists
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/boards/" + board.getBoardKey() + "/lists").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    String listKey = data.getKey();
+                    mDatabase.child(root).child("lists").child(listKey).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "deleteBoard:onCancelled", databaseError.toException());
+            }
+        });
+
+        // Delete channels
+        mDatabase.child(root).child("channels").child(board.getBoardKey()).removeValue();
+
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).removeValue();
+        mDatabase.child(root).child("updates").child(board.getBoardKey()).removeValue();
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

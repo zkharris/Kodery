@@ -87,32 +87,25 @@ public class SingleBoardActivity extends AppCompatActivity {
         ListrecyclerView.setAdapter(listAdapter);
 
         listAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/boards/" + board.getBoardKey() + "/lists").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        boardsList.clear();
-                        Log.w("TodoApp", "getUser:onCancelled " + dataSnapshot.toString());
-                        Log.w("TodoApp", "count = " + String.valueOf(dataSnapshot.getChildrenCount()) + " values " + dataSnapshot.getKey());
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            Log.w(TAG, String.valueOf(data.getKey()));
-                            findList(String.valueOf(data.getKey()));
-                        }
-                    }
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boardsList.clear();
+                Log.w("TodoApp", "getUser:onCancelled " + dataSnapshot.toString());
+                Log.w("TodoApp", "count = " + String.valueOf(dataSnapshot.getChildrenCount()) + " values " + dataSnapshot.getKey());
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Log.w(TAG, String.valueOf(data.getKey()));
+                    findList(String.valueOf(data.getKey()));
+                }
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "getLists:onCancelled", databaseError.toException());
-                    }
-                });
-
-
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getLists:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private void findList(final String listKey) {

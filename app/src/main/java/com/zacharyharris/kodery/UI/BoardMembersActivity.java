@@ -108,7 +108,7 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         memberList = new ArrayList<>();
 
-        findOwner(board.getOwnerUid());
+
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.memberRecycleView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -117,12 +117,6 @@ public class BoardMembersActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -141,6 +135,9 @@ public class BoardMembersActivity extends AppCompatActivity {
                 Log.w(TAG, "peepReference:onCancelled", databaseError.toException());
             }
         });
+
+        findOwner(board.getOwnerUid());
+
     }
 
     private void findUser(String peepUid) {
