@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         String generalKey = mDatabase.child(root).child("channels").child(board.getBoardKey()).push().getKey();
         Channel generalchannel = new Channel();
         generalchannel.setName("general");
-        generalchannel.setChannelKey(generalKey);
+        generalchannel.setKey(generalKey);
 
         mDatabase.child(root).child("channels").child(board.getBoardKey()).child(generalKey).setValue(generalchannel);
     }
