@@ -244,6 +244,7 @@ public class ChatActivity extends AppCompatActivity {
         //Message recycler View
         RecyclerView messagerecyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);
         LinearLayoutManager mllm = new LinearLayoutManager(this);
+        mllm.setStackFromEnd(true);
         messagerecyclerView.setLayoutManager(mllm);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(messagerecyclerView.getContext(),
                 mllm.getOrientation());
