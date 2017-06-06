@@ -103,25 +103,24 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Log.w(TAG, channelList.get(position).getName());
-                messageList.clear();
+                // Insert loading animations here
                 tap_num++;
                 android.os.Handler mHandler = new android.os.Handler();
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if(tap_num==1){
-                            Log.w(TAG, channelList.get(position).getName());
+                            Log.w(TAG, "clicked channel:" + channelList.get(position).getName());
                             currChannel = channelList.get(position);
-                            Log.w(TAG, currChannel.getName());
-                            channelFeed(currChannel);
+                            Log.w(TAG,  "current channel:" + currChannel.getName());
+                            channelFeed();
+
                         } else if (tap_num==2){
                             Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
 
                             /* THIS ACTION WILL TAKE YOU TO EDITCHANNEL ACTIVITY. WHERE CHAT SETTINGS AND MEMBERS OF THE CHANNEL WILL BE */
 
                         }
-
                         tap_num=0;
                     }
                 }, 500);
@@ -203,7 +202,7 @@ public class ChatActivity extends AppCompatActivity {
             Glide.with(ChatActivity.this).load(message.getMessagePhotoURL()).into(viewHolder.image);
         }
 
-        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView text;
             TextView author;
             ImageView image;
@@ -214,6 +213,12 @@ public class ChatActivity extends AppCompatActivity {
                 text = (TextView) itemView.findViewById(R.id.message_text);
                 author = (TextView) itemView.findViewById(R.id.prof_name);
                 image = (ImageView) itemView.findViewById(R.id.prof_pic);
+            }
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "text: " + messageList.get(position).getText());
+                Log.d(TAG, "key: " + messageList.get(position).getMessageKey());
             }
         }
     }
@@ -244,7 +249,6 @@ public class ChatActivity extends AppCompatActivity {
         messagerecyclerView.addItemDecoration(dividerItemDecoration);
         messageAdapter = new MessageRecycleAdapter();
         messagerecyclerView.setAdapter(messageAdapter);
-
         messageAdapter.notifyDataSetChanged();
 
         //Channel recycler View
@@ -316,28 +320,18 @@ public class ChatActivity extends AppCompatActivity {
         mDatabase.updateChildren(childUpdates);
     }
 
-    private void channelFeed(Channel channel) {
-        messageList.clear();
-        messageAdapter.notifyDataSetChanged();
+    private void channelFeed() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/channels/" + board.getBoardKey() + "/" + channel.getKey() + "/messages").addChildEventListener(new ChildEventListener() {
+        database.getReference(root + "/channels/" + board.getBoardKey() + "/" + currChannel.getKey() + "/messages").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Message message = dataSnapshot.getValue(Message.class);
-                messageList.add(message);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                messageList.clear();
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    Message message = data.getValue(Message.class);
+                    messageList.add(message);
+                    Log.d(TAG, message.getText() + " added");
+                }
                 messageAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
             }
 
             @Override
@@ -345,6 +339,7 @@ public class ChatActivity extends AppCompatActivity {
                 Log.w(TAG, "messageRef:onCancelled", databaseError.toException());
             }
         });
+
     }
 
     @Override

@@ -34,10 +34,6 @@ public class Message implements Serializable {
 
     public void setAuthorUid(String authorUid) { this.authorUid = authorUid; }
 
-    public String getChannelKey() { return channelKey; }
-
-    public void setChannelKey(String channelKey) { this.channelKey = channelKey; }
-
     public String getMessageKey() { return messageKey; }
 
     public void setMessageKey(String messageKey) { this.messageKey = messageKey; }

@@ -1,6 +1,8 @@
 package com.zacharyharris.kodery.Model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zacharyharris on 6/4/17.
@@ -9,7 +11,8 @@ import java.io.Serializable;
 public class Channel implements Serializable {
 
     public String name;
-    public String channelKey;
+    public String key;
+    public Map<String, Object> messages = new HashMap<>();
 
     public Channel() {}
 
@@ -17,9 +20,21 @@ public class Channel implements Serializable {
 
     public void setName(String name) { this.name = name; }
 
-    public String getChannelKey() { return channelKey; }
+    public String getKey() { return key; }
 
-    public void setChannelKey(String channelKey) { this.channelKey = channelKey; }
+    public void setKey(String key) { this.key = key; }
+
+    public Map<String, Object> getMessages() { return messages; }
+
+    public void setMessages(Map<String, Object> messages) { this.messages = messages; }
+
+    public HashMap<String,String> toFirebaseObject() {
+        HashMap<String, String> channel = new HashMap<>();
+        channel.put("name", name);
+        channel.put("key", key);
+
+        return channel;
+    }
 
 
 }
