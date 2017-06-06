@@ -164,7 +164,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if(!mlistname.getText().toString().isEmpty()){
                             Toast.makeText(SingleBoardActivity.this,
-                                    "List Created!",
+                                    mlistname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
                             /* CODE TO ADD NAME AND DESC OF LIST */
                             saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
@@ -345,7 +345,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                             Toast.makeText(v.getContext(),
                                     mboardname.getText()+" saved!",
                                     Toast.LENGTH_SHORT).show();
-                            //updateBoard(boardsList.get(position), mboardname.getText().toString());
+                            //updateBoard(test, mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
                             Toast t = Toast.makeText(v.getContext(),
@@ -381,3 +381,5 @@ public class SingleBoardActivity extends AppCompatActivity {
         }
     }
 }
+
+
