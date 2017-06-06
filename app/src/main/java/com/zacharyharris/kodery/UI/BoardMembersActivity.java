@@ -63,12 +63,15 @@ public class BoardMembersActivity extends AppCompatActivity {
             User user = memberList.get(position);
             ((BoardMembersActivity.RecycleAdapter.SimpleItemViewHolder) holder).title.setText(user.getUsername());
             Glide.with(BoardMembersActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
-
+            if(user.getUid().equals(board.getOwnerUid())) {
+                // set an icon on the item user
+            }
         }
 
         public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             ImageView image;
             TextView title;
+            ImageView ownerBadge;
             public int position;
 
             public SimpleItemViewHolder(View itemView) {
@@ -76,6 +79,7 @@ public class BoardMembersActivity extends AppCompatActivity {
                 itemView.setOnClickListener(this);
                 title = (TextView) itemView.findViewById(R.id.usr_name);
                 image = (ImageView) itemView.findViewById(R.id.usr_pic);
+                //ownerBadge = (ImageView) itemView.findViewById(R.id.owner_badge);
             }
 
             @Override
@@ -125,7 +129,6 @@ public class BoardMembersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    memberList.clear();
                     findUser(String.valueOf(data.getKey()));
                 }
             }
@@ -137,7 +140,6 @@ public class BoardMembersActivity extends AppCompatActivity {
         });
 
         findOwner(board.getOwnerUid());
-
     }
 
     private void findUser(String peepUid) {
@@ -163,7 +165,9 @@ public class BoardMembersActivity extends AppCompatActivity {
         database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                memberList.clear();
                 User owner = dataSnapshot.getValue(User.class);
+                Log.w(TAG, owner.getEmail());
                 memberList.add(owner);
             }
 
