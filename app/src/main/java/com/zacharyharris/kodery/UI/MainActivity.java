@@ -139,41 +139,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mDatabase.child(root).child("users").child(mFirebaseUser.getUid()).setValue(currentUser);
 
-        /* Create Add Board Button */
-
-        Button addBoard = (Button) findViewById(R.id.adButeon);
-        addBoard.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                final View mview = getLayoutInflater().inflate(R.layout.create_board_popup, null);
-                final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
-                Button addleboard = (Button) mview.findViewById(R.id.createB);
-
-                addleboard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(!mboardname.getText().toString().isEmpty()){
-                            saveBoard(mboardname.getText().toString());
-                            Toast.makeText(MainActivity.this,
-                                    mboardname.getText()+" created!",
-                                    Toast.LENGTH_SHORT).show();
-                            // Get rid of the pop up go back to main activity
-                        }else{
-                            Toast.makeText(MainActivity.this,
-                                    "Please name the board.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
-                dialog.show();
-
-            }
-        });
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         // Board feed
         database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
@@ -293,8 +258,37 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 mPhotoUrl = null;
                 startActivity(new Intent(this, SignInActivity.class));
                 break;
+
             case R.id.invites:
                 startActivity(new Intent(this, InvitesActivity.class));
+                break;
+
+            case R.id.add_board:
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                final View mview = getLayoutInflater().inflate(R.layout.create_board_popup, null);
+                final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
+                Button addleboard = (Button) mview.findViewById(R.id.createB);
+
+                addleboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mboardname.getText().toString().isEmpty()){
+                            saveBoard(mboardname.getText().toString());
+                            Toast.makeText(MainActivity.this,
+                                    mboardname.getText()+" created!",
+                                    Toast.LENGTH_SHORT).show();
+                            // Get rid of the pop up go back to main activity
+                        }else{
+                            Toast.makeText(MainActivity.this,
+                                    "Please name the board.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
         }
 
         return super.onOptionsItemSelected(item);
