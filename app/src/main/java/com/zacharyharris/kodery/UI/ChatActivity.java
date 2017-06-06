@@ -61,9 +61,10 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     ArrayList<Message> messageList;
     MessageRecycleAdapter messageAdapter;
-    private Channel currChannel;
+    public Channel currChannel;
     ChannelRecycleAdapter channelAdapter;
     ArrayList<Channel> channelList;
+    private Channel generalChannel;
 
     class ChannelRecycleAdapter extends RecyclerView.Adapter {
 
@@ -257,12 +258,17 @@ public class ChatActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendMessage(editText.getText().toString());
-                    handled = true;
-                    //Clears the keyboard and hides it when enter is pressed
-                    editText.setText("");
-                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                    if(currChannel != null) {
+                        sendMessage(editText.getText().toString());
+                        handled = true;
+                        //Clears the keyboard and hides it when enter is pressed
+                        editText.setText("");
+                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                    } else {
+                        Toast.makeText(v.getContext(), "Please select a channel",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
                 return handled;
             }
@@ -280,7 +286,6 @@ public class ChatActivity extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Channel channel = data.getValue(Channel.class);
                     channelList.add(channel);
-                    Log.w(TAG, String.valueOf(channel.getName()));
                 }
                 channelAdapter.notifyDataSetChanged();
             }
