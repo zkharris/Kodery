@@ -1,15 +1,23 @@
 package com.zacharyharris.kodery.UI;
 
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,7 +70,7 @@ public class SingleListActivity extends AppCompatActivity {
             }
         }
 
-        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
             TextView title;
             TextView subtitle;
             public int position;
@@ -85,6 +93,64 @@ public class SingleListActivity extends AppCompatActivity {
                 //  mDatabase.child("task").child(task.getKey()).child("list").setValue(taskList.get(position).getKey());
                 // mDatabase.child("list").child(todoList.get(position).getKey()).child("todos").child(task.getKey()).setValue(true);
                 //*/
+            }
+
+            @Override
+            public boolean onLongClick(View v) {
+
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(v.getContext());
+                View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_list_item, null);
+                final EditText mboardname = (EditText) mview.findViewById(R.id.listname_edit);
+                final EditText mlistdesc = (EditText) mview.findViewById(R.id.listdesc_edit);
+                final Task test = taskList.get(position);
+                final TextView mtextview = (TextView) mview.findViewById(R.id.edit_list_item_title);
+                mtextview.setText("Edit "+test.getName());
+                mboardname.setText(test.getName());
+                mlistdesc.setText(test.getDescription());
+                Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
+                Button delboard = (Button) mview.findViewById(R.id.delBoard);
+
+                saveleboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mboardname.getText().toString().isEmpty()
+                                && !(mboardname.getText().toString().equals(test.getName())
+                                && mlistdesc.getText().toString().equals(test.getDescription()))){
+                            Toast.makeText(v.getContext(),
+                                    mboardname.getText()+" saved!",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateBoard(boardsList.get(position), mboardname.getText().toString());
+                            // Get rid of the pop up go back to main activity
+                        }else{
+                            Toast t = Toast.makeText(v.getContext(),
+                                    "Please change the name or description of "+test.getName(),
+                                    Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
+                        }
+                    }
+                });
+
+                delboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(v.getContext(),
+                                mboardname.getText()+" deleted.",
+                                Toast.LENGTH_SHORT).show();
+                        //deleteBoard(boardsList.get(position));
+
+                    }
+                });
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+                return true;
             }
         }
     }
@@ -115,6 +181,61 @@ public class SingleListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.list_menu_item, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch(id){
+            case R.id.add_item:
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(SingleListActivity.this);
+                View mview = getLayoutInflater().inflate(R.layout.create_task_popup, null);
+                final EditText mlistname = (EditText) mview.findViewById(R.id.taskname_edit);
+                final EditText mlistdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
+                Button addleboard = (Button) mview.findViewById(R.id.createTsk);
+
+                addleboard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mlistname.getText().toString().isEmpty()){
+                            Toast.makeText(SingleListActivity.this,
+                                    mlistname.getText()+" created!",
+                                    Toast.LENGTH_SHORT).show();
+                            /* CODE TO ADD NAME AND DESC OF LIST */
+                            //saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
+                        }else{
+                            Toast.makeText(SingleListActivity.this,
+                                    "Please name the list.",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+                break;
+
+            case R.id.members_item:
+                Intent i = new Intent(this, BoardMembersActivity.class);
+                i.putExtra("board", board);
+                startActivity(i);
+                break;
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
