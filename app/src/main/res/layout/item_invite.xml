@@ -2,23 +2,23 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="75dp"
-    android:layout_margin="12dp">
+    android:layout_height="60dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginLeft="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="25dp"
-        android:paddingBottom="25dp"
         android:orientation="horizontal"
         android:paddingRight="10dp"
         android:paddingLeft="10dp">
 
         <TextView
             android:id="@+id/invite_lbl"
-            android:layout_width="150dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight=".6"
             android:text="@string/invite_mssg"
             android:textAlignment="center"
             android:layout_gravity="center"
@@ -26,9 +26,9 @@
 
         <Button
             android:id="@+id/accept"
-            android:layout_width="5dp"
+            android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_weight=".20"
             android:background="@android:color/holo_green_light"
             android:textColor="@android:color/white"
             android:layout_marginRight="10dp"
@@ -37,9 +37,9 @@
 
         <Button
             android:id="@+id/decline"
-            android:layout_width="5dp"
+            android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_weight=".20"
             android:textColor="@android:color/white"
             android:background="@android:color/holo_red_light"
             android:layout_gravity="center_vertical"
