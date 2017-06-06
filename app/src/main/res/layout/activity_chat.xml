@@ -26,13 +26,16 @@
     <EditText
         android:id="@+id/message_edit"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:padding="10dp"
         android:imeOptions="actionSend"
         android:inputType="text"
+        android:hint="Chat..."
         android:gravity="center_vertical"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:background="@drawable/textinputborder"
+        android:scrollHorizontally="false"
         />
 
 

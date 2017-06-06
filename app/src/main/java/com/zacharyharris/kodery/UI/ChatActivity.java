@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
@@ -367,6 +368,7 @@ public class ChatActivity extends AppCompatActivity {
                 View mview = getLayoutInflater().inflate(R.layout.create_channel_popup, null);
                 final EditText mboardname = (EditText) mview.findViewById(R.id.Channelname);
                 Button addleboard = (Button) mview.findViewById(R.id.createChannel);
+                final Switch mswitch = (Switch) mview.findViewById(R.id.switchtog);
 
                 addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -376,6 +378,7 @@ public class ChatActivity extends AppCompatActivity {
                             Toast.makeText(ChatActivity.this,
                                     mboardname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
+                            //mswitch.isChecked();
                             // Get rid of the pop up go back to main activity
 
                         }else{
