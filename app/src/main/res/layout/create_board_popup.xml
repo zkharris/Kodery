@@ -24,7 +24,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/boardname"
-
             android:paddingTop="10dp"
             android:textAlignment="viewStart"
             android:textSize="18sp" />
