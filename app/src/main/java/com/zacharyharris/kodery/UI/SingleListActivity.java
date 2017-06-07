@@ -297,7 +297,7 @@ public class SingleListActivity extends AppCompatActivity {
         task.setDescription(desc);
         task.setList(list.getKey());
 
-        String updateText = ("Task: " + name + " added to list: " + list.getName());
+        String updateText = ("Task: " + name + " added to List: " + list.getName());
         update(updateText);
 
         Map<String, Object> childUpdates = new HashMap<>();
