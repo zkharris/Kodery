@@ -4,7 +4,7 @@
     android:orientation="vertical" 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    android:layout_margin="10dp">
 
     <TextView
         android:id="@+id/update_date_pp"
@@ -16,7 +16,10 @@
         android:textSize="16sp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:background="@color/Grey"
+        android:textColor="@android:color/white"
+        android:padding="5dp"/>
 
     <TextView
         android:id="@+id/update_name_pp"
@@ -24,6 +27,8 @@
         android:layout_height="wrap_content"
         android:text="Update Text"
         android:textSize="14sp"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:padding="10dp"
+        android:textColor="@android:color/black"/>
 
 </LinearLayout>

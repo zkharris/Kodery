@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="10dp">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/edit_task_item_title"
@@ -19,7 +19,9 @@
             android:paddingTop="10dp"
             android:text="Edit To-Do"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textColor="@android:color/white"
+            android:background="@color/Grey"
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/taskname_edit"
@@ -28,7 +30,7 @@
             android:hint="List Name"
             android:paddingTop="10dp"
             android:textAlignment="viewStart"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/taskdesc_edit"
@@ -37,7 +39,7 @@
             android:hint="Optional: Description"
             android:paddingTop="10dp"
             android:textAlignment="viewStart"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -45,8 +47,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="5dp"
-        android:weightSum="1.0"
-        android:background="@color/colorPrimary">
+        android:weightSum="1.0">
 
         <Button
             android:id="@+id/delBoard"
@@ -55,8 +56,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@android:color/holo_red_light"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
             android:text="Delete"
             android:textColor="@android:color/white"
             android:textSize="14sp"
@@ -69,8 +68,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@android:color/holo_green_light"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
             android:text="Save"
             android:textColor="@android:color/white"
             android:textSize="14sp"
