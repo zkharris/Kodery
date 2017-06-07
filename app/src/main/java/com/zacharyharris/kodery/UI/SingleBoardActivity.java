@@ -363,16 +363,21 @@ public class SingleBoardActivity extends AppCompatActivity {
                 mlistdesc.setText(test.getDescription());
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
-
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if(!mboardname.getText().toString().isEmpty()
                                 && !(mboardname.getText().toString().equals(test.getName())
                                 && mlistdesc.getText().toString().equals(test.getDescription()))){
-                            Toast.makeText(v.getContext(),
+                            Toast t = Toast.makeText(v.getContext(),
                                     mboardname.getText()+" saved!",
-                                    Toast.LENGTH_SHORT).show();
+                                    Toast.LENGTH_SHORT);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
                             //updateBoard(test, mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
