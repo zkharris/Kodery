@@ -356,9 +356,15 @@ public class SingleBoardActivity extends AppCompatActivity {
                 delboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(v.getContext(),
+                        Toast t = Toast.makeText(v.getContext(),
                                 mboardname.getText()+" deleted.",
-                                Toast.LENGTH_SHORT).show();
+                                Toast.LENGTH_LONG);
+                        LinearLayout layout = (LinearLayout) t.getView();
+                        if (layout.getChildCount() > 0) {
+                            TextView tv = (TextView) layout.getChildAt(0);
+                            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                        }
+                        t.show();
                         //deleteBoard(boardsList.get(position));
 
                     }
