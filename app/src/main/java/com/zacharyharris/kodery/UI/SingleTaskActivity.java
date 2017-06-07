@@ -1,5 +1,6 @@
 package com.zacharyharris.kodery.UI;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
+import com.zacharyharris.kodery.Model.ListofTasks;
 import com.zacharyharris.kodery.Model.Task;
 import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.Model.boardList;
@@ -27,13 +29,16 @@ import com.zacharyharris.kodery.R;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class SingleTaskActivity extends AppCompatActivity {
 
     private static final String TAG = "test";
 
     public Task task;
-    public boardList list;
+    public ListofTasks list;
 
     public Board board;
     ArrayList<User> memberList;
@@ -94,8 +99,8 @@ public class SingleTaskActivity extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
-            task = (Task)extras.get("todo");
-            list = (boardList) extras.get("list");
+            task = (Task)extras.get("task");
+            list = (ListofTasks) extras.get("list");
             board = (Board)extras.get("board");
             Log.w(TAG, board.getName());
             if (task != null) {
@@ -103,6 +108,10 @@ public class SingleTaskActivity extends AppCompatActivity {
                 descText.setText(task.getDescription());
             }
         }
+
+        Log.d(TAG, task.getName());
+        Log.d(TAG, list.getName());
+        Log.d(TAG, board.getName());
 
         memberList = new ArrayList<>();
 
@@ -113,11 +122,7 @@ public class SingleTaskActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
         if(task != null){
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             database.getReference("tasks/" + task.getKey() + "/members").addValueEventListener(new ValueEventListener() {
@@ -152,5 +157,15 @@ public class SingleTaskActivity extends AppCompatActivity {
                 Log.w(TAG, "findUser:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    private void moveToList() {
+        if (task != null) {
+            Intent intent = new Intent(this, SingleBoardActivity.class);
+            intent.putExtra("task", task);
+            intent.putExtra("board", board);
+            startActivity(intent);
+            mDatabase.child(root).child("lists").child(list.getKey()).child(task.getKey()).removeValue();
+        }
     }
 }

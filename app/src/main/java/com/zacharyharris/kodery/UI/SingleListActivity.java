@@ -21,16 +21,23 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.ListofTasks;
 import com.zacharyharris.kodery.Model.Task;
+import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
+import static android.R.id.message;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class SingleListActivity extends AppCompatActivity {
@@ -42,6 +49,7 @@ public class SingleListActivity extends AppCompatActivity {
 
     private ListofTasks list;
     private Board board;
+    private DatabaseReference mDatabase;
 
     class RecycleAdapter extends RecyclerView.Adapter {
 
@@ -64,35 +72,41 @@ public class SingleListActivity extends AppCompatActivity {
             viewHolder.position = position;
             Task task = taskList.get(position);
             ((SimpleItemViewHolder) holder).title.setText(task.getName());
+            if(task.getDescription() != null) {
+                ((SimpleItemViewHolder) holder).subtitle.setText(task.getDescription());
+            } else {
+                ((SimpleItemViewHolder) holder).subtitle.setText(null);
+            }
             // set number of members in each task
             if(task.getNumMembers() != null) {
-                ((SimpleItemViewHolder) holder).subtitle.setText(task.getNumMembers() + " members");
+                ((SimpleItemViewHolder) holder).memSubtitle.setText(task.getNumMembers() + " members");
+            } else {
+                ((SimpleItemViewHolder) holder).memSubtitle.setText("No Members");
             }
         }
 
         public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
             TextView title;
             TextView subtitle;
+            TextView memSubtitle;
             public int position;
 
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
                 title = (TextView) itemView.findViewById(R.id.task_name);
-                subtitle = (TextView) itemView.findViewById(R.id.task_desc);
+                subtitle = (TextView) itemView.findViewById(R.id.task_desc_subt);
+                memSubtitle = (TextView) itemView.findViewById(R.id.task_mem_subt);
             }
 
             @Override
             public void onClick(View view) {
-                /*Intent newIntent = new Intent(SingleListActivity.this, TodoActivity.class);
+                Intent newIntent = new Intent(SingleListActivity.this, SingleTaskActivity.class);
                 newIntent.putExtra("task", taskList.get(position));
                 newIntent.putExtra("list", list);
                 newIntent.putExtra("board", board);
                 SingleListActivity.this.startActivity(newIntent);
-                //if(moveTask){
-                //  mDatabase.child("task").child(task.getKey()).child("list").setValue(taskList.get(position).getKey());
-                // mDatabase.child("list").child(todoList.get(position).getKey()).child("todos").child(task.getKey()).setValue(true);
-                //*/
+
             }
 
             @Override
@@ -166,6 +180,8 @@ public class SingleListActivity extends AppCompatActivity {
             board = (Board)extras.get("board");
         }
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         final TextView listTitle = (TextView) findViewById(R.id.list_name);
         listTitle.setText(list.getName());
 
@@ -181,6 +197,23 @@ public class SingleListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/lists/" + list.getKey() + "/tasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                taskList.clear();
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Log.w(TAG, String.valueOf(data.getKey()));
+                    findTask(String.valueOf(data.getKey()));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getList:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     @Override
@@ -200,18 +233,19 @@ public class SingleListActivity extends AppCompatActivity {
             case R.id.add_item:
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(SingleListActivity.this);
                 View mview = getLayoutInflater().inflate(R.layout.create_task_popup, null);
-                final EditText mlistname = (EditText) mview.findViewById(R.id.taskname_edit);
-                final EditText mlistdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
+                final EditText mtaskname = (EditText) mview.findViewById(R.id.taskname_edit);
+                final EditText mtaskdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createTsk);
 
                 addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!mlistname.getText().toString().isEmpty()){
+                        if(!mtaskname.getText().toString().isEmpty()){
                             Toast.makeText(SingleListActivity.this,
-                                    mlistname.getText()+" created!",
+                                    mtaskname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
                             /* CODE TO ADD NAME AND DESC OF LIST */
+                            saveTask(mtaskname.getText().toString(), mtaskdesc.getText().toString());
                             //saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
                         }else{
                             Toast.makeText(SingleListActivity.this,
@@ -238,40 +272,59 @@ public class SingleListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void saveTask(String name, String desc) {
+        //second section
+        //save it to the firebase db
+        String key = mDatabase.child(root).child("tasks").push().getKey();
+        String updateKey = mDatabase.child(root).child(board.getBoardKey()).child("updates").push().getKey();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "lists/" + list.getKey()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                taskList.clear();
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    Log.w(TAG, String.valueOf(data.getKey()));
-                    findTask(String.valueOf(data.getKey()));
-                }
-                adapter.notifyDataSetChanged();
-            }
+        Task task = new Task();
+        task.setKey(key);
+        task.setName(name);
+        task.setBoard(board.getBoardKey());
+        task.setDescription(desc);
+        task.setList(list.getKey());
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "getList:onCancelled", databaseError.toException());
-            }
-        });
+        String updateText = ("Task: " + name + " added to list: " + list.getName());
+        update(updateText);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/tasks/" + key, task.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
+
+        mDatabase.child(root).child("lists").child(list.getKey()).child("tasks").child(key).setValue(true);
+
+    }
+
+    private void update(String updateText) {
+        String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy hh:mm aa");
+        String dateString = format.format(calendar.getTime());
+
+        Update update = new Update();
+        update.setText(updateText);
+        update.setBoard(board.getBoardKey());
+        update.setKey(key);
+        update.setDate(dateString);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
     }
 
     private void findTask(final String taskKey) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/tasks").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/tasks/" + taskKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot data : dataSnapshot.getChildren()) {
-                    Task task = data.getValue(Task.class);
-                    if (task.getKey().equals(taskKey)){
-                        taskList.add(task);
-                    }
+                Task task = dataSnapshot.getValue(Task.class);
+                if(dataSnapshot.hasChild("members")) {
+                    String numMembers = String.valueOf(dataSnapshot.child("members").getChildrenCount());
+                    task.setNumMembers(numMembers);
                 }
+                taskList.add(task);
                 adapter.notifyDataSetChanged();
             }
 

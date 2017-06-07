@@ -58,8 +58,7 @@ public class SingleBoardActivity extends AppCompatActivity {
 
     private FirebaseUser mFirebaseUser;
     private Task task;
-
-
+    private boolean addTaskToList;
 
 
     @Override
@@ -71,6 +70,9 @@ public class SingleBoardActivity extends AppCompatActivity {
             Bundle extras = getIntent().getExtras();
             board = (Board)extras.get("board");
             task = (Task)extras.get("task");
+            if (task != null) {
+                addTaskToList = true;
+            }
         }
 
         final TextView boardTitle = (TextView) findViewById(R.id.boardname_view);
@@ -309,15 +311,19 @@ public class SingleBoardActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SingleBoardActivity.this, SingleListActivity.class);
-                intent.putExtra("list", boardsList.get(position));
-                intent.putExtra("board", board);
-                SingleBoardActivity.this.startActivity(intent);
-                if(task != null){
-                    mDatabase.child("list").child(boardsList.get(position).getKey()).child("tasks")
+                if(addTaskToList){
+                    mDatabase.child(root).child("lists").child(boardsList.get(position).getKey()).child("tasks")
                             .child(task.getKey()).setValue(true);
-                    mDatabase.child("task").child(task.getKey()).child("list")
+                    mDatabase.child(root).child("tasks").child(task.getKey()).child("list")
                             .setValue(boardsList.get(position).getKey());
+                    Toast.makeText(view.getContext(), "Task: " + task.getName() +
+                            " moved to List: " + boardsList.get(position).getName(),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(SingleBoardActivity.this, SingleListActivity.class);
+                    intent.putExtra("list", boardsList.get(position));
+                    intent.putExtra("board", board);
+                    SingleBoardActivity.this.startActivity(intent);
                 }
             }
 
