@@ -246,8 +246,11 @@ public class SingleListActivity extends AppCompatActivity {
                                     mtaskname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
                             /* CODE TO ADD NAME AND DESC OF LIST */
-                            saveTask(mtaskname.getText().toString(), mtaskdesc.getText().toString());
-                            //saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
+                            if(mtaskdesc.getText().toString().isEmpty()){
+                                saveTask(mtaskname.getText().toString(), "No Description");
+                            } else {
+                                saveTask(mtaskname.getText().toString(), mtaskdesc.getText().toString());
+                            }
                         }else{
                             Toast.makeText(SingleListActivity.this,
                                     "Please name the list.",

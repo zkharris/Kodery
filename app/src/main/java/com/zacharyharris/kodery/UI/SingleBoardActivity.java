@@ -151,7 +151,12 @@ public class SingleBoardActivity extends AppCompatActivity {
                                     mlistname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
                             /* CODE TO ADD NAME AND DESC OF LIST */
-                            saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
+                            if(mlistdesc.getText().toString().isEmpty()){
+                                saveList(mlistname.getText().toString(), "No Description");
+                            }else {
+                                saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
+                            }
+
                         }else{
                             Toast.makeText(SingleBoardActivity.this,
                                     "Please name the list.",
@@ -185,7 +190,6 @@ public class SingleBoardActivity extends AppCompatActivity {
     private void saveList(String name, String desc) {
         String key = mDatabase.child(root).child("lists").push().getKey();
         String updateKey = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
-
         ListofTasks listoftasks = new ListofTasks();
         listoftasks.setKey(key);
         listoftasks.setBoard(board.getBoardKey());
