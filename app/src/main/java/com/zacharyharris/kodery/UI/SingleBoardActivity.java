@@ -90,6 +90,13 @@ public class SingleBoardActivity extends AppCompatActivity {
 
         listAdapter.notifyDataSetChanged();
 
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/boards/" + board.getBoardKey() + "/lists").addValueEventListener(new ValueEventListener() {
             @Override
@@ -108,6 +115,8 @@ public class SingleBoardActivity extends AppCompatActivity {
                 Log.w(TAG, "getLists:onCancelled", databaseError.toException());
             }
         });
+
+
     }
 
     private void findList(final String listKey) {
@@ -120,7 +129,6 @@ public class SingleBoardActivity extends AppCompatActivity {
                     String numTasks = String.valueOf(dataSnapshot.child("tasks").getChildrenCount());
                     list.setNumTasks(numTasks);
                 }
-
                 boardsList.add(list);
                 listAdapter.notifyDataSetChanged();
             }
