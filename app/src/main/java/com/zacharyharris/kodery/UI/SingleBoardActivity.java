@@ -66,10 +66,10 @@ public class SingleBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_board);
 
-        if(getIntent().getExtras() != null) {
+        if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
-            board = (Board)extras.get("board");
-            task = (Task)extras.get("task");
+            board = (Board) extras.get("board");
+            task = (Task) extras.get("task");
             if (task != null) {
                 addTaskToList = true;
             }
@@ -82,15 +82,13 @@ public class SingleBoardActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        RecyclerView ListrecyclerView = (RecyclerView)findViewById(R.id.board_lists_recyclerView);
+        RecyclerView ListrecyclerView = (RecyclerView) findViewById(R.id.board_lists_recyclerView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         ListrecyclerView.setLayoutManager(llm);
         listAdapter = new ListsRecycleAdapter();
         ListrecyclerView.setAdapter(listAdapter);
 
         listAdapter.notifyDataSetChanged();
-
-
     }
 
     @Override
@@ -98,16 +96,23 @@ public class SingleBoardActivity extends AppCompatActivity {
         super.onResume();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/boards/" + board.getBoardKey() + "/lists").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/lists").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boardsList.clear();
                 Log.w("TodoApp", "getUser:onCancelled " + dataSnapshot.toString());
                 Log.w("TodoApp", "count = " + String.valueOf(dataSnapshot.getChildrenCount()) + " values " + dataSnapshot.getKey());
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    Log.w(TAG, String.valueOf(data.getKey()));
-                    findList(String.valueOf(data.getKey()));
+                    ListofTasks list = data.getValue(ListofTasks.class);
+                    if(list.getBoard().equals(board.getBoardKey())){
+                        boardsList.add(list);
+                    }
+                    if(data.hasChild("tasks") && boardsList.contains(list)) {
+                        String numTasks = String.valueOf(data.child("tasks").getChildrenCount());
+                        list.setNumTasks(numTasks);
+                    }
                 }
+                listAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -116,37 +121,8 @@ public class SingleBoardActivity extends AppCompatActivity {
             }
         });
 
-
     }
-
-    private void findList(final String listKey) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/lists/" + listKey).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ListofTasks list = dataSnapshot.getValue(ListofTasks.class);
-                if(dataSnapshot.hasChild("tasks")) {
-                    String numTasks = String.valueOf(dataSnapshot.child("tasks").getChildrenCount());
-                    list.setNumTasks(numTasks);
-                }
-                boardsList.add(list);
-                listAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "findList:onCancelled", databaseError.toException());
-            }
-        });
-
-    }
-
-    public void goToChat(View view) {
-        Intent intent = new Intent(this, ChatActivity.class);
-        intent.putExtra("board", board);
-        startActivity(intent);
-    }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
