@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/edit_task_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Edit To-Do"
+            android:textAlignment="center"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/taskname_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="List Name"
+            android:paddingTop="10dp"
+            android:textAlignment="viewStart"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/taskdesc_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Optional: Description"
+            android:paddingTop="10dp"
+            android:textAlignment="viewStart"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:weightSum="1.0"
+        android:background="@color/colorPrimary">
+
+        <Button
+            android:id="@+id/delBoard"
+            android:layout_weight=".5"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/holo_red_light"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Delete"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:layout_marginRight="2.5dp"/>
+
+        <Button
+            android:id="@+id/saveBoard"
+            android:layout_weight=".5"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/holo_green_light"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Save"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:layout_marginLeft="2.5dp"/>
+    </LinearLayout>
+
+
+</LinearLayout>

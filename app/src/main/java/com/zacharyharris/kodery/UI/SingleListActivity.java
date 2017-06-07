@@ -94,6 +94,7 @@ public class SingleListActivity extends AppCompatActivity {
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
+                itemView.setOnLongClickListener(this);
                 title = (TextView) itemView.findViewById(R.id.task_name);
                 subtitle = (TextView) itemView.findViewById(R.id.task_desc_subt);
                 memSubtitle = (TextView) itemView.findViewById(R.id.task_mem_subt);
@@ -101,6 +102,7 @@ public class SingleListActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "onClick: sdfkjgshljgh");
                 Intent newIntent = new Intent(SingleListActivity.this, SingleTaskActivity.class);
                 newIntent.putExtra("task", taskList.get(position));
                 newIntent.putExtra("list", list);
@@ -111,13 +113,13 @@ public class SingleListActivity extends AppCompatActivity {
 
             @Override
             public boolean onLongClick(View v) {
-
+                //////////////////////////////
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(v.getContext());
-                View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_list_item, null);
-                final EditText mboardname = (EditText) mview.findViewById(R.id.listname_edit);
-                final EditText mlistdesc = (EditText) mview.findViewById(R.id.listdesc_edit);
+                View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_task_item, null);
+                final EditText mboardname = (EditText) mview.findViewById(R.id.taskname_edit);
+                final EditText mlistdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
                 final Task test = taskList.get(position);
-                final TextView mtextview = (TextView) mview.findViewById(R.id.edit_list_item_title);
+                final TextView mtextview = (TextView) mview.findViewById(R.id.edit_task_item_title);
                 mtextview.setText("Edit "+test.getName());
                 mboardname.setText(test.getName());
                 mlistdesc.setText(test.getDescription());
@@ -152,9 +154,15 @@ public class SingleListActivity extends AppCompatActivity {
                 delboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(v.getContext(),
+                        Toast t = Toast.makeText(v.getContext(),
                                 mboardname.getText()+" deleted.",
-                                Toast.LENGTH_SHORT).show();
+                                Toast.LENGTH_LONG);
+                        LinearLayout layout = (LinearLayout) t.getView();
+                        if (layout.getChildCount() > 0) {
+                            TextView tv = (TextView) layout.getChildAt(0);
+                            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                        }
+                        t.show();
                         //deleteBoard(boardsList.get(position));
 
                     }
