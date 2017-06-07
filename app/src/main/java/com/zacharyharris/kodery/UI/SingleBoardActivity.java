@@ -96,7 +96,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         super.onResume();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/lists").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/lists/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boardsList.clear();
@@ -104,10 +104,8 @@ public class SingleBoardActivity extends AppCompatActivity {
                 Log.w("TodoApp", "count = " + String.valueOf(dataSnapshot.getChildrenCount()) + " values " + dataSnapshot.getKey());
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     ListofTasks list = data.getValue(ListofTasks.class);
-                    if(list.getBoard().equals(board.getBoardKey())){
-                        boardsList.add(list);
-                    }
-                    if(data.hasChild("tasks") && boardsList.contains(list)) {
+                    boardsList.add(list);
+                    if(data.hasChild("tasks")) {
                         String numTasks = String.valueOf(data.child("tasks").getChildrenCount());
                         list.setNumTasks(numTasks);
                     }
@@ -122,7 +120,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         });
 
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -198,7 +196,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         update(updateText);
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/lists/" + key, listoftasks.toFirebaseObject());
+        childUpdates.put(root + "/lists/" + board.getBoardKey() + "/" + key, listoftasks.toFirebaseObject());
         mDatabase.updateChildren(childUpdates);
 
         mDatabase.child(root).child("boards").child(board.getBoardKey()).child("lists")
