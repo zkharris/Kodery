@@ -94,6 +94,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         listAdapter.notifyDataSetChanged();
 
         LinearLayoutManager updatesllm = new LinearLayoutManager(this);
+        updatesllm.setReverseLayout(true);
 
         RecyclerView UpdaterecyclerView = (RecyclerView) findViewById(R.id.board_update_recyclerView);
         UpdaterecyclerView.setLayoutManager(updatesllm);
@@ -231,7 +232,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         listoftasks.setName(name);
         listoftasks.setDescription(desc);
 
-        String updateText = ("list: " + name + " added to board: " + board.getName());
+        String updateText = ("List: " + name + " added to Board: " + board.getName());
         update(updateText);
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -438,16 +439,41 @@ public class SingleBoardActivity extends AppCompatActivity {
             ((SimpleItemViewHolder) holder).date.setText(update.getDate());
         }
 
-        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView name;
             TextView date;
             public int position;
 
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
-
+                itemView.setOnClickListener(this);
                 name = (TextView) itemView.findViewById(R.id.update_name);
                 date = (TextView) itemView.findViewById(R.id.update_date);
+            }
+
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder mBuilderup = new AlertDialog.Builder(v.getContext());
+                View mviewup = LayoutInflater.from(v.getContext()).inflate(R.layout.update_popup, null);
+                Update mupdate=updateList.get(position);
+                TextView tvn = (TextView) mviewup.findViewById(R.id.update_name_pp);
+                TextView tvd = (TextView) mviewup.findViewById(R.id.update_date_pp);
+                tvn.setText(mupdate.getText());
+                String day="";
+                String time="";
+                int i;
+                for(i=0; i<mupdate.getDate().length(); i++){
+                    if(i<mupdate.getDate().length()-9) {
+                        day += mupdate.getDate().charAt(i);
+                    } else{
+                        time += mupdate.getDate().charAt(i);
+                    }
+                }
+                tvd.setText("Update on "+day+" at"+time+":");
+
+                mBuilderup.setView(mviewup);
+                AlertDialog dialog = mBuilderup.create();
+                dialog.show();
             }
         }
     }
