@@ -199,7 +199,7 @@ public class SingleListActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/lists/" + list.getKey() + "/tasks").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/lists/" + board.getBoardKey() + "/" + list.getKey() + "/tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 taskList.clear();
@@ -207,6 +207,7 @@ public class SingleListActivity extends AppCompatActivity {
                     Log.w(TAG, String.valueOf(data.getKey()));
                     findTask(String.valueOf(data.getKey()));
                 }
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -292,7 +293,7 @@ public class SingleListActivity extends AppCompatActivity {
         childUpdates.put(root + "/tasks/" + key, task.toFirebaseObject());
         mDatabase.updateChildren(childUpdates);
 
-        mDatabase.child(root).child("lists").child(list.getKey()).child("tasks").child(key).setValue(true);
+        mDatabase.child(root).child("lists").child(board.getBoardKey()).child(list.getKey()).child("tasks").child(key).setValue(true);
 
     }
 
