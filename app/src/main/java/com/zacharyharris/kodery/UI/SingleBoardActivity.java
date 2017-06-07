@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -96,6 +97,9 @@ public class SingleBoardActivity extends AppCompatActivity {
 
         RecyclerView UpdaterecyclerView = (RecyclerView) findViewById(R.id.board_update_recyclerView);
         UpdaterecyclerView.setLayoutManager(updatesllm);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(UpdaterecyclerView.getContext(),
+                updatesllm.getOrientation());
+        UpdaterecyclerView.addItemDecoration(dividerItemDecoration);
         updateAdapter = new UpdatesRecycleAdapter();
         UpdaterecyclerView.setAdapter(updateAdapter);
         updateAdapter.notifyDataSetChanged();
