@@ -7,22 +7,23 @@
     android:layout_margin="5dp">
 
     <TextView
-        android:id="@+id/update_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Update Text"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/update_date"
+        android:id="@+id/update_date_pp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="MM/DD/YYY 11:59 PM"
+        android:textStyle="bold"
         android:paddingTop="5dp"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:maxLines="1"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/update_name_pp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update Text"
+        android:textSize="14sp"
+        android:textAlignment="center"/>
+
 </LinearLayout>
