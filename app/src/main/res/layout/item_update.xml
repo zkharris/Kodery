@@ -7,6 +7,7 @@
     android:layout_margin="5dp">
 
     <TextView
+        android:id="@+id/update_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="X updated/deleted/added Y"
@@ -14,6 +15,7 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/update_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="February 28, 2017 23:59"

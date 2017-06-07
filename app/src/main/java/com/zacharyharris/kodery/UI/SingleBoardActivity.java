@@ -51,7 +51,9 @@ public class SingleBoardActivity extends AppCompatActivity {
     public static final String TAG = "SingleBoardActivity";
 
     ListsRecycleAdapter listAdapter;
+    UpdatesRecycleAdapter updateAdapter;
     ArrayList<ListofTasks> boardsList;
+    ArrayList<Update> updateList;
 
     private Board board;
     private DatabaseReference mDatabase;
@@ -79,22 +81,33 @@ public class SingleBoardActivity extends AppCompatActivity {
         boardTitle.setText(board.getName());
 
         boardsList = new ArrayList<>();
+        updateList = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        LinearLayoutManager listsllm = new LinearLayoutManager(this);
 
         RecyclerView ListrecyclerView = (RecyclerView) findViewById(R.id.board_lists_recyclerView);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        ListrecyclerView.setLayoutManager(llm);
+        ListrecyclerView.setLayoutManager(listsllm);
         listAdapter = new ListsRecycleAdapter();
         ListrecyclerView.setAdapter(listAdapter);
-
         listAdapter.notifyDataSetChanged();
+
+        LinearLayoutManager updatesllm = new LinearLayoutManager(this);
+
+        RecyclerView UpdaterecyclerView = (RecyclerView) findViewById(R.id.board_update_recyclerView);
+        UpdaterecyclerView.setLayoutManager(updatesllm);
+        updateAdapter = new UpdatesRecycleAdapter();
+        UpdaterecyclerView.setAdapter(updateAdapter);
+        updateAdapter.notifyDataSetChanged();
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        // Lists Feed
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/lists/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -116,6 +129,24 @@ public class SingleBoardActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "getLists:onCancelled", databaseError.toException());
+            }
+        });
+
+        // Updates Feed
+        database.getReference(root + "/updates/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updateList.clear();
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Update update = data.getValue(Update.class);
+                    updateList.add(update);
+                }
+                updateAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUpdates:onCancelled", databaseError.toException());
             }
         });
 
@@ -375,6 +406,44 @@ public class SingleBoardActivity extends AppCompatActivity {
                 dialog.show();
 
                 return true;
+            }
+        }
+    }
+
+    class UpdatesRecycleAdapter extends RecyclerView.Adapter {
+
+
+        @Override
+        public int getItemCount() {
+            return updateList.size();
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_update, parent, false);
+            SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
+            return pvh;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
+            viewHolder.position = position;
+            Update update = updateList.get(position);
+            ((SimpleItemViewHolder) holder).name.setText(update.getText());
+            ((SimpleItemViewHolder) holder).date.setText(update.getDate());
+        }
+
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+            TextView name;
+            TextView date;
+            public int position;
+
+            public SimpleItemViewHolder(View itemView) {
+                super(itemView);
+
+                name = (TextView) itemView.findViewById(R.id.update_name);
+                date = (TextView) itemView.findViewById(R.id.update_date);
             }
         }
     }
