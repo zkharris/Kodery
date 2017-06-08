@@ -14,7 +14,8 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="#94adba"/>
 
     <TextView
         android:id="@+id/update_date"
@@ -24,5 +25,6 @@
         android:paddingTop="5dp"
         android:textSize="14sp"
         android:maxLines="1"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        android:textColor="#94adba"/>
 </LinearLayout>

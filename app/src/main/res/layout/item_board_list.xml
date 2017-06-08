@@ -18,18 +18,22 @@
             android:layout_height="wrap_content"
             android:text="List"
             android:maxLines="1"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:ellipsize="end"/>
+            android:ellipsize="end"
+            android:textColor="#94adba"/>
 
         <TextView
             android:id="@+id/list_subt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="15 Tasks" />
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="15 Tasks"
+            android:textColor="#94adba"/>
     </LinearLayout>
 
     <!--- A card with the name of the task and the # of members in the task -->
