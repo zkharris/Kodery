@@ -1,19 +1,27 @@
 package com.zacharyharris.kodery.UI;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +44,7 @@ import java.util.List;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class SingleTaskActivity extends AppCompatActivity {
+    public static Activity fatask;
 
     private static final String TAG = "test";
 
@@ -111,6 +120,7 @@ public class SingleTaskActivity extends AppCompatActivity {
             }
         }
 
+        fatask = this;
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffc2a2")));
         mActionBar.setTitle(board.getName()+" > "+list.getName()+" > "+task.getName());
@@ -148,6 +158,52 @@ public class SingleTaskActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.task_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch(id){
+            case R.id.move_item:
+
+                /*//build alert
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(SingleTaskActivity.this);
+                View mview = getLayoutInflater().inflate(R.layout.move_list_popup, null);
+
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+                LinearLayoutManager listsllm = new LinearLayoutManager(this);
+                RecyclerView mRV = (RecyclerView) mview.findViewById(R.id.list_cycler_pop);
+                mRV.setLayoutManager(listsllm);
+                listAdapter = new ListsRecycleAdapter();
+                mRV.setAdapter(listAdapter);
+                listAdapter.notifyDataSetChanged();
+
+                mBuilder.setView(mview);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();*/
+
+                Intent i = new Intent(this, MoveTaskActivity.class);
+                i.putExtra("board", board);
+                i.putExtra("task", task);
+                i.putExtra("list", list);
+                SingleTaskActivity.this.startActivity(i);
+
+
+
+
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void findUser(String userUid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference("users/" + userUid).addValueEventListener(new ValueEventListener() {
@@ -164,14 +220,23 @@ public class SingleTaskActivity extends AppCompatActivity {
             }
         });
     }
-
+/*
     private void moveToList() {
+        Log.d(TAG, "moveToList: 123test");
         if (task != null) {
             Intent intent = new Intent(this, SingleBoardActivity.class);
-            intent.putExtra("task", task);
+            //intent.putExtra("task", task);
             intent.putExtra("board", board);
+            Log.d(TAG, "moveToList: safkajdfskl");
             startActivity(intent);
             mDatabase.child(root).child("lists").child(list.getKey()).child(task.getKey()).removeValue();
         }
     }
+ */
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+    }
+
 }
