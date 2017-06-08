@@ -1,12 +1,16 @@
 package com.zacharyharris.kodery.UI;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -66,6 +70,7 @@ public class SingleBoardActivity extends AppCompatActivity {
     private Task task;
     private boolean addTaskToList;
 
+    LinearLayout mll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +85,10 @@ public class SingleBoardActivity extends AppCompatActivity {
                 addTaskToList = true;
             }
         }
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b2cefe")));
+        mActionBar.setTitle(board.getName());
+
 
         final TextView boardTitle = (TextView) findViewById(R.id.boardname_view);
         boardTitle.setText(board.getName());
@@ -98,7 +107,7 @@ public class SingleBoardActivity extends AppCompatActivity {
 
         LinearLayoutManager updatesllm = new LinearLayoutManager(this);
         updatesllm.setReverseLayout(true);
-
+        updatesllm.setStackFromEnd(true);
         RecyclerView UpdaterecyclerView = (RecyclerView) findViewById(R.id.board_update_recyclerView);
         UpdaterecyclerView.setLayoutManager(updatesllm);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(UpdaterecyclerView.getContext(),
@@ -476,7 +485,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                         time += mupdate.getDate().charAt(i);
                     }
                 }
-                tvd.setText("Update on "+day+" at "+time+":");
+                tvd.setText("Update on "+day+" at"+time+":");
 
                 mBuilderup.setView(mviewup);
                 AlertDialog dialog = mBuilderup.create();

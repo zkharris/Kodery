@@ -1,6 +1,8 @@
 package com.zacharyharris.kodery.UI;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -108,6 +110,10 @@ public class SingleTaskActivity extends AppCompatActivity {
                 descText.setText(task.getDescription());
             }
         }
+
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffc2a2")));
+        mActionBar.setTitle(board.getName()+" > "+list.getName()+" > "+task.getName());
 
         Log.d(TAG, task.getName());
         Log.d(TAG, list.getName());

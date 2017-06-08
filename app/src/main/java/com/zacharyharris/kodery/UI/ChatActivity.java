@@ -2,6 +2,8 @@ package com.zacharyharris.kodery.UI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -241,6 +243,10 @@ public class ChatActivity extends AppCompatActivity {
 
         messageList = new ArrayList<>();
         channelList = new ArrayList<>();
+
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b2cefe")));
+        mActionBar.setTitle(board.getName()+" Message Boards");
 
         //Message recycler View
         RecyclerView messagerecyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);

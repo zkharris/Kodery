@@ -1,6 +1,8 @@
 package com.zacharyharris.kodery.UI;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,9 +33,11 @@ import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -188,6 +192,10 @@ public class SingleListActivity extends AppCompatActivity {
             board = (Board)extras.get("board");
         }
 
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#abe9a1")));
+        mActionBar.setTitle(board.getName()+" > "+list.getName());
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         final TextView listTitle = (TextView) findViewById(R.id.list_name);
@@ -310,16 +318,19 @@ public class SingleListActivity extends AppCompatActivity {
 
     private void update(String updateText) {
         String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
-
+/*
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy hh:mm aa");
         String dateString = format.format(calendar.getTime());
+*/
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Log.w(TAG, currentDateTimeString);
 
         Update update = new Update();
         update.setText(updateText);
         update.setBoard(board.getBoardKey());
         update.setKey(key);
-        update.setDate(dateString);
+        update.setDate(currentDateTimeString);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());

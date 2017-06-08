@@ -1,6 +1,8 @@
 package com.zacharyharris.kodery.UI;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -86,8 +88,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         android.support.v7.app.ActionBar menu = getSupportActionBar();
         menu.setDisplayShowHomeEnabled(true);
-        menu.setLogo(R.mipmap.ic_launcher_round);
+        //menu.setLogo(R.drawable.koderyborder2);
         menu.setDisplayUseLogoEnabled(true);
+
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#d1afff")));
 
         /* Implementation of Horizontal Card & Recycler view */
 
