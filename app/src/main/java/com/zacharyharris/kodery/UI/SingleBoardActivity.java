@@ -228,7 +228,7 @@ public class SingleBoardActivity extends AppCompatActivity {
 
     private void saveList(String name, String desc) {
         String key = mDatabase.child(root).child("lists").push().getKey();
-        String updateKey = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
+        
         ListofTasks listoftasks = new ListofTasks();
         listoftasks.setKey(key);
         listoftasks.setBoard(board.getBoardKey());
@@ -250,7 +250,7 @@ public class SingleBoardActivity extends AppCompatActivity {
 
     private void update(String updateText) {
         String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
-        
+
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
         Log.w(TAG, currentDateTimeString);
 
