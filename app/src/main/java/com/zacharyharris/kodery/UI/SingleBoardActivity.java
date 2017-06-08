@@ -39,10 +39,13 @@ import com.zacharyharris.kodery.R;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
@@ -232,7 +235,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         listoftasks.setName(name);
         listoftasks.setDescription(desc);
 
-        String updateText = ("List: " + name + " added to Board: " + board.getName());
+        String updateText = ("List: " + name + " added");
         update(updateText);
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -248,15 +251,20 @@ public class SingleBoardActivity extends AppCompatActivity {
     private void update(String updateText) {
         String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
 
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy hh:mm aa");
-        String dateString = format.format(calendar.getTime());
+
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy hh:mm aa");
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+                //DateFormat.getDateTimeInstance().format(df);
+
+        //String dateString = new SimpleDateFormat("dd/MM/yyy hh:mm aa", Locale.US).format(date.getTime());
+        Log.w(TAG, currentDateTimeString);
 
         Update update = new Update();
         update.setText(updateText);
         update.setBoard(board.getBoardKey());
         update.setKey(key);
-        update.setDate(dateString);
+        update.setDate(currentDateTimeString);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
@@ -393,7 +401,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                         }
                     }
                 });
-
+                
                 delboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -468,13 +476,13 @@ public class SingleBoardActivity extends AppCompatActivity {
                 String time="";
                 int i;
                 for(i=0; i<mupdate.getDate().length(); i++){
-                    if(i<mupdate.getDate().length()-9) {
+                    if(i<mupdate.getDate().length()-11) {
                         day += mupdate.getDate().charAt(i);
                     } else{
                         time += mupdate.getDate().charAt(i);
                     }
                 }
-                tvd.setText("Update on "+day+" at"+time+":");
+                tvd.setText("Update on "+day+" at "+time+":");
 
                 mBuilderup.setView(mviewup);
                 AlertDialog dialog = mBuilderup.create();
