@@ -250,14 +250,8 @@ public class SingleBoardActivity extends AppCompatActivity {
 
     private void update(String updateText) {
         String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
-
-
-        Date date = new Date();
-        SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy hh:mm aa");
+        
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-                //DateFormat.getDateTimeInstance().format(df);
-
-        //String dateString = new SimpleDateFormat("dd/MM/yyy hh:mm aa", Locale.US).format(date.getTime());
         Log.w(TAG, currentDateTimeString);
 
         Update update = new Update();
@@ -401,7 +395,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                         }
                     }
                 });
-                
+
                 delboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
