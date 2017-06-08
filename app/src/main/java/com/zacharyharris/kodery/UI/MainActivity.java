@@ -366,6 +366,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
 
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
+
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -374,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             Toast.makeText(v.getContext(),
                                     test.getName()+" renamed to "+mboardname.getText()+"!",
                                     Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                             updateBoard(boardsList.get(position), mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
@@ -393,6 +397,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             Toast.makeText(v.getContext(),
                                     test.getName()+" deleted.",
                                     Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                         } else {
                             Toast.makeText(v.getContext(), "Only owner can delete boards",
                                     Toast.LENGTH_SHORT).show();
@@ -401,8 +406,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
                 return true;
