@@ -136,6 +136,8 @@ public class SingleListActivity extends AppCompatActivity {
                 mlistdesc.setText(test.getDescription());
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
 
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -146,6 +148,7 @@ public class SingleListActivity extends AppCompatActivity {
                             Toast.makeText(v.getContext(),
                                     mboardname.getText()+" saved!",
                                     Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                             //updateBoard(boardsList.get(position), mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
@@ -174,13 +177,12 @@ public class SingleListActivity extends AppCompatActivity {
                             tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
                         }
                         t.show();
+                        dialog.dismiss();
                         //deleteBoard(boardsList.get(position));
 
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
                 return true;
@@ -263,6 +265,8 @@ public class SingleListActivity extends AppCompatActivity {
                 final EditText mtaskname = (EditText) mview.findViewById(R.id.taskname_edit);
                 final EditText mtaskdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createTsk);
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
 
                 addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -277,6 +281,7 @@ public class SingleListActivity extends AppCompatActivity {
                             } else {
                                 saveTask(mtaskname.getText().toString(), mtaskdesc.getText().toString());
                             }
+                            dialog.dismiss();
                         }else{
                             Toast.makeText(SingleListActivity.this,
                                     "Please name the list.",
@@ -286,8 +291,6 @@ public class SingleListActivity extends AppCompatActivity {
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
                 break;
 /*

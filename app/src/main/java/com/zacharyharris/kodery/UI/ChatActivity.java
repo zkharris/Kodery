@@ -144,6 +144,8 @@ public class ChatActivity extends AppCompatActivity {
                 final Channel mchannel= channelList.get(position);
                 mtitle.setText("Rename "+mchannel.getName());
                 mboardname.setText(mchannel.getName());
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
 
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -153,6 +155,7 @@ public class ChatActivity extends AppCompatActivity {
                             Toast.makeText(ChatActivity.this,
                                     mchannel.getName()+" renamed to "+mboardname.getText()+"!",
                                     Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                             // Get rid of the pop up go back to main activity
                         }else{
                             Toast.makeText(ChatActivity.this,
@@ -168,12 +171,11 @@ public class ChatActivity extends AppCompatActivity {
                         Toast.makeText(v.getContext(),
                                 "#"+mchannel.getName()+" deleted.",
                                 Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
 
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
                 return true;
@@ -372,6 +374,8 @@ public class ChatActivity extends AppCompatActivity {
                 final EditText mboardname = (EditText) mview.findViewById(R.id.Channelname);
                 Button addleboard = (Button) mview.findViewById(R.id.createChannel);
                 final Switch mswitch = (Switch) mview.findViewById(R.id.switchtog);
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
 
                 addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -381,6 +385,7 @@ public class ChatActivity extends AppCompatActivity {
                             Toast.makeText(ChatActivity.this,
                                     mboardname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
                             //mswitch.isChecked();
                             // Get rid of the pop up go back to main activity
 
@@ -392,8 +397,6 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
         }
 

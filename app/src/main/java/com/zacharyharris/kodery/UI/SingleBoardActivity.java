@@ -190,6 +190,8 @@ public class SingleBoardActivity extends AppCompatActivity {
                 final EditText mlistname = (EditText) mview.findViewById(R.id.listname_edit);
                 final EditText mlistdesc = (EditText) mview.findViewById(R.id.listdesc_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createLst);
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
 
                 addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -204,6 +206,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                             }else {
                                 saveList(mlistname.getText().toString(), mlistdesc.getText().toString());
                             }
+                            dialog.dismiss();
 
                         }else{
                             Toast.makeText(SingleBoardActivity.this,
@@ -214,8 +217,6 @@ public class SingleBoardActivity extends AppCompatActivity {
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
                 break;
 
@@ -378,6 +379,10 @@ public class SingleBoardActivity extends AppCompatActivity {
                 mlistdesc.setText(test.getDescription());
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
+
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
+
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -393,6 +398,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                                 tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
                             }
                             t.show();
+                            dialog.dismiss();
                             //updateBoard(test, mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
@@ -421,13 +427,12 @@ public class SingleBoardActivity extends AppCompatActivity {
                             tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
                         }
                         t.show();
+                        dialog.dismiss();
                         //deleteBoard(boardsList.get(position));
 
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
                 return true;
