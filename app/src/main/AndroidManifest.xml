@@ -24,7 +24,8 @@
         <activity android:name=".UI.BoardMembersActivity" />
         <activity android:name=".UI.SingleTaskActivity" />
         <activity android:name=".UI.CreateBoardActivity" />
-        <activity android:name=".UI.ChatActivity"></activity>
+        <activity android:name=".UI.ChatActivity" />
+        <activity android:name=".UI.MoveTaskActivity"></activity>
     </application>
 
 </manifest>

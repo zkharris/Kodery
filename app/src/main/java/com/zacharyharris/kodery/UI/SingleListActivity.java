@@ -1,11 +1,14 @@
 package com.zacharyharris.kodery.UI;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +37,8 @@ import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
 
+import org.w3c.dom.Text;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +51,7 @@ import static android.R.id.message;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class SingleListActivity extends AppCompatActivity {
+    public static Activity falist;
 
     public static final String TAG = "SingleListActivity";
 
@@ -192,9 +199,12 @@ public class SingleListActivity extends AppCompatActivity {
             board = (Board)extras.get("board");
         }
 
+        falist = this;
+
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#abe9a1")));
         mActionBar.setTitle(board.getName()+" > "+list.getName());
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -280,12 +290,12 @@ public class SingleListActivity extends AppCompatActivity {
                 AlertDialog dialog = mBuilder.create();
                 dialog.show();
                 break;
-
+/*
             case R.id.members_item:
                 Intent i = new Intent(this, BoardMembersActivity.class);
                 i.putExtra("board", board);
                 startActivity(i);
-                break;
+                break;*/
 
         }
 
@@ -356,5 +366,16 @@ public class SingleListActivity extends AppCompatActivity {
                 Log.w(TAG, "findTask:onCancelled", databaseError.toException());
             }
         });
+    }
+
+
+    @Override
+    public void onBackPressed(){
+        //Go back to single board
+        //moveTaskToBack(true);
+        //Intent i = new Intent(this, SingleBoardActivity.class);
+        //i.putExtra("board", board);
+        //startActivity(i);
+        super.onBackPressed();
     }
 }

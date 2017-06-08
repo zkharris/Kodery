@@ -323,7 +323,11 @@ public class SingleBoardActivity extends AppCompatActivity {
             ((SimpleItemViewHolder) holder).title.setText(list.getName());
             // set number of todos in each list
             if(list.getNumTasks() != null) {
-                ((SimpleItemViewHolder) holder).subtitle.setText(list.getNumTasks() + " tasks");
+                if(list.getNumTasks().toString().equals("1")){
+                    ((SingleBoardActivity.ListsRecycleAdapter.SimpleItemViewHolder) holder).subtitle.setText(list.getNumTasks() + " task");
+                }else {
+                    ((SingleBoardActivity.ListsRecycleAdapter.SimpleItemViewHolder) holder).subtitle.setText(list.getNumTasks() + " tasks");
+                }
             } else {
                 ((SimpleItemViewHolder) holder).subtitle.setText("No tasks");
             }
@@ -493,6 +497,12 @@ public class SingleBoardActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+    }
+
 }
 
 
