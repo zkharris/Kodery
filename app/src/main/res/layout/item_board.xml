@@ -19,8 +19,9 @@
             android:text="Board"
             android:layout_gravity="center"
             android:textAlignment="center"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textStyle="bold"
+            android:layout_margin="10dp"
             android:textColor="#bb8aff"/>
     </LinearLayout>
 
