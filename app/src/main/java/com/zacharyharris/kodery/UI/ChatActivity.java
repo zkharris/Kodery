@@ -1,4 +1,5 @@
 package com.zacharyharris.kodery.UI;
+//c6ffed
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -91,18 +93,23 @@ public class ChatActivity extends AppCompatActivity {
             viewHolder.position = position;
             Channel channel = channelList.get(position);
             ((SimpleItemViewHolder) holder).title.setText("#" + channel.getName());
+            if(channel.getExclusive().equals("yes")) {
+                ((SimpleItemViewHolder) holder).mCV.setCardBackgroundColor(Color.parseColor("#c6ffed"));
+            }
+
         }
 
         public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
             TextView title;
             int position;
+            CardView mCV;
 
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
                 itemView.setOnLongClickListener(this);
                 title = (TextView) itemView.findViewById(R.id.channel_name);
-
+                mCV = (CardView) itemView.findViewById(R.id.channel_cards);
             }
 
             @Override
@@ -118,6 +125,9 @@ public class ChatActivity extends AppCompatActivity {
                             currChannel = channelList.get(position);
                             Log.w(TAG,  "current channel:" + currChannel.getName());
                             channelFeed();
+
+                            android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+                            mActionBar.setTitle(board.getName()+" Message Board: #"+channelList.get(position).getName());
 
                         } else if (tap_num==2){
                             Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
@@ -381,7 +391,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if(!mboardname.getText().toString().isEmpty()){
-                            saveChannel(mboardname.getText().toString());
+                            saveChannel(mboardname.getText().toString(), mswitch.isChecked());
                             Toast.makeText(ChatActivity.this,
                                     mboardname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
@@ -403,12 +413,17 @@ public class ChatActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void saveChannel(String name) {
+    private void saveChannel(String name, Boolean exclusive) {
         String key = mDatabase.child(root).child("channels").child(board.getBoardKey()).push().getKey();
 
         Channel channel = new Channel();
         channel.setName(name);
         channel.setKey(key);
+        if(exclusive) {
+            channel.setExclusive("yes");
+        } else{
+            channel.setExclusive("no");
+        }
 
         Map<String, Object> channelUpdates = new HashMap<>();
         channelUpdates.put(root + "/channels/" + "/" + board.getBoardKey() + "/" +key,

@@ -12,9 +12,14 @@ public class Channel implements Serializable {
 
     public String name;
     public String key;
+    public String exclusive;
     public Map<String, Object> messages = new HashMap<>();
 
-    public Channel() {}
+    public Channel() { exclusive = "no"; }
+
+    public String getExclusive() { return exclusive; }
+
+    public void setExclusive(String exclusive) { this.exclusive = exclusive;}
 
     public String getName() { return name; }
 
@@ -32,6 +37,7 @@ public class Channel implements Serializable {
         HashMap<String, String> channel = new HashMap<>();
         channel.put("name", name);
         channel.put("key", key);
+        channel.put("exclusive", exclusive);
 
         return channel;
     }

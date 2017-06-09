@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +33,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="italic"
-                android:text="#"/>
+                android:text="#" />
+
             <EditText
                 android:id="@+id/Channelname"
                 android:layout_width="0dp"
@@ -57,13 +59,9 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_gravity="center">
+            android:layout_height="match_parent">
 
             <Switch
                 android:id="@+id/switchtog"
@@ -71,10 +69,10 @@
                 android:textOff="Public"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:switchTextAppearance="@style/TextAppearance.AppCompat.Button" />
 
-
-        </LinearLayout>
+        </FrameLayout>
 
     </LinearLayout>
 </ScrollView>
