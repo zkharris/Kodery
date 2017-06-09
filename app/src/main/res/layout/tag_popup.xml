@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tag_popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#d1afff"
+        android:padding="10dp"
+        android:text="Add Your Network:"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/tag_popup_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="e.g. UCSC, Google, Apple"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+
+    <Button
+        android:id="@+id/tag_popup_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_margin="5dp"
+        android:background="#cc94c5f5"/>
+
+</LinearLayout>

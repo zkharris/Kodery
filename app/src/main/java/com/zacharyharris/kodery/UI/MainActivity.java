@@ -86,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         setContentView(R.layout.activity_main);
 
 
-        android.support.v7.app.ActionBar menu = getSupportActionBar();
-        menu.setDisplayShowHomeEnabled(true);
+        //android.support.v7.app.ActionBar menu = getSupportActionBar();
+        //menu.setDisplayShowHomeEnabled(true);
         //menu.setLogo(R.drawable.koderyborder2);
-        menu.setDisplayUseLogoEnabled(true);
+        //menu.setDisplayUseLogoEnabled(true);
 
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#d1afff")));
@@ -169,6 +169,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
         });
+/*
+        String name = mFirebaseUser.getDisplayName();
+        String displayname="";
+        int i = 0;
+        while(!(String.valueOf(name.charAt(i)).equals(" "))){
+            displayname += name.charAt(i);
+            i++;
+        }
+
+        mActionBar.setTitle(displayname+"'s Kodery");
+*/
     }
 
     private void saveBoard(String name) {
@@ -268,13 +279,41 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 startActivity(new Intent(this, InvitesActivity.class));
                 break;
 
-            case R.id.add_board:
+            case R.id.add_tag:
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                final View mview = getLayoutInflater().inflate(R.layout.create_board_popup, null);
-                final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
-                Button addleboard = (Button) mview.findViewById(R.id.createB);
+                final View mview = getLayoutInflater().inflate(R.layout.tag_popup, null);
+                final EditText mCompName = (EditText) mview.findViewById(R.id.tag_popup_edit);
+                TextView mtitlep = (TextView) mview.findViewById(R.id.tag_popup_title);
+                Button saveupdate = (Button) mview.findViewById(R.id.tag_popup_button);
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
+
+                saveupdate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!mCompName.getText().toString().isEmpty()){
+                            Toast.makeText(MainActivity.this,
+                                    mCompName.getText()+" added!",
+                                    Toast.LENGTH_SHORT).show();
+                            //Add save here
+                            dialog.dismiss();
+                        } else{
+                            Toast.makeText(MainActivity.this,
+                                    "Please add your network.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                dialog.show();
+                break;
+
+            case R.id.add_board:
+                AlertDialog.Builder myBuilder = new AlertDialog.Builder(MainActivity.this);
+                final View myview = getLayoutInflater().inflate(R.layout.create_board_popup, null);
+                final EditText mboardname = (EditText) myview.findViewById(R.id.boardnme_edit);
+                Button addleboard = (Button) myview.findViewById(R.id.createB);
+                myBuilder.setView(myview);
+                final AlertDialog mydialog = myBuilder.create();
 
                 addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -284,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             Toast.makeText(MainActivity.this,
                                     mboardname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                            mydialog.dismiss();
                             // Get rid of the pop up go back to main activity
                         }else{
                             Toast.makeText(MainActivity.this,
@@ -294,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     }
                 });
 
-                dialog.show();
+                mydialog.show();
         }
 
         return super.onOptionsItemSelected(item);

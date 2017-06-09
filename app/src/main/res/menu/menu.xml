@@ -10,9 +10,16 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/add_tag"
+        android:orderInCategory="100"
+        android:title="Add Tag"
+        android:icon="@drawable/ic_label_outline_white_48dp"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/add_board"
         android:orderInCategory="100"
-        android:title="Invites"
+        android:title="Add Board"
         android:icon="@drawable/ic_add_white_48dp"
         app:showAsAction="always" />
 
