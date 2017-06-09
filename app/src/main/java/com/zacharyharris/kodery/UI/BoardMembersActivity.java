@@ -1,6 +1,8 @@
 package com.zacharyharris.kodery.UI;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -112,7 +114,8 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         memberList = new ArrayList<>();
 
-
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b2cefe")));
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.memberRecycleView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
