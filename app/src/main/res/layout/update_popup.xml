@@ -10,7 +10,7 @@
         android:id="@+id/update_date_pp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MM/DD/YYY 11:59 PM"
+        android:text="Update on MMM DD,YYYY at 11:59:59 PM"
         android:textStyle="bold"
         android:paddingTop="5dp"
         android:textSize="16sp"
