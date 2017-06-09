@@ -51,6 +51,7 @@ public class MoveTaskActivity extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     private Task task;
     private boolean addTaskToList;
+    private Task currTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,9 +179,10 @@ public class MoveTaskActivity extends AppCompatActivity {
     private void moveTask(ListofTasks listc) {
         //second section
         //save it to the firebase db
-        mDatabase.child(root).child("tasks").child(task.getKey()).child("list").
-                setValue(listc.getKey());
-
+        // remove it from list
+        mDatabase.child(root).child("lists").child(board.getBoardKey()).
+                child(list.getKey()).child("tasks").child(task.getKey()).removeValue();
+        mDatabase.child(root).child("tasks").child(task.getKey()).child("list").setValue(listc.getKey());
         mDatabase.child(root).child("lists").child(board.getBoardKey()).child(listc.getKey()).
                 child("tasks").child(task.getKey()).setValue(true);
 

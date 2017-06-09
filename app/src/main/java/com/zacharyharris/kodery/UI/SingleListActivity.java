@@ -233,16 +233,17 @@ public class SingleListActivity extends AppCompatActivity {
     }
 
     private void loadTaskFeed() {
-        taskList = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/tasks/" + list.getKey()).addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 taskList.clear();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Log.w(TAG, String.valueOf(data.getKey()));
                     Task task = data.getValue(Task.class);
-                    taskList.add(task);
+                    if(task.getList().equals(list.getKey())) {
+                        taskList.add(task);
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -331,7 +332,7 @@ public class SingleListActivity extends AppCompatActivity {
         update(updateText);
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/tasks/" + list.getKey() + "/" + key, task.toFirebaseObject());
+        childUpdates.put(root + "/tasks/" + key, task.toFirebaseObject());
         mDatabase.updateChildren(childUpdates);
 
         mDatabase.child(root).child("lists").child(board.getBoardKey()).child(list.getKey()).child("tasks").child(key).setValue(true);
@@ -364,7 +365,7 @@ public class SingleListActivity extends AppCompatActivity {
         update(updateText);
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/tasks/" + list.getKey() + "/" + task.getKey(), newTask.toFirebaseObject());
+        childUpdates.put(root + "/tasks/" + task.getKey(), newTask.toFirebaseObject());
         mDatabase.updateChildren(childUpdates);
 
         loadTaskFeed();
@@ -419,7 +420,7 @@ public class SingleListActivity extends AppCompatActivity {
         // surround this with checks if user is admin or owner
         mDatabase.child(root).child("lists").child(board.getBoardKey()).child(list.getKey()).
                 child("tasks").child(task.getKey()).removeValue();
-        mDatabase.child(root).child("tasks").child(list.getKey()).child(task.getKey()).removeValue();
+        mDatabase.child(root).child("tasks").child(task.getKey()).removeValue();
 
 
         // Updates

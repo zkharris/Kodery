@@ -192,9 +192,7 @@ public class SingleTaskActivity extends AppCompatActivity {
                 AlertDialog dialog = mBuilder.create();
                 dialog.show();*/
 
-                // remove it from list
-                mDatabase.child(root).child("lists").child(board.getBoardKey()).
-                        child(list.getKey()).child("tasks").child(task.getKey()).removeValue();
+
 
                 Intent i = new Intent(this, MoveTaskActivity.class);
                 i.putExtra("board", board);
