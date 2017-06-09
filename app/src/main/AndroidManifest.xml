@@ -9,13 +9,7 @@
         android:logo="@drawable/kodery_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".UI.MainActivity"/>
         <activity android:name=".UI.SignInActivity" />
         <activity android:name=".UI.UsersActivity" />
         <activity android:name=".UI.InvitesActivity" />
@@ -25,7 +19,13 @@
         <activity android:name=".UI.SingleTaskActivity" />
         <activity android:name=".UI.CreateBoardActivity" />
         <activity android:name=".UI.ChatActivity" />
-        <activity android:name=".UI.MoveTaskActivity"></activity>
+        <activity android:name=".UI.MoveTaskActivity" />
+        <activity android:name=".UI.LoadActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
