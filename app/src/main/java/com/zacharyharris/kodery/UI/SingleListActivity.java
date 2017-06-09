@@ -174,7 +174,7 @@ public class SingleListActivity extends AppCompatActivity {
                             tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
                         }
                         t.show();
-                        //deleteBoard(boardsList.get(position));
+                        deleteTask(taskList.get(position));
 
                     }
                 });
@@ -205,7 +205,11 @@ public class SingleListActivity extends AppCompatActivity {
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#abe9a1")));
         mActionBar.setTitle(board.getName()+" > "+list.getName());
 
+        loadTaskFeed();
 
+    }
+
+    private void loadTaskFeed() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         final TextView listTitle = (TextView) findViewById(R.id.list_name);
@@ -241,6 +245,7 @@ public class SingleListActivity extends AppCompatActivity {
                 Log.w(TAG, "getList:onCancelled", databaseError.toException());
             }
         });
+
     }
 
     @Override
@@ -330,6 +335,9 @@ public class SingleListActivity extends AppCompatActivity {
         String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
 /*
         Calendar calendar = Calendar.getInstance();
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        //String dateString = new SimpleDateFormat("dd/MM/yyy hh:mm aa").format(Calendar.getInstance().getTime());
+        Log.w(TAG, currentDateTimeString);
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy hh:mm aa");
         String dateString = format.format(calendar.getTime());
 */
@@ -368,7 +376,20 @@ public class SingleListActivity extends AppCompatActivity {
         });
     }
 
+    private void deleteTask(Task task) {
+        // surround this with checks if user is admin or owner
+        mDatabase.child(root).child("lists").child(board.getBoardKey()).child(list.getKey()).
+                child("tasks").child(task.getKey()).removeValue();
+        mDatabase.child(root).child("tasks").child(task.getKey()).removeValue();
 
+        // Updates
+        String updateText = ("Task:" + task.getName() + " deleted from List:" + list.getName());
+        update(updateText);
+
+        // reload the recycler view
+        loadTaskFeed();
+    }
+    
     @Override
     public void onBackPressed(){
         //Go back to single board
