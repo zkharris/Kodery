@@ -82,7 +82,9 @@ public class SingleListActivity extends AppCompatActivity {
             SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
             viewHolder.position = position;
             Task task = taskList.get(position);
-            ((SimpleItemViewHolder) holder).title.setText(task.getName());
+            if(task.getName() != null) {
+                ((SimpleItemViewHolder) holder).title.setText(task.getName());
+            }
             if(task.getDescription() != null) {
                 ((SimpleItemViewHolder) holder).subtitle.setText(task.getDescription());
             } else {
@@ -127,25 +129,27 @@ public class SingleListActivity extends AppCompatActivity {
                 //////////////////////////////
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(v.getContext());
                 View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_task_item, null);
-                final EditText mboardname = (EditText) mview.findViewById(R.id.taskname_edit);
-                final EditText mlistdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
+                final EditText mtaskname = (EditText) mview.findViewById(R.id.taskname_edit);
+                final EditText mtaskdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
                 final Task test = taskList.get(position);
                 final TextView mtextview = (TextView) mview.findViewById(R.id.edit_task_item_title);
                 mtextview.setText("Edit "+test.getName());
-                mboardname.setText(test.getName());
-                mlistdesc.setText(test.getDescription());
+                mtaskname.setText(test.getName());
+                mtaskdesc.setText(test.getDescription());
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
 
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!mboardname.getText().toString().isEmpty()
-                                && !(mboardname.getText().toString().equals(test.getName())
-                                && mlistdesc.getText().toString().equals(test.getDescription()))){
+                        if(!mtaskname.getText().toString().isEmpty()
+                                && !(mtaskname.getText().toString().equals(test.getName())
+                                && mtaskdesc.getText().toString().equals(test.getDescription()))){
                             Toast.makeText(v.getContext(),
-                                    mboardname.getText()+" saved!",
+                                    mtaskname.getText()+" saved!",
                                     Toast.LENGTH_SHORT).show();
+                            editTask(taskList.get(position), mtaskname.getText().toString(),
+                                    mtaskdesc.getText().toString());
                             //updateBoard(boardsList.get(position), mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
@@ -166,7 +170,7 @@ public class SingleListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Toast t = Toast.makeText(v.getContext(),
-                                mboardname.getText()+" deleted.",
+                                mtaskname.getText()+" deleted.",
                                 Toast.LENGTH_LONG);
                         LinearLayout layout = (LinearLayout) t.getView();
                         if (layout.getChildCount() > 0) {
@@ -205,11 +209,6 @@ public class SingleListActivity extends AppCompatActivity {
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#abe9a1")));
         mActionBar.setTitle(board.getName()+" > "+list.getName());
 
-        loadTaskFeed();
-
-    }
-
-    private void loadTaskFeed() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         final TextView listTitle = (TextView) findViewById(R.id.list_name);
@@ -217,8 +216,6 @@ public class SingleListActivity extends AppCompatActivity {
 
         final TextView listDesc = (TextView) findViewById(R.id.list_desc);
         listDesc.setText(list.getDescription());
-
-        taskList = new ArrayList<>();
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.tasks_list);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -228,14 +225,20 @@ public class SingleListActivity extends AppCompatActivity {
 
         adapter.notifyDataSetChanged();
 
+        loadTaskFeed();
+    }
+
+    private void loadTaskFeed() {
+        taskList = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/lists/" + board.getBoardKey() + "/" + list.getKey() + "/tasks").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/tasks/" + list.getKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 taskList.clear();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Log.w(TAG, String.valueOf(data.getKey()));
-                    findTask(String.valueOf(data.getKey()));
+                    Task task = data.getValue(Task.class);
+                    taskList.add(task);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -245,7 +248,6 @@ public class SingleListActivity extends AppCompatActivity {
                 Log.w(TAG, "getList:onCancelled", databaseError.toException());
             }
         });
-
     }
 
     @Override
@@ -310,7 +312,7 @@ public class SingleListActivity extends AppCompatActivity {
     private void saveTask(String name, String desc) {
         //second section
         //save it to the firebase db
-        String key = mDatabase.child(root).child("tasks").push().getKey();
+        String key = mDatabase.child(root).child("tasks").child(list.getKey()).push().getKey();
         String updateKey = mDatabase.child(root).child(board.getBoardKey()).child("updates").push().getKey();
 
         Task task = new Task();
@@ -324,11 +326,43 @@ public class SingleListActivity extends AppCompatActivity {
         update(updateText);
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/tasks/" + key, task.toFirebaseObject());
+        childUpdates.put(root + "/tasks/" + list.getKey() + "/" + key, task.toFirebaseObject());
         mDatabase.updateChildren(childUpdates);
 
         mDatabase.child(root).child("lists").child(board.getBoardKey()).child(list.getKey()).child("tasks").child(key).setValue(true);
 
+        loadTaskFeed();
+    }
+
+    private void editTask(Task task, String name, String desc) {
+        Task newTask = new Task();
+        newTask.setKey(task.getKey());
+        newTask.setName(name);
+        newTask.setDescription(desc);
+        newTask.setBoard(board.getBoardKey());
+        newTask.setList(list.getKey());
+
+        String updateText = null;
+        if (!task.getName().equals(name)) {
+            updateText = ("Task:" + task.getName() + " renamed " + name + " in List:" +
+                    list.getName());
+        }
+
+        if (!task.getDescription().equals(desc)) {
+            updateText = ("Task:" + task.getName() + " description " +
+                    "edited in List:" + list.getName());
+        }
+
+        if(!task.getDescription().equals(desc) && !task.getName().equals(name)){
+            updateText = ("Task:" + task.getName() + " edited " + " in List:" + list.getName());
+        }
+        update(updateText);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/tasks/" + list.getKey() + "/" + task.getKey(), newTask.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
+
+        loadTaskFeed();
     }
 
     private void update(String updateText) {
@@ -380,7 +414,8 @@ public class SingleListActivity extends AppCompatActivity {
         // surround this with checks if user is admin or owner
         mDatabase.child(root).child("lists").child(board.getBoardKey()).child(list.getKey()).
                 child("tasks").child(task.getKey()).removeValue();
-        mDatabase.child(root).child("tasks").child(task.getKey()).removeValue();
+        mDatabase.child(root).child("tasks").child(list.getKey()).child(task.getKey()).removeValue();
+
 
         // Updates
         String updateText = ("Task:" + task.getName() + " deleted from List:" + list.getName());
@@ -389,7 +424,7 @@ public class SingleListActivity extends AppCompatActivity {
         // reload the recycler view
         loadTaskFeed();
     }
-    
+
     @Override
     public void onBackPressed(){
         //Go back to single board
