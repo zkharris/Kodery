@@ -82,9 +82,7 @@ public class SingleListActivity extends AppCompatActivity {
             SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
             viewHolder.position = position;
             Task task = taskList.get(position);
-            if(task.getName() != null) {
-                ((SimpleItemViewHolder) holder).title.setText(task.getName());
-            }
+            ((SimpleItemViewHolder) holder).title.setText(task.getName());
             if(task.getDescription() != null) {
                 ((SimpleItemViewHolder) holder).subtitle.setText(task.getDescription());
             } else {
@@ -138,6 +136,8 @@ public class SingleListActivity extends AppCompatActivity {
                 mtaskdesc.setText(test.getDescription());
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
 
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -150,6 +150,7 @@ public class SingleListActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                             editTask(taskList.get(position), mtaskname.getText().toString(),
                                     mtaskdesc.getText().toString());
+                            dialog.dismiss();
                             //updateBoard(boardsList.get(position), mboardname.getText().toString());
                             // Get rid of the pop up go back to main activity
                         }else{
@@ -179,12 +180,12 @@ public class SingleListActivity extends AppCompatActivity {
                         }
                         t.show();
                         deleteTask(taskList.get(position));
+                        dialog.dismiss();
+                        //deleteBoard(boardsList.get(position));
 
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
                 return true;
@@ -209,6 +210,7 @@ public class SingleListActivity extends AppCompatActivity {
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#abe9a1")));
         mActionBar.setTitle(board.getName()+" > "+list.getName());
 
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         final TextView listTitle = (TextView) findViewById(R.id.list_name);
@@ -216,6 +218,8 @@ public class SingleListActivity extends AppCompatActivity {
 
         final TextView listDesc = (TextView) findViewById(R.id.list_desc);
         listDesc.setText(list.getDescription());
+
+        taskList = new ArrayList<>();
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.tasks_list);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -270,6 +274,8 @@ public class SingleListActivity extends AppCompatActivity {
                 final EditText mtaskname = (EditText) mview.findViewById(R.id.taskname_edit);
                 final EditText mtaskdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createTsk);
+                mBuilder.setView(mview);
+                final AlertDialog dialog = mBuilder.create();
 
                 addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -284,6 +290,7 @@ public class SingleListActivity extends AppCompatActivity {
                             } else {
                                 saveTask(mtaskname.getText().toString(), mtaskdesc.getText().toString());
                             }
+                            dialog.dismiss();
                         }else{
                             Toast.makeText(SingleListActivity.this,
                                     "Please name the list.",
@@ -293,8 +300,6 @@ public class SingleListActivity extends AppCompatActivity {
                     }
                 });
 
-                mBuilder.setView(mview);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
                 break;
 /*
