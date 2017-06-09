@@ -155,7 +155,7 @@ public class MoveTaskActivity extends AppCompatActivity {
                 } else {
                     ListofTasks listc = boardsList.get(position);
                     Toast.makeText(view.getContext(), "Added " + task.getName() + " to " + title.getText() + "!", Toast.LENGTH_SHORT).show();
-                    saveTask(task.getName(), task.getDescription(), listc);
+                    moveTask(listc);
                     // Deletes? vv
                     //mDatabase.child(root).child("lists").child(list.getKey()).child(task.getKey()).removeValue();
 
@@ -175,30 +175,17 @@ public class MoveTaskActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-    private void saveTask(String name, String desc, ListofTasks listc) {
+    private void moveTask(ListofTasks listc) {
         //second section
         //save it to the firebase db
-        String key = mDatabase.child(root).child("tasks").push().getKey();
-        String updateKey = mDatabase.child(root).child(board.getBoardKey()).child("updates").push().getKey();
+        mDatabase.child(root).child("tasks").child(task.getKey()).child("list").
+                setValue(listc.getKey());
 
-        Task task2 = new Task();
-        task2.setKey(key);
-        task2.setName(name);
-        task2.setBoard(board.getBoardKey());
-        task2.setDescription(desc);
-        task2.setList(listc.getKey());
+        mDatabase.child(root).child("lists").child(board.getBoardKey()).child(listc.getKey()).
+                child("tasks").child(task.getKey()).setValue(true);
 
-        String updateText = ("Task: " + name + " added to List: " + listc.getName());
+        String updateText = ("Task:" + task.getName() + " moved to List:" + listc.getName());
         update(updateText);
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/tasks/" + key, task.toFirebaseObject());
-        mDatabase.updateChildren(childUpdates);
-
-        mDatabase.child(root).child("lists").child(board.getBoardKey()).child(listc.getKey()).child("tasks").child(key).setValue(true);
 
     }
 

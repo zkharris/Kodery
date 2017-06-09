@@ -120,6 +120,8 @@ public class SingleTaskActivity extends AppCompatActivity {
             }
         }
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         fatask = this;
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffc2a2")));
@@ -190,14 +192,15 @@ public class SingleTaskActivity extends AppCompatActivity {
                 AlertDialog dialog = mBuilder.create();
                 dialog.show();*/
 
+                // remove it from list
+                mDatabase.child(root).child("lists").child(board.getBoardKey()).
+                        child(list.getKey()).child("tasks").child(task.getKey()).removeValue();
+
                 Intent i = new Intent(this, MoveTaskActivity.class);
                 i.putExtra("board", board);
                 i.putExtra("task", task);
                 i.putExtra("list", list);
                 SingleTaskActivity.this.startActivity(i);
-
-
-
 
                 break;
         }
