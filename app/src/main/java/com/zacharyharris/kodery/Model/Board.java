@@ -1,6 +1,7 @@
 package com.zacharyharris.kodery.Model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Board implements Serializable {
@@ -9,7 +10,8 @@ public class Board implements Serializable {
     public String owner;
     public String ownerUid;
     public String boardKey;
-    private HashMap<String, Object> peeps;
+    public String color;
+    public ArrayList<String> admins;
 
     public Board(){}
 
@@ -29,9 +31,15 @@ public class Board implements Serializable {
 
     public void setBoardKey(String boardKey) { this.boardKey = boardKey; }
 
-    public HashMap<String, Object> getPeeps() {
-        return peeps;
-    }
+    public String getColor() { return color; }
+
+    public void setColor(String color) { this.color = color; }
+
+    public ArrayList<String> getAdmins() { return admins; }
+
+    public void addAdmin(String admin) { this.admins.add(admin); }
+
+    public void removeAdmin(String admin) { this.admins.remove(admin); }
 
     public HashMap<String,String> toFirebaseObject() {
         HashMap<String, String> board = new HashMap<>();
@@ -39,6 +47,7 @@ public class Board implements Serializable {
         board.put("owner", owner);
         board.put("ownerUid", ownerUid);
         board.put("boardKey", boardKey);
+        board.put("color", color);
 
         return board;
     }

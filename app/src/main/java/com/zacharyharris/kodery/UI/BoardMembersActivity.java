@@ -23,11 +23,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
+import com.zacharyharris.kodery.Model.Channel;
 import com.zacharyharris.kodery.Model.Task;
+import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.R;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BoardMembersActivity extends AppCompatActivity {
 
@@ -38,10 +44,12 @@ public class BoardMembersActivity extends AppCompatActivity {
 
     private Board board;
     private ArrayList<User> memberList;
-    private boolean addMembers;
+    private boolean addMembersToTask;
+    private boolean addMembersToChannel;
     private Task task;
     public User owner;
     private DatabaseReference mDatabase;
+    private Channel channel;
 
     class RecycleAdapter extends RecyclerView.Adapter {
 
@@ -87,13 +95,18 @@ public class BoardMembersActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "Clicked user is " + memberList.get(position));
-                if(addMembers) {
+                if(addMembersToTask) {
                     addTaskMembers(task, memberList.get(position));
+                }
+                if(addMembersToChannel){
+                    addChannelMembers(channel, memberList.get(position));
                 }
 
             }
         }
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +117,12 @@ public class BoardMembersActivity extends AppCompatActivity {
             Bundle extras = getIntent().getExtras();
             board = (Board)extras.get("board");
             task = (Task)extras.get("task");
+            channel = (Channel)extras.get("channel");
             if (task != null) {
-                addMembers = true;
+                addMembersToTask = true;
+            }
+            if (channel != null) {
+                addMembersToChannel = true;
             }
         }
 
@@ -187,10 +204,43 @@ public class BoardMembersActivity extends AppCompatActivity {
 
     }
 
+    private void makeAdmin(User user){
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).child("admins").
+                child(user.getUid()).setValue(true);
+
+        board.addAdmin(user.getUid());
+
+        String updateText = (user.getUsername() + " is now an Admin");
+        update(updateText);
+    }
+
+    private void update(String updateText) {
+        String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
+
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Log.w(TAG, currentDateTimeString);
+
+        Update update = new Update();
+        update.setText(updateText);
+        update.setBoard(board.getBoardKey());
+        update.setKey(key);
+        update.setDate(currentDateTimeString);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
+    }
+
+
     private void addTaskMembers(Task task, User user) {
         mDatabase.child(root).child("tasks").child(task.getKey()).child("members").
                 child(user.getUid()).setValue(true);
         //Intent to Single Task view
+    }
+
+    private void addChannelMembers(Channel channel, User user) {
+        mDatabase.child(root).child("channels").child(board.getBoardKey()).child(channel.getKey())
+                .child("peeps").child(user.getUid()).setValue(true);
     }
 
     @Override
