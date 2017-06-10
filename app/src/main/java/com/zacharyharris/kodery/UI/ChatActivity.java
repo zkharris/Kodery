@@ -313,7 +313,7 @@ public class ChatActivity extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Channel channel = data.getValue(Channel.class);
                     if (channel.getType().equals("private") && data.child("peeps").
-                            child(mFirebaseUser.getUid()) != null) {
+                            child(mFirebaseUser.getUid()).getValue() != null) {
                         channelList.add(channel);
                     }
                     if(channel.getType().equals("public")) {
