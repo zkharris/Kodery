@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Channel generalchannel = new Channel();
         generalchannel.setName("general");
         generalchannel.setKey(generalKey);
+        generalchannel.setType("public");
 
         mDatabase.child(root).child("channels").child(board.getBoardKey()).child(generalKey).setValue(generalchannel);
     }

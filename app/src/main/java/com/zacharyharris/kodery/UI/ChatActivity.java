@@ -93,7 +93,7 @@ public class ChatActivity extends AppCompatActivity {
             viewHolder.position = position;
             Channel channel = channelList.get(position);
             ((SimpleItemViewHolder) holder).title.setText("#" + channel.getName());
-            if(channel.getExclusive().equals("yes")) {
+            if(channel.getType().equals("private")) {
                 ((SimpleItemViewHolder) holder).mCV.setCardBackgroundColor(Color.parseColor("#c6ffed"));
             }
 
@@ -312,7 +312,13 @@ public class ChatActivity extends AppCompatActivity {
                 channelList.clear();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Channel channel = data.getValue(Channel.class);
-                    channelList.add(channel);
+                    if (channel.getType().equals("private") && data.child("peeps").
+                            child(mFirebaseUser.getUid()) != null) {
+                        channelList.add(channel);
+                    }
+                    if(channel.getType().equals("public")) {
+                        channelList.add(channel);
+                    }
                 }
                 channelAdapter.notifyDataSetChanged();
             }
@@ -391,12 +397,17 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if(!mboardname.getText().toString().isEmpty()){
-                            saveChannel(mboardname.getText().toString(), mswitch.isChecked());
+                            if(mswitch.isChecked()) {
+                                savePublicChannel(mboardname.getText().toString());
+                            } else {
+                                savePrivateChannel(mboardname.getText().toString());
+                            }
                             Toast.makeText(ChatActivity.this,
                                     mboardname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                             //mswitch.isChecked();
+                            // check if admin if switch is set to private
                             // Get rid of the pop up go back to main activity
 
                         }else{
@@ -413,22 +424,36 @@ public class ChatActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void saveChannel(String name, Boolean exclusive) {
+    private void savePublicChannel(String name) {
         String key = mDatabase.child(root).child("channels").child(board.getBoardKey()).push().getKey();
 
         Channel channel = new Channel();
         channel.setName(name);
         channel.setKey(key);
-        if(exclusive) {
-            channel.setExclusive("yes");
-        } else{
-            channel.setExclusive("no");
-        }
+        channel.setType("public");
 
         Map<String, Object> channelUpdates = new HashMap<>();
         channelUpdates.put(root + "/channels/" + "/" + board.getBoardKey() + "/" +key,
                 channel.toFirebaseObject());
         mDatabase.updateChildren(channelUpdates);
 
+    }
+
+    private void savePrivateChannel(String name) {
+        String key = mDatabase.child(root).child("channels").child(board.getBoardKey()).
+                push().getKey();
+
+        Channel channel = new Channel();
+        channel.setName(name);
+        channel.setKey(key);
+        channel.setType("private");
+
+        Map<String, Object> channelUpdates = new HashMap<>();
+        channelUpdates.put(root + "/channels/" + board.getBoardKey() + "/" +key,
+                channel.toFirebaseObject());
+        mDatabase.updateChildren(channelUpdates);
+
+        mDatabase.child(root).child("channels").child(board.getBoardKey()).child(key).
+                child("peeps").child(mFirebaseUser.getUid()).setValue(true);
     }
 }

@@ -11,23 +11,28 @@ import java.util.Map;
 public class Channel implements Serializable {
 
     public String name;
+    public String description;
     public String key;
-    public String exclusive;
+    public String type;
     public Map<String, Object> messages = new HashMap<>();
 
-    public Channel() { exclusive = "no"; }
-
-    public String getExclusive() { return exclusive; }
-
-    public void setExclusive(String exclusive) { this.exclusive = exclusive;}
+    public Channel() {}
 
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
 
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
     public String getKey() { return key; }
 
     public void setKey(String key) { this.key = key; }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
 
     public Map<String, Object> getMessages() { return messages; }
 
@@ -36,8 +41,9 @@ public class Channel implements Serializable {
     public HashMap<String,String> toFirebaseObject() {
         HashMap<String, String> channel = new HashMap<>();
         channel.put("name", name);
+        channel.put("description", description);
         channel.put("key", key);
-        channel.put("exclusive", exclusive);
+        channel.put("type", type);
 
         return channel;
     }
