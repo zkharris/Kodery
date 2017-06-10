@@ -10,7 +10,7 @@ public class User{
     public String email;
     public String uid;
     public String photoURL;
-    public String companyName;
+    public String network;
 
     public User() {
         // Default constructer
@@ -32,9 +32,9 @@ public class User{
 
     public void setPhotoURL(String photoURL) { this.photoURL = photoURL; }
 
-    public String getCompanyName() { return companyName; }
+    public String getNetwork() { return network; }
 
-    public void setCompanyName(String companyName) { this.companyName = companyName; }
+    public void setNetwork(String network) { this.network = network; }
 
     public User(String username, String email, String uid, String photoURL) {
         this.username = username;

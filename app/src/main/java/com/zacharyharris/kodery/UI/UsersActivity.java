@@ -87,8 +87,8 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
             viewHolder.position = position;
             User user = userList.get(position);
             ((SimpleItemViewHolder) holder).username.setText(user.getUsername());
-            if(user.getCompanyName() != null) {
-                ((SimpleItemViewHolder) holder).compName.setText(user.getCompanyName());
+            if(user.getNetwork() != null) {
+                ((SimpleItemViewHolder) holder).compName.setText(user.getNetwork());
             } else {
                 ((SimpleItemViewHolder) holder).compName.setText(null);
             }

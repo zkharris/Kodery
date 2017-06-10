@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     ArrayList<Board> boardsList;
 
     private static final String root = "testRoot";
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // store user into database
-        User currentUser = new User(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(),
+        currentUser = new User(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(),
                 mFirebaseUser.getUid(), mFirebaseUser.getPhotoUrl().toString());
 
         mDatabase.child(root).child("users").child(mFirebaseUser.getUid()).setValue(currentUser);
@@ -296,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                     mCompName.getText()+" added!",
                                     Toast.LENGTH_SHORT).show();
                             //Add save here
+                            saveNetwork(mCompName.getText().toString());
                             dialog.dismiss();
                         } else{
                             Toast.makeText(MainActivity.this,
@@ -337,6 +339,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void saveNetwork(String name) {
+        mDatabase.child(root).child("users").child(mFirebaseUser.getUid()).child("network")
+                .setValue(name);
+
+        currentUser.setNetwork(name);
     }
 
     public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
