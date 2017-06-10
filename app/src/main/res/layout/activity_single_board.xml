@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#ddf3ff"
     android:id="@+id/singboard_ll">
 
     <!-- This will appear when the user presses on a board from the main activity it will let display all the updates

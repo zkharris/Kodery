@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.content.Intent;
@@ -23,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -183,14 +186,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 */
     }
 
-    private void saveBoard(String name) {
+    private void saveBoard(String name, String hc) {
         String key = mDatabase.child("board").push().getKey();
+
+        Log.d(TAG, "saveBoard: "+hc);
 
         Board board = new Board();
         board.setName(name);
         board.setOwner(mFirebaseUser.getDisplayName());
         board.setBoardKey(key);
         board.setOwnerUid(mFirebaseUser.getUid());
+        //board.setHc(hc);
 
         Map<String, Object> boardUpdates = new HashMap<>();
         boardUpdates.put(root + "/boards/" + key, board.toFirebaseObject());
@@ -287,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 final EditText mCompName = (EditText) mview.findViewById(R.id.tag_popup_edit);
                 TextView mtitlep = (TextView) mview.findViewById(R.id.tag_popup_title);
                 Button saveupdate = (Button) mview.findViewById(R.id.tag_popup_button);
+
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
 
@@ -315,14 +322,48 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 final View myview = getLayoutInflater().inflate(R.layout.create_board_popup, null);
                 final EditText mboardname = (EditText) myview.findViewById(R.id.boardnme_edit);
                 Button addleboard = (Button) myview.findViewById(R.id.createB);
+
+                RadioGroup mRG = (RadioGroup) myview.findViewById(R.id.color_radio_group);
+                final int radioButtonid = mRG.getCheckedRadioButtonId();
+                final RadioButton purpRB = (RadioButton) myview.findViewById(R.id.purp_b);
+                final RadioButton blueRB = (RadioButton) myview.findViewById(R.id.blue_b);
+                final RadioButton greenRB = (RadioButton) myview.findViewById(R.id.green_b);
+                final RadioButton yellRB = (RadioButton) myview.findViewById(R.id.yell_b);
+                final RadioButton orngRB = (RadioButton) myview.findViewById(R.id.orng_b);
+                final RadioButton redRB = (RadioButton) myview.findViewById(R.id.red_b);
+
                 myBuilder.setView(myview);
                 final AlertDialog mydialog = myBuilder.create();
+                //Log.d(TAG, "onOptionsItemSelected: "+HC);
 
                 addleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if(!mboardname.getText().toString().isEmpty()){
-                            saveBoard(mboardname.getText().toString());
+                            if (purpRB.isChecked()) {
+                                Log.d(TAG, "onClick: purple");
+                                saveBoard(mboardname.getText().toString(), "#f693ff");
+
+                            }else if(blueRB.isChecked()){
+                                Log.d(TAG, "onClick: blue");
+                                saveBoard(mboardname.getText().toString(), "#93d9ff");
+
+                            }else if(greenRB.isChecked()){
+                                Log.d(TAG, "onClick: green");
+                                saveBoard(mboardname.getText().toString(), "#abe9a1");
+
+                            }else if(yellRB.isChecked()){
+                                Log.d(TAG, "onClick: yellow");
+                                saveBoard(mboardname.getText().toString(), "#fff371");
+
+                            }else if(orngRB.isChecked()){
+                                Log.d(TAG, "onClick: orange");
+                                saveBoard(mboardname.getText().toString(), "#ff964c");
+
+                            }else /*if(radioButtonid==R.id.red_b)*/{
+                                Log.d(TAG, "onClick: red");
+                                saveBoard(mboardname.getText().toString(), "#ff7a75");
+                            }
                             Toast.makeText(MainActivity.this,
                                     mboardname.getText()+" created!",
                                     Toast.LENGTH_SHORT).show();
@@ -371,6 +412,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.mBoard.setText(boardsList.get(position).getName());
             holder.position = position;
+            //if(!boardsList.get(position).getHc().equals("nocolor")){
+            //    holder.mCV.setCardBackgroundColor(Color.parseColor(boardsList.get(position).getHc()));
+            //}else{
+            //    Log.d(TAG, "onBindViewHolder: "+boardsList.get(position).getName()+" "+boardsList.get(position).getHc());
+            //}
         }
 
 
@@ -383,12 +429,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             public TextView mBoard;
             public int position;
+            CardView mCV;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
                 itemView.setOnLongClickListener(this);
                 mBoard =(TextView) itemView.findViewById(board);
+                mCV = (CardView) itemView.findViewById(R.id.board_cv);
             }
 
             @Override
@@ -507,12 +555,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         // Delete channels
         mDatabase.child(root).child("channels").child(board.getBoardKey()).removeValue();
-
         mDatabase.child(root).child("boards").child(board.getBoardKey()).removeValue();
         mDatabase.child(root).child("updates").child(board.getBoardKey()).removeValue();
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
 
     }
 

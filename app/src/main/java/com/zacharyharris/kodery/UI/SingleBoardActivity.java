@@ -245,7 +245,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         listoftasks.setName(name);
         listoftasks.setDescription(desc);
 
-        String updateText = ("List: " + name + " added");
+        String updateText = ("Added List: " + name);
         update(updateText);
 
         Map<String, Object> childUpdates = new HashMap<>();

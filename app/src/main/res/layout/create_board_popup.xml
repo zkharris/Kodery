@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,6 +30,72 @@
             android:paddingTop="10dp"
             android:textAlignment="viewStart"
             android:textSize="18sp" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:layout_marginLeft="15dp"
+            android:id="@+id/color_radio_group">
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/purp_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:buttonTint="#f693ff"
+                android:checked="true">
+
+            </android.support.v7.widget.AppCompatRadioButton>
+
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/blue_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:buttonTint="#93d9ff">
+
+            </android.support.v7.widget.AppCompatRadioButton>
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/green_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:buttonTint="#abe9a1">
+
+            </android.support.v7.widget.AppCompatRadioButton>
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/yell_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:buttonTint="#fff371">
+
+            </android.support.v7.widget.AppCompatRadioButton>
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/orng_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:buttonTint="#ff964c">
+
+            </android.support.v7.widget.AppCompatRadioButton>
+
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/red_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:buttonTint="#ff7a75">
+
+            </android.support.v7.widget.AppCompatRadioButton>
+
+        </RadioGroup>
 
         <Button
             android:id="@+id/createB"

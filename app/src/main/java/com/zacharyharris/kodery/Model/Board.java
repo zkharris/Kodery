@@ -9,9 +9,14 @@ public class Board implements Serializable {
     public String owner;
     public String ownerUid;
     public String boardKey;
+    //public String hc;
     private HashMap<String, Object> peeps;
 
     public Board(){}
+
+    //public String getHc() { return hc; }
+
+    //public void setHc(String hc) { this.hc = hc;}
 
     public String getName() { return  name; }
 
@@ -39,6 +44,7 @@ public class Board implements Serializable {
         board.put("owner", owner);
         board.put("ownerUid", ownerUid);
         board.put("boardKey", boardKey);
+        //board.put("HC", hc);
 
         return board;
     }

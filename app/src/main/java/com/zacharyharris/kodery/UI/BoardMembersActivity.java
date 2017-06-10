@@ -1,22 +1,33 @@
 package com.zacharyharris.kodery.UI;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.appindexing.Action;
+import com.google.firebase.appindexing.FirebaseUserActions;
+import com.google.firebase.appindexing.builders.Actions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,6 +54,32 @@ public class BoardMembersActivity extends AppCompatActivity {
     public User owner;
     private DatabaseReference mDatabase;
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        return Actions.newView("BoardMembers", "http://[ENTER-YOUR-URL-HERE]");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        FirebaseUserActions.getInstance().start(getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        FirebaseUserActions.getInstance().end(getIndexApiAction());
+        super.onStop();
+    }
+
     class RecycleAdapter extends RecyclerView.Adapter {
 
         @Override
@@ -54,16 +91,16 @@ public class BoardMembersActivity extends AppCompatActivity {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
-            BoardMembersActivity.RecycleAdapter.SimpleItemViewHolder pvh = new BoardMembersActivity.RecycleAdapter.SimpleItemViewHolder(v);
+            SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
             return pvh;
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            BoardMembersActivity.RecycleAdapter.SimpleItemViewHolder viewHolder = (BoardMembersActivity.RecycleAdapter.SimpleItemViewHolder) holder;
+            SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
             viewHolder.position = position;
             User user = memberList.get(position);
-            ((BoardMembersActivity.RecycleAdapter.SimpleItemViewHolder) holder).title.setText(user.getUsername());
+            ((SimpleItemViewHolder) holder).title.setText(user.getUsername());
             Glide.with(BoardMembersActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
             if(user.getUid().equals(board.getOwnerUid())) {
                 // set an icon on the item user
@@ -91,6 +128,106 @@ public class BoardMembersActivity extends AppCompatActivity {
                     addTaskMembers(task, memberList.get(position));
                 }
 
+                AlertDialog.Builder myBuilder = new AlertDialog.Builder(BoardMembersActivity.this);
+                final View myview = getLayoutInflater().inflate(R.layout.memberopt_popup, null);
+                TextView mTV = (TextView) myview.findViewById(R.id.question_title);
+                TextView mTVs = (TextView) myview.findViewById(R.id.question_text);
+                Button makeAd = (Button) myview.findViewById(R.id.make_ans);
+                Button demoteAd = (Button) myview.findViewById(R.id.demote_ans);
+                Button removeM = (Button) myview.findViewById(R.id.remove_ans);
+                mTV.setText("Actions for "+memberList.get(position).getUsername());
+                mTVs.setText("Are you sure?");
+
+                myBuilder.setView(myview);
+                final AlertDialog mydialog = myBuilder.create();
+
+                makeAd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast t = Toast.makeText(v.getContext(),
+                                memberList.get(position).getUsername()+" is now an Admin.",
+                                Toast.LENGTH_LONG);
+                        LinearLayout layout = (LinearLayout) t.getView();
+                        if (layout.getChildCount() > 0) {
+                            TextView tv = (TextView) layout.getChildAt(0);
+                            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                        }
+                        t.show();
+                        mydialog.dismiss();
+                    }
+                });
+
+                demoteAd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast t = Toast.makeText(v.getContext(),
+                                memberList.get(position).getUsername()+" is no longer an Admin.",
+                                Toast.LENGTH_LONG);
+                        LinearLayout layout = (LinearLayout) t.getView();
+                        if (layout.getChildCount() > 0) {
+                            TextView tv = (TextView) layout.getChildAt(0);
+                            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                        }
+                        t.show();
+                        mydialog.dismiss();
+                    }
+                });
+
+                removeM.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        AlertDialog.Builder my2Builder = new AlertDialog.Builder(BoardMembersActivity.this);
+                        final View my2view = getLayoutInflater().inflate(R.layout.yes_no_popup, null);
+                        TextView mTV = (TextView) my2view.findViewById(R.id.question_title);
+                        TextView mTVs = (TextView) my2view.findViewById(R.id.question_text);
+                        Button no = (Button) my2view.findViewById(R.id.no_ans);
+                        Button yes = (Button) my2view.findViewById(R.id.yes_ans);
+                        mTV.setText("Removing "+memberList.get(position).getUsername()+"...");
+                        mTVs.setText("Are you sure?");
+
+                        my2Builder.setView(my2view);
+                        final AlertDialog my2dialog = my2Builder.create();
+
+                        yes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //memberList.get(position).getUsername()+" removed from "+board.getName()+"."
+                                Toast t = Toast.makeText(v.getContext(),
+                                        memberList.get(position).getUsername()+" removed from "+board.getName()+".",
+                                        Toast.LENGTH_LONG);
+                                LinearLayout layout = (LinearLayout) t.getView();
+                                if (layout.getChildCount() > 0) {
+                                    TextView tv = (TextView) layout.getChildAt(0);
+                                    tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                }
+                                t.show();
+                                my2dialog.dismiss();
+                            }
+                        });
+
+                        no.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                my2dialog.dismiss();
+                            }
+                        });
+
+
+
+                        my2dialog.show();
+                        mydialog.dismiss();
+
+
+                    }
+                });
+
+                mydialog.show();
+
+
+
+
             }
         }
     }
@@ -114,7 +251,7 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         memberList = new ArrayList<>();
 
-        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b2cefe")));
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.memberRecycleView);
@@ -196,7 +333,7 @@ public class BoardMembersActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.add_item, menu);
+        getMenuInflater().inflate(R.menu.members_add_item, menu);
         return true;
     }
 
@@ -212,7 +349,40 @@ public class BoardMembersActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, UsersActivity.class);
                 intent.putExtra("board", board);
                 startActivity(intent);
+                break;
 
+            case R.id.leave_item:
+                AlertDialog.Builder myBuilder = new AlertDialog.Builder(BoardMembersActivity.this);
+                final View myview = getLayoutInflater().inflate(R.layout.yes_no_popup, null);
+                TextView mTV = (TextView) myview.findViewById(R.id.question_title);
+                TextView mTVs = (TextView) myview.findViewById(R.id.question_text);
+                Button no = (Button) myview.findViewById(R.id.no_ans);
+                Button yes = (Button) myview.findViewById(R.id.yes_ans);
+                mTV.setText("Leaving "+ board.getName()+"...");
+                mTVs.setText("Are you sure?");
+
+                myBuilder.setView(myview);
+                final AlertDialog mydialog = myBuilder.create();
+
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(BoardMembersActivity.this, "You left "+board.getName()+".", Toast.LENGTH_SHORT).show();
+                        mydialog.dismiss();
+                    }
+                });
+
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mydialog.dismiss();
+                    }
+                });
+
+
+
+
+                mydialog.show();
         }
 
         return super.onOptionsItemSelected(item);
