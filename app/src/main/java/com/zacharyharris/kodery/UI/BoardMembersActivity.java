@@ -125,9 +125,14 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         adapter.notifyDataSetChanged();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        findOwner(board.getOwnerUid());
+        loadFeed();
+        Log.w(TAG, String.valueOf(memberList));
+    }
 
+    private void loadFeed() {
         // Peep reference
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -141,8 +146,6 @@ public class BoardMembersActivity extends AppCompatActivity {
                 Log.w(TAG, "peepReference:onCancelled", databaseError.toException());
             }
         });
-
-        findOwner(board.getOwnerUid());
     }
 
     private void findUser(String peepUid) {
@@ -172,7 +175,9 @@ public class BoardMembersActivity extends AppCompatActivity {
                 User owner = dataSnapshot.getValue(User.class);
                 Log.w(TAG, owner.getEmail());
                 memberList.add(owner);
+                adapter.notifyDataSetChanged();
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -183,7 +188,8 @@ public class BoardMembersActivity extends AppCompatActivity {
     }
 
     private void addTaskMembers(Task task, User user) {
-        mDatabase.child(root).child("tasks").child(task.getKey()).child("members").child(user.getUid()).setValue(true);
+        mDatabase.child(root).child("tasks").child(task.getKey()).child("members").
+                child(user.getUid()).setValue(true);
         //Intent to Single Task view
     }
 
