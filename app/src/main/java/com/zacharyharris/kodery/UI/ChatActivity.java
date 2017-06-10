@@ -397,7 +397,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if(!mboardname.getText().toString().isEmpty()){
-                            if(mswitch.isChecked()) {
+                            if(!mswitch.isChecked()) {
                                 savePublicChannel(mboardname.getText().toString());
                             } else {
                                 savePrivateChannel(mboardname.getText().toString());

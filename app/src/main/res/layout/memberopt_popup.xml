@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="10dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/question_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="lol, u sure bro?"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:background="@color/Grey"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/question_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="lol, u sure bro?"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3.0"
+        android:layout_margin="5dp">
+
+        <Button
+            android:id="@+id/make_ans"
+            android:layout_weight="1"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/holo_purple"
+            android:text="Make Admin"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:layout_marginRight="2.5dp"/>
+
+        <Button
+            android:id="@+id/demote_ans"
+            android:layout_weight="1"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/holo_green_light"
+            android:text="Demote"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:layout_marginRight="2.5dp"
+            android:layout_marginLeft="2.5dp"/>
+
+        <Button
+            android:id="@+id/remove_ans"
+            android:layout_weight="1"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/holo_red_light"
+            android:text="Remove"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:layout_marginLeft="2.5dp"/>
+    </LinearLayout>
+
+
+</LinearLayout>

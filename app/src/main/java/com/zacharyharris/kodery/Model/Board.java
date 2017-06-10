@@ -12,8 +12,14 @@ public class Board implements Serializable {
     public String boardKey;
     public String color;
     public ArrayList<String> admins;
+    //public String hc;
+    private HashMap<String, Object> peeps;
 
     public Board(){}
+
+    //public String getHc() { return hc; }
+
+    //public void setHc(String hc) { this.hc = hc;}
 
     public String getName() { return  name; }
 
@@ -48,6 +54,7 @@ public class Board implements Serializable {
         board.put("ownerUid", ownerUid);
         board.put("boardKey", boardKey);
         board.put("color", color);
+        //board.put("HC", hc);
 
         return board;
     }

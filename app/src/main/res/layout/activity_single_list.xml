@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="1"
-    android:background="#d4ffce">
+    android:weightSum="1">
     <!--android:background="#d4ffce">-->
 
     <!-- This will appear when a user presses on a list in a board, It will just have a recycler view of tasks -->
