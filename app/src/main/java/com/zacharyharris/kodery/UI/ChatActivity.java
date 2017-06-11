@@ -331,7 +331,7 @@ public class ChatActivity extends AppCompatActivity {
                         mgr.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                     } else {
                         Toast.makeText(v.getContext(), "Please select a channel",
-                                Toast.LENGTH_SHORT).show();
+                                Toast.LENGTH_LONG).show();
                     }
                 }
                 return handled;
@@ -436,13 +436,27 @@ public class ChatActivity extends AppCompatActivity {
                         if(!mboardname.getText().toString().isEmpty()){
                             if(!mswitch.isChecked()) {
                                 savePublicChannel(mboardname.getText().toString());
+                                Toast.makeText(ChatActivity.this,
+                                        mboardname.getText()+" created!",
+                                        Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
                             } else {
-                                savePrivateChannel(mboardname.getText().toString());
+                                if(mFirebaseUser.getUid().equals(board.getOwnerUid()) ||
+                                        board.getAdmins().containsKey(mFirebaseUser.getUid())) {
+                                    savePrivateChannel(mboardname.getText().toString());
+                                    Toast.makeText(ChatActivity.this,
+                                            mboardname.getText()+" created!",
+                                            Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+
+                                } else {
+                                    Toast.makeText(ChatActivity.this,
+                                            "Only board owners and admins can make a private channel",
+                                            Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                }
                             }
-                            Toast.makeText(ChatActivity.this,
-                                    mboardname.getText()+" created!",
-                                    Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                            
                             //mswitch.isChecked();
                             // check if admin if switch is set to private
                             // Get rid of the pop up go back to main activity
