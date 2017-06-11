@@ -31,7 +31,7 @@ android:layout_marginLeft="5dp">
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:weightSum="1">
 
         <TextView
@@ -41,6 +41,20 @@ android:layout_marginLeft="5dp">
             android:textColor="@android:color/black"
             android:text="@string/profile_name"
             android:textSize="18sp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/owner_badge"
+            android:src="@drawable/ic_star_black_48dp"/>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/admin_badge"
+            android:src="@drawable/ic_star_border_black_48dp"/>
 
     </LinearLayout>
 
