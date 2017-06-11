@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         board.setOwner(mFirebaseUser.getDisplayName());
         board.setBoardKey(key);
         board.setOwnerUid(mFirebaseUser.getUid());
-        //board.setHc(hc);
+        board.setColor(hc);
 
         Map<String, Object> boardUpdates = new HashMap<>();
         boardUpdates.put(root + "/boards/" + key, board.toFirebaseObject());

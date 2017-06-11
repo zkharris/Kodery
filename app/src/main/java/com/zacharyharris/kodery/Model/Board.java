@@ -11,7 +11,7 @@ public class Board implements Serializable {
     public String ownerUid;
     public String boardKey;
     public String color;
-    public ArrayList<String> admins;
+    public HashMap<String, Object> admins = new HashMap<>();
     //public String hc;
     private HashMap<String, Object> peeps;
 
@@ -41,9 +41,9 @@ public class Board implements Serializable {
 
     public void setColor(String color) { this.color = color; }
 
-    public ArrayList<String> getAdmins() { return admins; }
+    public HashMap<String, Object> getAdmins() { return admins; }
 
-    public void addAdmin(String admin) { this.admins.add(admin); }
+    public void addAdmin(String admin) { this.admins.put(admin, true); }
 
     public void removeAdmin(String admin) { this.admins.remove(admin); }
 
