@@ -132,21 +132,21 @@ public class ChatActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(tap_num==1){
+                        if (tap_num == 1) {
                             Log.w(TAG, "clicked channel:" + channelList.get(position).getName());
                             currChannel = channelList.get(position);
-                            Log.w(TAG,  "current channel:" + currChannel.getName());
+                            Log.w(TAG, "current channel:" + currChannel.getName());
                             channelFeed();
 
                             android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
-                            if(channelList.get(position).getType().equals("public")) {
+                            if (channelList.get(position).getType().equals("public")) {
                                 mActionBar.setTitle(board.getName() + " #" + channelList.get(position).getName() + " Public Chat");
-                            } else{
+                            } else {
                                 mActionBar.setTitle(board.getName() + " #" + channelList.get(position).getName() + " Private Chat");
                             }
 
-                        } else if (tap_num==2){
-                            if(channelList.get(position).getType().equals("private")) {
+                        } else if (tap_num == 2) {
+                            if (channelList.get(position).getType().equals("private")) {
                                 //Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
 
                                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(ChatActivity.this);
@@ -176,35 +176,34 @@ public class ChatActivity extends AppCompatActivity {
                             }
 
                         }
-                        tap_num=0;
+                        tap_num = 0;
                     }
                 }, 500);
             }
 
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(ChatActivity.this, "long clicked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ChatActivity.this, "long clicked", Toast.LENGTH_SHORT).show();
 
                 /* THIS TAKES YOU TO EDIT POPUP FOR CHANNEL */
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(ChatActivity.this);
-                View mview = getLayoutInflater().inflate(R.layout.edit_channel, null);
-                final EditText mboardname = (EditText) mview.findViewById(R.id.Channelname);
-                final TextView mtitle = (TextView) mview.findViewById(R.id.edit_channel_tag);
-                Button saveleboard = (Button) mview.findViewById(R.id.saveChannel);
-                Button delboard = (Button) mview.findViewById(R.id.delChannel);
-                final Channel mchannel= channelList.get(position);
-                mtitle.setText("Rename "+mchannel.getName());
-                mboardname.setText(mchannel.getName());
-                mBuilder.setView(mview);
-                final AlertDialog dialog = mBuilder.create();
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(ChatActivity.this);
+                    View mview = getLayoutInflater().inflate(R.layout.edit_channel, null);
+                    final EditText mboardname = (EditText) mview.findViewById(R.id.Channelname);
+                    final TextView mtitle = (TextView) mview.findViewById(R.id.edit_channel_tag);
+                    Button saveleboard = (Button) mview.findViewById(R.id.saveChannel);
+                    Button delboard = (Button) mview.findViewById(R.id.delChannel);
+                    final Channel mchannel = channelList.get(position);
+                    mtitle.setText("Rename " + mchannel.getName());
+                    mboardname.setText(mchannel.getName());
+                    mBuilder.setView(mview);
+                    final AlertDialog dialog = mBuilder.create();
 
-                saveleboard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                            if(mFirebaseUser.getUid().equals(board.getOwnerUid()) ||
+                    saveleboard.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mFirebaseUser.getUid().equals(board.getOwnerUid()) ||
                                     board.getAdmins().containsKey(mFirebaseUser.getUid())) {
-                                if(!mboardname.getText().toString().isEmpty()
+                                if (!mboardname.getText().toString().isEmpty()
                                         || !(mboardname.getText().toString().equals(mchannel.getName()))) {
                                     Toast.makeText(ChatActivity.this,
                                             mchannel.getName() + " renamed to " + mboardname.getText() + "!",
@@ -212,7 +211,7 @@ public class ChatActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                     editChannel(channelList.get(position), mboardname.getText().toString());
                                     // Get rid of the pop up go back to main activity
-                                } else{
+                                } else {
                                     Toast.makeText(ChatActivity.this,
                                             "Please rename the channel.",
                                             Toast.LENGTH_SHORT).show();
@@ -224,25 +223,33 @@ public class ChatActivity extends AppCompatActivity {
                                 dialog.dismiss();
                             }
                         }
-                });
+                    });
 
-                delboard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(v.getContext(),
-                                "#"+mchannel.getName()+" deleted.",
-                                Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
+                    delboard.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mFirebaseUser.getUid().equals(board.getOwnerUid()) ||
+                                    board.getAdmins().containsKey(mFirebaseUser.getUid())) {
+                                Toast.makeText(v.getContext(),
+                                        "#" + mchannel.getName() + " deleted.",
+                                        Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                                deleteChannel(channelList.get(position));
+                            } else {
+                                Toast.makeText(ChatActivity.this,
+                                        "Only owners and admins can delete channels",
+                                        Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
+                            }
 
-                    }
-                });
+                        }
+                    });
 
-                dialog.show();
+                    dialog.show();
 
-                return true;
+                    return true;
             }
         }
-
     }
 
     class MessageRecycleAdapter extends RecyclerView.Adapter {
@@ -625,6 +632,14 @@ public class ChatActivity extends AppCompatActivity {
             String updateText = ("Channel:" + channel.getName() + " renamed to " + name);
             update(updateText);
         }
+    }
+
+    private void deleteChannel(Channel channel){
+        mDatabase.child(root).child("channels").child(board.getBoardKey()).
+                child(channel.getKey()).removeValue();
+
+        String updateText = ("Channel:" + channel.getName() + " deleted");
+        update(updateText);
     }
 
     private void update(String updateText) {
