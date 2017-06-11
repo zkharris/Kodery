@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void saveBoard(String name, String hc) {
         String key = mDatabase.child("board").push().getKey();
 
-        Log.d(TAG, "saveBoard: "+hc);
+        //Log.d(TAG, "saveBoard: "+hc);
 
         Board board = new Board();
         board.setName(name);
@@ -200,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         board.setBoardKey(key);
         board.setOwnerUid(mFirebaseUser.getUid());
         board.setColor(hc);
+
+        Log.d(TAG, "saveBoard: "+board.getColor());
 
         Map<String, Object> boardUpdates = new HashMap<>();
         boardUpdates.put(root + "/boards/" + key, board.toFirebaseObject());
@@ -345,11 +347,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         if(!mboardname.getText().toString().isEmpty()){
                             if (purpRB.isChecked()) {
                                 Log.d(TAG, "onClick: purple");
-                                saveBoard(mboardname.getText().toString(), "#f693ff");
+                                saveBoard(mboardname.getText().toString(), "#d1afff");
 
                             }else if(blueRB.isChecked()){
                                 Log.d(TAG, "onClick: blue");
-                                saveBoard(mboardname.getText().toString(), "#93d9ff");
+                                saveBoard(mboardname.getText().toString(), "#b2cefe");
 
                             }else if(greenRB.isChecked()){
                                 Log.d(TAG, "onClick: green");
@@ -357,15 +359,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                             }else if(yellRB.isChecked()){
                                 Log.d(TAG, "onClick: yellow");
-                                saveBoard(mboardname.getText().toString(), "#fff371");
+                                saveBoard(mboardname.getText().toString(), "#f6ff4e");
 
                             }else if(orngRB.isChecked()){
                                 Log.d(TAG, "onClick: orange");
-                                saveBoard(mboardname.getText().toString(), "#ff964c");
+                                saveBoard(mboardname.getText().toString(), "#ffc2a2");
 
                             }else /*if(radioButtonid==R.id.red_b)*/{
                                 Log.d(TAG, "onClick: red");
-                                saveBoard(mboardname.getText().toString(), "#ff7a75");
+                                saveBoard(mboardname.getText().toString(), "#fd9995");
                             }
                             Toast.makeText(MainActivity.this,
                                     mboardname.getText()+" created!",
@@ -415,11 +417,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.mBoard.setText(boardsList.get(position).getName());
             holder.position = position;
-            //if(!boardsList.get(position).getHc().equals("nocolor")){
-            //    holder.mCV.setCardBackgroundColor(Color.parseColor(boardsList.get(position).getHc()));
-            //}else{
-            //    Log.d(TAG, "onBindViewHolder: "+boardsList.get(position).getName()+" "+boardsList.get(position).getHc());
-            //}
+            Log.d(TAG, "onBindViewHolder: color: "+boardsList.get(position).getColor());
+            //String str = boardsList.get(position).getColor();
+            //Color colorCV = new Color();
+            //colorCV.parseColor(str);
+            holder.mCV.setCardBackgroundColor(Color.parseColor(boardsList.get(position).getColor()));
         }
 
 

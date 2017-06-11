@@ -99,7 +99,7 @@ public class ChatActivity extends AppCompatActivity {
             Channel channel = channelList.get(position);
             ((SimpleItemViewHolder) holder).title.setText("#" + channel.getName());
             if(channel.getType().equals("private")) {
-                ((SimpleItemViewHolder) holder).mCV.setCardBackgroundColor(Color.parseColor("#c6ffed"));
+                ((SimpleItemViewHolder) holder).privC.setVisibility(View.VISIBLE);
             }
 
         }
@@ -107,14 +107,16 @@ public class ChatActivity extends AppCompatActivity {
         public final class SimpleItemViewHolder extends ViewHolder implements View.OnClickListener,View.OnLongClickListener {
             TextView title;
             int position;
-            CardView mCV;
+            //CardView mCV;
+            ImageView privC;
 
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
                 itemView.setOnLongClickListener(this);
                 title = (TextView) itemView.findViewById(R.id.channel_name);
-                mCV = (CardView) itemView.findViewById(R.id.channel_cards);
+                //mCV = (CardView) itemView.findViewById(R.id.channel_cards);
+                privC = (ImageView) itemView.findViewById(R.id.priv_channel);
             }
 
             @Override
@@ -289,7 +291,8 @@ public class ChatActivity extends AppCompatActivity {
         channelList = new ArrayList<>();
 
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
-        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b2cefe")));
+        ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
+        mActionBar.setBackgroundDrawable(mColor);
         mActionBar.setTitle(board.getName()+" Chats");
 /*
 

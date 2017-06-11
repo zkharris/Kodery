@@ -317,8 +317,9 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         memberList = new ArrayList<>();
 
-        ActionBar mActionBar = getSupportActionBar();
-        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b2cefe")));
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
+        mActionBar.setBackgroundDrawable(mColor);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.memberRecycleView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
