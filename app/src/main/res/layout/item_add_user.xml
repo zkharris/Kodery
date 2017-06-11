@@ -54,8 +54,8 @@
         <Button
             android:id="@+id/Add_friend"
             style="@android:style/Widget.Holo.Light.Button.Toggle"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="10dp"
             android:background="@drawable/ic_person_add_black_48dp"
