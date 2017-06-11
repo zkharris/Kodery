@@ -554,9 +554,14 @@ public class SingleBoardActivity extends AppCompatActivity {
                 tvn.setText(mupdate.getText());
                 String day="";
                 String time="";
+                String space = " ";
                 int i;
+                int j=0;
                 for(i=0; i<mupdate.getDate().length(); i++){
-                    if(i<mupdate.getDate().length()-11) {
+                    if(String.valueOf(mupdate.getDate().charAt(i)).equals(space)){
+                        j++;
+                    }
+                    if(j<3) {
                         day += mupdate.getDate().charAt(i);
                     } else{
                         time += mupdate.getDate().charAt(i);
