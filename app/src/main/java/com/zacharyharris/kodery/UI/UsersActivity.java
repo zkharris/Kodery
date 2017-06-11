@@ -1,5 +1,7 @@
 package com.zacharyharris.kodery.UI;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.SearchView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -169,6 +171,10 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
             Bundle extras = getIntent().getExtras();
             board = (Board)extras.get("board");
         }
+
+        android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
+        ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
+        mActionBar.setBackgroundDrawable(mColor);
     }
 
     @Override

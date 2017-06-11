@@ -124,7 +124,8 @@ public class SingleTaskActivity extends AppCompatActivity {
 
         fatask = this;
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
-        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffc2a2")));
+        ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
+        mActionBar.setBackgroundDrawable(mColor);
         mActionBar.setTitle(board.getName()+" > "+list.getName()+" > "+task.getName());
 
         Log.d(TAG, task.getName());

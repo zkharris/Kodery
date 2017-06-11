@@ -86,7 +86,8 @@ public class SingleBoardActivity extends AppCompatActivity {
             }
         }
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
-        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b2cefe")));
+        ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
+        mActionBar.setBackgroundDrawable(mColor);
         mActionBar.setTitle(board.getName());
 
 
@@ -190,6 +191,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                 final EditText mlistname = (EditText) mview.findViewById(R.id.listname_edit);
                 final EditText mlistdesc = (EditText) mview.findViewById(R.id.listdesc_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createLst);
+
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
 

@@ -69,7 +69,8 @@ public class MoveTaskActivity extends AppCompatActivity {
         }
 
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
-        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffc2a2")));
+        ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
+        mActionBar.setBackgroundDrawable(mColor);
         mActionBar.setTitle("Move "+task.getName()+" to...");
 
         boardsList = new ArrayList<>();

@@ -10,7 +10,7 @@ public class Board implements Serializable {
     public String owner;
     public String ownerUid;
     public String boardKey;
-    public String color;
+    public String color = "#ffffff";
     public HashMap<String, Object> admins = new HashMap<>();
     //public String hc;
     private HashMap<String, Object> peeps;
