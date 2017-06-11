@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     ArrayList<Board> boardsList;
 
     private static final String root = "testRoot";
+    private User currentUser;
 
 
     @Override
@@ -156,6 +157,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     Log.w(TAG, "user is new");
                     mDatabase.child(root).child("users").
                             child(mFirebaseUser.getUid()).setValue(newUser);
+                } else {
+                    DataSnapshot currUserRef = dataSnapshot.child(mFirebaseUser.getUid());
+                    currentUser = currUserRef.getValue(User.class);
                 }
 
             }
@@ -574,7 +578,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-        // Delete channels
+        // Delete channels, updates and board
         mDatabase.child(root).child("channels").child(board.getBoardKey()).removeValue();
         mDatabase.child(root).child("boards").child(board.getBoardKey()).removeValue();
         mDatabase.child(root).child("updates").child(board.getBoardKey()).removeValue();
