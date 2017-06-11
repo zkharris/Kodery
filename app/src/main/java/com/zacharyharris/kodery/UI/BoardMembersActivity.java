@@ -502,10 +502,12 @@ public class BoardMembersActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if(!mFirebaseUser.getUid().equals(board.getOwnerUid())) {
                             leaveBoard(mFirebaseUser);
-                            Toast.makeText(BoardMembersActivity.this, "You left " + board.getName() + ".",
+                            Toast.makeText(BoardMembersActivity.this,
+                                    "You left " + board.getName() + ".",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(BoardMembersActivity.this, "Board owners cannot leave their board",
+                            Toast.makeText(BoardMembersActivity.this,
+                                    "Board owners cannot leave their own board",
                                     Toast.LENGTH_SHORT).show();
                         }
                         mydialog.dismiss();
@@ -531,6 +533,9 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         String updateText = (mFirebaseUser.getDisplayName() + " has left the board");
         update(updateText);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private void kickUser(User user) {

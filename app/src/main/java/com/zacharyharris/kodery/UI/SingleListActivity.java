@@ -179,7 +179,7 @@ public class SingleListActivity extends AppCompatActivity {
                                 board.getAdmins().containsKey(mFirebaseUser.getUid())) {
                             Toast t = Toast.makeText(v.getContext(),
                                     mtaskname.getText() + " deleted.",
-                                    Toast.LENGTH_LONG);
+                                    Toast.LENGTH_SHORT);
                             LinearLayout layout = (LinearLayout) t.getView();
                             if (layout.getChildCount() > 0) {
                                 TextView tv = (TextView) layout.getChildAt(0);
@@ -199,7 +199,6 @@ public class SingleListActivity extends AppCompatActivity {
                                 tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
                             }
                             t.show();
-                            deleteTask(taskList.get(position));
                             dialog.dismiss();
                         }
 

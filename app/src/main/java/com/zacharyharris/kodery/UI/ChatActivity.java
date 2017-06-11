@@ -343,8 +343,27 @@ public class ChatActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        // set default channel to general
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        // Admins Feed
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                board.getAdmins().clear();
+                if(dataSnapshot.hasChild("admins")){
+                    for(DataSnapshot data : dataSnapshot.child("admins").getChildren()) {
+                        board.addAdmin(data.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
+            }
+        });
+
+        // Channel List
         database.getReference(root + "/channels/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -459,7 +478,7 @@ public class ChatActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
                             }
-                            
+
                             //mswitch.isChecked();
                             // check if admin if switch is set to private
                             // Get rid of the pop up go back to main activity
