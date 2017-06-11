@@ -326,18 +326,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 saveupdate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!mCompName.getText().toString().isEmpty()){
+                        if(!mCompName.getText().toString().isEmpty()) {
                             Toast.makeText(MainActivity.this,
-                                    mCompName.getText()+" added!",
+                                    mCompName.getText() + " added!",
                                     Toast.LENGTH_SHORT).show();
                             //Add save here
+                        }
                             saveNetwork(mCompName.getText().toString());
                             dialog.dismiss();
-                        } else{
-                            Toast.makeText(MainActivity.this,
-                                    "Please add your network.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+
                     }
                 });
                 dialog.show();
