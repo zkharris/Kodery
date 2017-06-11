@@ -59,20 +59,13 @@
 
         </LinearLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Switch
-                android:id="@+id/switchtog"
-                android:textOn="Private"
-                android:textOff="Public"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:switchTextAppearance="@style/TextAppearance.AppCompat.Button" />
-
-        </FrameLayout>
+        <ToggleButton
+            android:id="@+id/switchtog"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textOn="Private"
+            android:textOff="Public"
+            android:layout_gravity="center_horizontal"/>
 
     </LinearLayout>
 </ScrollView>

@@ -13,6 +13,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -426,7 +428,8 @@ public class ChatActivity extends AppCompatActivity {
                 View mview = getLayoutInflater().inflate(R.layout.create_channel_popup, null);
                 final EditText mboardname = (EditText) mview.findViewById(R.id.Channelname);
                 Button addleboard = (Button) mview.findViewById(R.id.createChannel);
-                final Switch mswitch = (Switch) mview.findViewById(R.id.switchtog);
+                final ToggleButton mswitch = (ToggleButton) mview.findViewById(R.id.switchtog);
+               // mswitch.set
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
 
