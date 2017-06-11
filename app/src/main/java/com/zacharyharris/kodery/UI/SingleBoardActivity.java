@@ -567,7 +567,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                         time += mupdate.getDate().charAt(i);
                     }
                 }
-                tvd.setText("Update on "+day+" at"+time+":");
+                tvd.setText(day+" at"+time+":");
 
                 mBuilderup.setView(mviewup);
                 AlertDialog dialog = mBuilderup.create();

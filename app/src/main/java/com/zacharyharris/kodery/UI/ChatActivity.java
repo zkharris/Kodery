@@ -45,13 +45,16 @@ import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.Channel;
 import com.zacharyharris.kodery.Model.Message;
+import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.R;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.LogRecord;
@@ -157,6 +160,8 @@ public class ChatActivity extends AppCompatActivity {
                                 memberrecyclerView.setAdapter(memberAdapter);
                                 memberAdapter.notifyDataSetChanged();
 
+                                loadMembers();
+
                                 mBuilder.setView(mview);
                                 final AlertDialog dialog = mBuilder.create();
 
@@ -196,19 +201,29 @@ public class ChatActivity extends AppCompatActivity {
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!mboardname.getText().toString().isEmpty()
-                                || !(mboardname.getText().toString().equals(mchannel.getName()))){
-                            Toast.makeText(ChatActivity.this,
-                                    mchannel.getName()+" renamed to "+mboardname.getText()+"!",
-                                    Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                            // Get rid of the pop up go back to main activity
-                        }else{
-                            Toast.makeText(ChatActivity.this,
-                                    "Please rename the channel.",
-                                    Toast.LENGTH_SHORT).show();
+
+                            if(mFirebaseUser.getUid().equals(board.getOwnerUid()) ||
+                                    board.getAdmins().containsKey(mFirebaseUser.getUid())) {
+                                if(!mboardname.getText().toString().isEmpty()
+                                        || !(mboardname.getText().toString().equals(mchannel.getName()))) {
+                                    Toast.makeText(ChatActivity.this,
+                                            mchannel.getName() + " renamed to " + mboardname.getText() + "!",
+                                            Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                    editChannel(channelList.get(position), mboardname.getText().toString());
+                                    // Get rid of the pop up go back to main activity
+                                } else{
+                                    Toast.makeText(ChatActivity.this,
+                                            "Please rename the channel.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(ChatActivity.this,
+                                        "Only owners and admins can edit channels",
+                                        Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
+                            }
                         }
-                    }
                 });
 
                 delboard.setOnClickListener(new View.OnClickListener() {
@@ -291,6 +306,7 @@ public class ChatActivity extends AppCompatActivity {
 
         messageList = new ArrayList<>();
         channelList = new ArrayList<>();
+        memberList = new ArrayList<>();
 
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
@@ -384,6 +400,65 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "getChannels:onCancelled", databaseError.toException());
+            }
+        });
+
+    }
+
+    private void loadMembers() {
+        // Member feed
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                memberList.clear();
+                findOwner(String.valueOf(dataSnapshot.child("ownerUid").getValue()));
+                DataSnapshot peepsRef = dataSnapshot.child("peeps");
+                for(DataSnapshot data : peepsRef.getChildren()) {
+                    findUser(String.valueOf(data.getKey()));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "memberFeed:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    private void findUser(String peepUid) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                memberList.add(user);
+                memberAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "findUser:onCancelled", databaseError.toException());
+
+            }
+        });
+    }
+
+    private void findOwner(String ownerUid) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User owner = dataSnapshot.getValue(User.class);
+                Log.w(TAG, owner.getEmail());
+                memberList.add(owner);
+                memberAdapter.notifyDataSetChanged();
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "findOwner:onCancelled", databaseError.toException());
             }
         });
     }
@@ -505,12 +580,17 @@ public class ChatActivity extends AppCompatActivity {
         channel.setKey(key);
         channel.setType("public");
 
+        String updateText = ("Channel:" + name + " created");
+        update(updateText);
+
         Map<String, Object> channelUpdates = new HashMap<>();
         channelUpdates.put(root + "/channels/" + "/" + board.getBoardKey() + "/" +key,
                 channel.toFirebaseObject());
         mDatabase.updateChildren(channelUpdates);
 
     }
+
+
 
     private void savePrivateChannel(String name) {
         String key = mDatabase.child(root).child("channels").child(board.getBoardKey()).
@@ -528,6 +608,40 @@ public class ChatActivity extends AppCompatActivity {
 
         mDatabase.child(root).child("channels").child(board.getBoardKey()).child(key).
                 child("peeps").child(mFirebaseUser.getUid()).setValue(true);
+    }
+
+    private void editChannel(Channel channel, String name) {
+        Channel newChannel = new Channel();
+        channel.setName(name);
+        channel.setKey(channel.getKey());
+        channel.setType(channel.getType());
+
+        Map<String, Object> channelUpdates = new HashMap<>();
+        channelUpdates.put(root + "/channels/" + board.getBoardKey() + "/" + channel.getKey(),
+                channel.toFirebaseObject());
+        mDatabase.updateChildren(channelUpdates);
+
+        if(channel.getType().equals("public")){
+            String updateText = ("Channel:" + channel.getName() + " renamed to " + name);
+            update(updateText);
+        }
+    }
+
+    private void update(String updateText) {
+        String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
+
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Log.w(TAG, currentDateTimeString);
+
+        Update update = new Update();
+        update.setText(updateText);
+        update.setBoard(board.getBoardKey());
+        update.setKey(key);
+        update.setDate(currentDateTimeString);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
     }
 
 
@@ -574,6 +688,14 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                mDatabase.child(root).child("channels").child(board.getBoardKey()).
+                        child(channelList.get(position).getKey()).child("peeps").
+                        child(memberList.get(position).getUid()).setValue(true);
+
+                Toast.makeText(ChatActivity.this,
+                        memberList.get(position).getUsername()+" invited to channel "
+                                + channelList.get(position).getName(),
+                        Toast.LENGTH_SHORT).show();
 
             }
         }

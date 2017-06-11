@@ -139,11 +139,11 @@ public class SingleTaskActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(llm);
         adapter = new RecycleAdapter();
         recyclerView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
         if(task != null){
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
             database.getReference("tasks/" + task.getKey() + "/members").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -159,6 +159,24 @@ public class SingleTaskActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // Admins Feed
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                board.getAdmins().clear();
+                if(dataSnapshot.hasChild("admins")){
+                    for(DataSnapshot data : dataSnapshot.child("admins").getChildren()) {
+                        board.addAdmin(data.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     @Override

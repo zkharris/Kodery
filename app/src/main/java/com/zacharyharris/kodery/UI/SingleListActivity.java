@@ -253,8 +253,6 @@ public class SingleListActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         loadTaskFeed();
-
-
     }
 
     private void loadTaskFeed() {

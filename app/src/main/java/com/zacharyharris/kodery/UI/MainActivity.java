@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         //menu.setDisplayUseLogoEnabled(true);
 
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
-        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#d1afff")));
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#245a7a")));
 
         /* Implementation of Horizontal Card & Recycler view */
 
