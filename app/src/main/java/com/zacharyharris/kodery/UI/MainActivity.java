@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     ArrayList<Board> boardsList;
 
     private static final String root = "testRoot";
-    private User currentUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,13 +144,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // store user into database
-        currentUser = new User(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(),
-                mFirebaseUser.getUid(), mFirebaseUser.getPhotoUrl().toString());
-
-        mDatabase.child(root).child("users").child(mFirebaseUser.getUid()).setValue(currentUser);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+        // Check new user
+        database.getReference(root + "/users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChild(mFirebaseUser.getUid())) {
+                    User newUser = new User(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(),
+                            mFirebaseUser.getUid(), mFirebaseUser.getPhotoUrl().toString(), null);
+                    Log.w(TAG, "user is new");
+                    mDatabase.child(root).child("users").
+                            child(mFirebaseUser.getUid()).setValue(newUser);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "storeUser:onCancelled", databaseError.toException());
+            }
+        });
+
+
         // Board feed
         database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
             @Override
@@ -392,7 +408,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDatabase.child(root).child("users").child(mFirebaseUser.getUid()).child("network")
                 .setValue(name);
 
-        currentUser.setNetwork(name);
     }
 
     public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {

@@ -36,11 +36,12 @@ public class User{
 
     public void setNetwork(String network) { this.network = network; }
 
-    public User(String username, String email, String uid, String photoURL) {
+    public User(String username, String email, String uid, String photoURL, String network) {
         this.username = username;
         this.email = email;
         this.uid = uid;
         this.photoURL = photoURL;
+        this.network = network;
     }
 
 
