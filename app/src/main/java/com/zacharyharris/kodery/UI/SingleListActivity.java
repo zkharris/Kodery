@@ -25,6 +25,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +36,7 @@ import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.ListofTasks;
 import com.zacharyharris.kodery.Model.Task;
 import com.zacharyharris.kodery.Model.Update;
+import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
 
@@ -61,6 +64,8 @@ public class SingleListActivity extends AppCompatActivity {
     private ListofTasks list;
     private Board board;
     private DatabaseReference mDatabase;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
     class RecycleAdapter extends RecyclerView.Adapter {
 
@@ -170,18 +175,33 @@ public class SingleListActivity extends AppCompatActivity {
                 delboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast t = Toast.makeText(v.getContext(),
-                                mtaskname.getText()+" deleted.",
-                                Toast.LENGTH_LONG);
-                        LinearLayout layout = (LinearLayout) t.getView();
-                        if (layout.getChildCount() > 0) {
-                            TextView tv = (TextView) layout.getChildAt(0);
-                            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                        if(mFirebaseUser.getUid().equals(board.getOwnerUid()) ||
+                                board.getAdmins().containsKey(mFirebaseUser.getUid())) {
+                            Toast t = Toast.makeText(v.getContext(),
+                                    mtaskname.getText() + " deleted.",
+                                    Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
+                            deleteTask(taskList.get(position));
+                            dialog.dismiss();
+                            //deleteBoard(boardsList.get(position));
+                        } else {
+                            Toast t = Toast.makeText(v.getContext(),
+                                    "Only board owners and admins can delete tasks",
+                                    Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
+                            deleteTask(taskList.get(position));
+                            dialog.dismiss();
                         }
-                        t.show();
-                        deleteTask(taskList.get(position));
-                        dialog.dismiss();
-                        //deleteBoard(boardsList.get(position));
 
                     }
                 });
@@ -205,6 +225,9 @@ public class SingleListActivity extends AppCompatActivity {
         }
 
         falist = this;
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#abe9a1")));
@@ -230,6 +253,8 @@ public class SingleListActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         loadTaskFeed();
+
+
     }
 
     private void loadTaskFeed() {
@@ -253,6 +278,26 @@ public class SingleListActivity extends AppCompatActivity {
                 Log.w(TAG, "getList:onCancelled", databaseError.toException());
             }
         });
+
+        // Admins Feed
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                board.getAdmins().clear();
+                if(dataSnapshot.hasChild("admins")){
+                    for(DataSnapshot data : dataSnapshot.child("admins").getChildren()) {
+                        board.addAdmin(data.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
+            }
+        });
+
+        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
     }
 
     @Override

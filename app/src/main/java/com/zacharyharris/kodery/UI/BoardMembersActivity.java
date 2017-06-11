@@ -28,6 +28,8 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.builders.Actions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,6 +63,9 @@ public class BoardMembersActivity extends AppCompatActivity {
     public User owner;
     private DatabaseReference mDatabase;
     private Channel channel;
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -132,12 +137,6 @@ public class BoardMembersActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "Clicked user is " + memberList.get(position));
-                if(addMembersToTask) {
-                    addTaskMembers(task, memberList.get(position));
-                }
-                if(addMembersToChannel){
-                    addChannelMembers(channel, memberList.get(position));
-                }
 
                 AlertDialog.Builder myBuilder = new AlertDialog.Builder(BoardMembersActivity.this);
                 final View myview = getLayoutInflater().inflate(R.layout.memberopt_popup, null);
@@ -155,32 +154,80 @@ public class BoardMembersActivity extends AppCompatActivity {
                 makeAd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast t = Toast.makeText(v.getContext(),
-                                memberList.get(position).getUsername()+" is now an Admin.",
-                                Toast.LENGTH_LONG);
-                        LinearLayout layout = (LinearLayout) t.getView();
-                        if (layout.getChildCount() > 0) {
-                            TextView tv = (TextView) layout.getChildAt(0);
-                            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                        if(mFirebaseUser.getUid().equals(board.getOwnerUid()) ||
+                                board.getAdmins().containsKey(mFirebaseUser.getUid())) {
+
+                            if(!board.getAdmins().containsKey(memberList.get(position).getUid())){
+                            makeAdmin(memberList.get(position));
+                            Toast t = Toast.makeText(v.getContext(),
+                                    memberList.get(position).getUsername() + " is now an Admin.",
+                                    Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
+                            mydialog.dismiss();
+
+                            } else {
+                                Toast t = Toast.makeText(v.getContext(),
+                                        memberList.get(position).getUsername() + " is already an admin",
+                                        Toast.LENGTH_LONG);
+                                LinearLayout layout = (LinearLayout) t.getView();
+                                if (layout.getChildCount() > 0) {
+                                    TextView tv = (TextView) layout.getChildAt(0);
+                                    tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                }
+                                t.show();
+                                mydialog.dismiss();
+                            }
+
+                        } else {
+                            Toast t = Toast.makeText(v.getContext(),
+                                    "Only board owners and admins can make admins",Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
+                            mydialog.dismiss();
+
                         }
-                        t.show();
-                        mydialog.dismiss();
+
                     }
                 });
 
                 demoteAd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast t = Toast.makeText(v.getContext(),
-                                memberList.get(position).getUsername()+" is no longer an Admin.",
-                                Toast.LENGTH_LONG);
-                        LinearLayout layout = (LinearLayout) t.getView();
-                        if (layout.getChildCount() > 0) {
-                            TextView tv = (TextView) layout.getChildAt(0);
-                            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                        if(mFirebaseUser.getUid().equals(board.getOwnerUid())) {
+                            if(board.getAdmins().containsKey(memberList.get(position).getUid())) {
+                                removeAdmin(memberList.get(position));
+                                Toast t = Toast.makeText(v.getContext(),
+                                        memberList.get(position).getUsername() + " is no longer an Admin.",
+                                        Toast.LENGTH_LONG);
+                                LinearLayout layout = (LinearLayout) t.getView();
+                                if (layout.getChildCount() > 0) {
+                                    TextView tv = (TextView) layout.getChildAt(0);
+                                    tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                }
+                                t.show();
+                                mydialog.dismiss();
+                            } else {
+                                Toast t = Toast.makeText(v.getContext(),
+                                        memberList.get(position).getUsername() + " is not an Admin.",
+                                        Toast.LENGTH_LONG);
+                                LinearLayout layout = (LinearLayout) t.getView();
+                                if (layout.getChildCount() > 0) {
+                                    TextView tv = (TextView) layout.getChildAt(0);
+                                    tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                }
+                                t.show();
+                                mydialog.dismiss();
+                            }
                         }
-                        t.show();
-                        mydialog.dismiss();
                     }
                 });
 
@@ -205,6 +252,7 @@ public class BoardMembersActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 //memberList.get(position).getUsername()+" removed from "+board.getName()+"."
+                                kickUser(memberList.get(position));
                                 Toast t = Toast.makeText(v.getContext(),
                                         memberList.get(position).getUsername()+" removed from "+board.getName()+".",
                                         Toast.LENGTH_LONG);
@@ -244,7 +292,6 @@ public class BoardMembersActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -265,6 +312,8 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         // Initialize Database
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         memberList = new ArrayList<>();
 
@@ -282,6 +331,10 @@ public class BoardMembersActivity extends AppCompatActivity {
         findOwner(board.getOwnerUid());
         loadFeed();
         Log.w(TAG, String.valueOf(memberList));
+
+        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
+
+
     }
 
     private void loadFeed() {
@@ -300,6 +353,26 @@ public class BoardMembersActivity extends AppCompatActivity {
                 Log.w(TAG, "peepReference:onCancelled", databaseError.toException());
             }
         });
+
+        // Admins Feed
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                board.getAdmins().clear();
+                if(dataSnapshot.hasChild("admins")){
+                    for(DataSnapshot data : dataSnapshot.child("admins").getChildren()) {
+                        board.addAdmin(data.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
+            }
+        });
+
+        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
     }
 
     private void findUser(String peepUid) {
@@ -345,10 +418,19 @@ public class BoardMembersActivity extends AppCompatActivity {
         mDatabase.child(root).child("boards").child(board.getBoardKey()).child("admins").
                 child(user.getUid()).setValue(true);
 
-        board.addAdmin(user.getUid());
+        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
 
         String updateText = (user.getUsername() + " is now an Admin");
         update(updateText);
+    }
+
+    private void removeAdmin(User user) {
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).child("admins").
+                child(user.getUid()).removeValue();
+
+        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
+
+        // no update text for this action
     }
 
     private void update(String updateText) {
@@ -417,7 +499,14 @@ public class BoardMembersActivity extends AppCompatActivity {
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(BoardMembersActivity.this, "You left "+board.getName()+".", Toast.LENGTH_SHORT).show();
+                        if(!mFirebaseUser.getUid().equals(board.getOwnerUid())) {
+                            leaveBoard(mFirebaseUser);
+                            Toast.makeText(BoardMembersActivity.this, "You left " + board.getName() + ".",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(BoardMembersActivity.this, "Board owners cannot leave their board",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                         mydialog.dismiss();
                     }
                 });
@@ -429,13 +518,27 @@ public class BoardMembersActivity extends AppCompatActivity {
                     }
                 });
 
-
-
-
                 mydialog.show();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void leaveBoard(FirebaseUser mFirebaseUser) {
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).
+                child("peeps").child(mFirebaseUser.getUid()).removeValue();
+
+        String updateText = (mFirebaseUser.getDisplayName() + " has left the board");
+        update(updateText);
+    }
+
+    private void kickUser(User user) {
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).
+                child("peeps").child(user.getUid()).removeValue();
+
+        // no update Text for this action
+    }
+
+
 
 }

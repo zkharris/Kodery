@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.builders.Actions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -65,8 +66,9 @@ public class SingleBoardActivity extends AppCompatActivity {
 
     private Board board;
     private DatabaseReference mDatabase;
-
     private FirebaseUser mFirebaseUser;
+    private FirebaseAuth mFirebaseAuth;
+
     private Task task;
     private boolean addTaskToList;
 
@@ -97,8 +99,11 @@ public class SingleBoardActivity extends AppCompatActivity {
         updateList = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        LinearLayoutManager listsllm = new LinearLayoutManager(this);
 
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        LinearLayoutManager listsllm = new LinearLayoutManager(this);
         RecyclerView ListrecyclerView = (RecyclerView) findViewById(R.id.board_lists_recyclerView);
         ListrecyclerView.setLayoutManager(listsllm);
         listAdapter = new ListsRecycleAdapter();
@@ -117,6 +122,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         UpdaterecyclerView.setAdapter(updateAdapter);
         updateAdapter.notifyDataSetChanged();
 
+        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
 
     }
 
@@ -130,8 +136,6 @@ public class SingleBoardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boardsList.clear();
-                Log.w("TodoApp", "getUser:onCancelled " + dataSnapshot.toString());
-                Log.w("TodoApp", "count = " + String.valueOf(dataSnapshot.getChildrenCount()) + " values " + dataSnapshot.getKey());
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     ListofTasks list = data.getValue(ListofTasks.class);
                     boardsList.add(list);
@@ -167,6 +171,25 @@ public class SingleBoardActivity extends AppCompatActivity {
             }
         });
 
+        // Admins Feed
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                board.getAdmins().clear();
+                if(dataSnapshot.hasChild("admins")){
+                    for(DataSnapshot data : dataSnapshot.child("admins").getChildren()) {
+                        board.addAdmin(data.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
+            }
+        });
+
+        //Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
     }
 
     @Override
@@ -238,7 +261,7 @@ public class SingleBoardActivity extends AppCompatActivity {
 
     private void saveList(String name, String desc) {
         String key = mDatabase.child(root).child("lists").push().getKey();
-        
+
         ListofTasks listoftasks = new ListofTasks();
         listoftasks.setKey(key);
         listoftasks.setBoard(board.getBoardKey());
@@ -418,17 +441,32 @@ public class SingleBoardActivity extends AppCompatActivity {
                 delboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast t = Toast.makeText(v.getContext(),
-                                mboardname.getText()+" deleted.",
-                                Toast.LENGTH_LONG);
-                        LinearLayout layout = (LinearLayout) t.getView();
-                        if (layout.getChildCount() > 0) {
-                            TextView tv = (TextView) layout.getChildAt(0);
-                            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                        if(mFirebaseUser.getUid().equals(board.getOwnerUid()) ||
+                                board.getAdmins().containsKey(mFirebaseUser.getUid())) {
+
+                            Toast t = Toast.makeText(v.getContext(),
+                                    mboardname.getText() + " deleted.",
+                                    Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
+                            dialog.dismiss();
+                            deleteList(boardsList.get(position));
+                        } else {
+                            Toast t = Toast.makeText(v.getContext(),
+                                    "Only board owners and admins can delete Lists",
+                                    Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            t.show();
+                            dialog.dismiss();
                         }
-                        t.show();
-                        dialog.dismiss();
-                        //deleteBoard(boardsList.get(position));
 
                     }
                 });
@@ -438,6 +476,34 @@ public class SingleBoardActivity extends AppCompatActivity {
                 return true;
             }
         }
+    }
+
+    public void deleteList(final ListofTasks list) {
+        // Delete Tasks
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/tasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Task task = data.getValue(Task.class);
+                    if(task.getList().equals(list.getKey())) {
+                        mDatabase.child(root).child("tasks").child(task.getKey()).removeValue();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "deleteList:onCancelled", databaseError.toException());
+            }
+        });
+
+        // Delete List
+        mDatabase.child(root).child("lists").child(board.getBoardKey()).
+                child(list.getKey()).removeValue();
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).
+                child("lists").child(list.getKey()).removeValue();
     }
 
     class UpdatesRecycleAdapter extends RecyclerView.Adapter {

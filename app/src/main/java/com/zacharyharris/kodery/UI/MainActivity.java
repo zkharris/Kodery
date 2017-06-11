@@ -45,9 +45,11 @@ import com.google.firebase.database.ValueEventListener;
 //import com.zacharyharris.kodery.Adapter.MainAdapter;
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.Channel;
+import com.zacharyharris.kodery.Model.Task;
 import com.zacharyharris.kodery.R;
 import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
+import com.zacharyharris.kodery.UI.SingleBoardActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -173,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
         });
+
 /*
         String name = mFirebaseUser.getDisplayName();
         String displayname="";
@@ -535,7 +538,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDatabase.updateChildren(childUpdates);
     }
 
-    private void deleteBoard(Board board) {
+    private void deleteBoard(final Board board) {
         // Delete Lists
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/boards/" + board.getBoardKey() + "/lists").addValueEventListener(new ValueEventListener() {
@@ -557,6 +560,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDatabase.child(root).child("channels").child(board.getBoardKey()).removeValue();
         mDatabase.child(root).child("boards").child(board.getBoardKey()).removeValue();
         mDatabase.child(root).child("updates").child(board.getBoardKey()).removeValue();
+
+        // Delete Tasks
+        database.getReference(root + "/tasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Task task = data.getValue(Task.class);
+                    if(task.getBoard().equals(board.getBoardKey())) {
+                        mDatabase.child(root).child("tasks").child(task.getKey()).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "deleteTasks:onCancelled", databaseError.toException());
+            }
+        });
 
 
     }
