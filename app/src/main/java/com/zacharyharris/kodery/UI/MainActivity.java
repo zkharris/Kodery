@@ -314,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 final EditText mCompName = (EditText) mview.findViewById(R.id.tag_popup_edit);
                 TextView mtitlep = (TextView) mview.findViewById(R.id.tag_popup_title);
                 Button saveupdate = (Button) mview.findViewById(R.id.tag_popup_button);
+                mCompName.setText(currentUser.getNetwork());
 
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
