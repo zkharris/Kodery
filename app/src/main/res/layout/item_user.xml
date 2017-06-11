@@ -47,14 +47,16 @@ android:layout_marginLeft="5dp">
             android:layout_height="20dp"
             android:layout_marginLeft="5dp"
             android:id="@+id/owner_badge"
-            android:src="@drawable/ic_star_black_48dp"/>
+            android:src="@drawable/ic_star_black_48dp"
+            android:visibility="gone"/>
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginLeft="5dp"
             android:id="@+id/admin_badge"
-            android:src="@drawable/ic_star_border_black_48dp"/>
+            android:src="@drawable/ic_star_border_black_48dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
