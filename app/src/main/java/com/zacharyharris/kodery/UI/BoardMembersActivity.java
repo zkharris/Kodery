@@ -438,5 +438,4 @@ public class BoardMembersActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
 }

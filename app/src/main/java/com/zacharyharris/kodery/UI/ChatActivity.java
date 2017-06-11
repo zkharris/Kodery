@@ -12,6 +12,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.Channel;
 import com.zacharyharris.kodery.Model.Message;
+import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.R;
 
 import org.w3c.dom.Text;
@@ -73,6 +75,9 @@ public class ChatActivity extends AppCompatActivity {
     ArrayList<Channel> channelList;
     private Channel generalChannel;
 
+    memberRecyclerAdapter memberAdapter;
+    private ArrayList<User> memberList;
+
     class ChannelRecycleAdapter extends RecyclerView.Adapter {
 
         @Override
@@ -81,14 +86,14 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_channel, parent, false);
             SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
             return pvh;
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, int position) {
             SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
             viewHolder.position = position;
             Channel channel = channelList.get(position);
@@ -99,7 +104,7 @@ public class ChatActivity extends AppCompatActivity {
 
         }
 
-        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
+        public final class SimpleItemViewHolder extends ViewHolder implements View.OnClickListener,View.OnLongClickListener {
             TextView title;
             int position;
             CardView mCV;
@@ -127,12 +132,39 @@ public class ChatActivity extends AppCompatActivity {
                             channelFeed();
 
                             android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
-                            mActionBar.setTitle(board.getName()+" Message Board: #"+channelList.get(position).getName());
+                            if(channelList.get(position).getType().equals("public")) {
+                                mActionBar.setTitle(board.getName() + " #" + channelList.get(position).getName() + " Public Chat");
+                            } else{
+                                mActionBar.setTitle(board.getName() + " #" + channelList.get(position).getName() + " Private Chat");
+                            }
 
                         } else if (tap_num==2){
-                            Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
+                            if(channelList.get(position).getType().equals("private")) {
+                                //Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
 
-                            /* THIS ACTION WILL TAKE YOU TO EDITCHANNEL ACTIVITY. WHERE CHAT SETTINGS AND MEMBERS OF THE CHANNEL WILL BE */
+                                AlertDialog.Builder mBuilder = new AlertDialog.Builder(ChatActivity.this);
+                                View mview = getLayoutInflater().inflate(R.layout.addto_channel_popup, null);
+                                Button doneb = (Button) mview.findViewById(R.id.finish_adding_btn);
+                                RecyclerView memberrecyclerView = (RecyclerView) mview.findViewById(R.id.add_channel_RV);
+                                LinearLayoutManager llm = new LinearLayoutManager(ChatActivity.this);
+                                memberrecyclerView.setLayoutManager(llm);
+                                memberList = new ArrayList();
+                                memberAdapter = new memberRecyclerAdapter();
+                                memberrecyclerView.setAdapter(memberAdapter);
+                                memberAdapter.notifyDataSetChanged();
+
+                                mBuilder.setView(mview);
+                                final AlertDialog dialog = mBuilder.create();
+
+                                doneb.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                dialog.show();
+                            }
 
                         }
                         tap_num=0;
@@ -202,14 +234,14 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
             SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
             return pvh;
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, int position) {
             SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
             viewHolder.position = position;
             Message message = messageList.get(position);
@@ -218,7 +250,7 @@ public class ChatActivity extends AppCompatActivity {
             Glide.with(ChatActivity.this).load(message.getMessagePhotoURL()).into(viewHolder.image);
         }
 
-        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public final class SimpleItemViewHolder extends ViewHolder implements View.OnClickListener {
             TextView text;
             TextView author;
             ImageView image;
@@ -258,8 +290,10 @@ public class ChatActivity extends AppCompatActivity {
 
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#b2cefe")));
-        mActionBar.setTitle(board.getName()+" Message Boards");
+        mActionBar.setTitle(board.getName()+" Chats");
+/*
 
+*/
         //Message recycler View
         RecyclerView messagerecyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);
         LinearLayoutManager mllm = new LinearLayoutManager(this);
@@ -456,4 +490,55 @@ public class ChatActivity extends AppCompatActivity {
         mDatabase.child(root).child("channels").child(board.getBoardKey()).child(key).
                 child("peeps").child(mFirebaseUser.getUid()).setValue(true);
     }
+
+
+
+    class memberRecyclerAdapter extends RecyclerView.Adapter {
+
+        @Override
+        public int getItemCount() {
+            return memberList.size();
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
+            SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
+            return pvh;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
+            viewHolder.position = position;
+            User user = memberList.get(position);
+            ((SimpleItemViewHolder) holder).title.setText(user.getUsername());
+            Glide.with(ChatActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
+            if (user.getUid().equals(board.getOwnerUid())) {
+                // set an icon on the item user
+            }
+        }
+
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            ImageView image;
+            TextView title;
+            ImageView ownerBadge;
+            public int position;
+
+            public SimpleItemViewHolder(View itemView) {
+                super(itemView);
+                itemView.setOnClickListener(this);
+                title = (TextView) itemView.findViewById(R.id.usr_name);
+                image = (ImageView) itemView.findViewById(R.id.usr_pic);
+                //ownerBadge = (ImageView) itemView.findViewById(R.id.owner_badge);
+            }
+
+            @Override
+            public void onClick(View v) {
+
+            }
+        }
+
+    }
+
 }
