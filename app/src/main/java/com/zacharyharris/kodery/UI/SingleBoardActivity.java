@@ -279,8 +279,33 @@ public class SingleBoardActivity extends AppCompatActivity {
 
         mDatabase.child(root).child("boards").child(board.getBoardKey()).child("lists")
                 .child(listoftasks.getKey()).setValue(true);
+    }
 
+    private void editList(ListofTasks list, String name, String desc) {
+        ListofTasks newList = new ListofTasks();
+        newList.setKey(list.getKey());
+        newList.setBoard(board.getBoardKey());
+        newList.setName(name);
+        newList.setDescription(desc);
 
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/lists/" + board.getBoardKey() + "/" + list.getKey(),
+                newList.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
+
+        String updateText = null;
+        if(!name.equals(list.getName())) {
+            updateText = ("List: " + list.getName() + " renamed to " + name);
+        }
+        if(!desc.equals(list.getDescription())) {
+            updateText = ("List: " + list.getName() + " description changed");
+        }
+
+        if(!name.equals(list.getName()) && !desc.equals(list.getDescription())) {
+            updateText = ("List: " + list.getName() + " renamed to " + name
+                    + " and description changed" );
+        }
+        update(updateText);
     }
 
     private void update(String updateText) {
@@ -395,12 +420,12 @@ public class SingleBoardActivity extends AppCompatActivity {
 
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(v.getContext());
                 View mview = LayoutInflater.from(v.getContext()).inflate(R.layout.edit_list_item, null);
-                final EditText mboardname = (EditText) mview.findViewById(R.id.listname_edit);
+                final EditText mlistname = (EditText) mview.findViewById(R.id.listname_edit);
                 final EditText mlistdesc = (EditText) mview.findViewById(R.id.listdesc_edit);
                 final ListofTasks test = boardsList.get(position);
                 final TextView mtextview = (TextView) mview.findViewById(R.id.edit_list_item_title);
                 mtextview.setText("Edit "+test.getName());
-                mboardname.setText(test.getName());
+                mlistname.setText(test.getName());
                 mlistdesc.setText(test.getDescription());
                 Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                 Button delboard = (Button) mview.findViewById(R.id.delBoard);
@@ -411,11 +436,13 @@ public class SingleBoardActivity extends AppCompatActivity {
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!mboardname.getText().toString().isEmpty()
-                                && !(mboardname.getText().toString().equals(test.getName())
-                                && mlistdesc.getText().toString().equals(test.getDescription()))){
+                        if (!mlistname.getText().toString().isEmpty()
+                                && !(mlistname.getText().toString().equals(test.getName())
+                                && mlistdesc.getText().toString().equals(test.getDescription()))) {
+                            editList(boardsList.get(position), mlistname.getText().toString(),
+                                    mlistdesc.getText().toString());
                             Toast t = Toast.makeText(v.getContext(),
-                                    mboardname.getText()+" saved!",
+                                    mlistname.getText() + " saved!",
                                     Toast.LENGTH_SHORT);
                             LinearLayout layout = (LinearLayout) t.getView();
                             if (layout.getChildCount() > 0) {
@@ -424,11 +451,11 @@ public class SingleBoardActivity extends AppCompatActivity {
                             }
                             t.show();
                             dialog.dismiss();
-                            //updateBoard(test, mboardname.getText().toString());
-                            // Get rid of the pop up go back to main activity
-                        }else{
+                                //updateBoard(test, mboardname.getText().toString());
+                                // Get rid of the pop up go back to main activity
+                        } else {
                             Toast t = Toast.makeText(v.getContext(),
-                                    "Please change the name or description of "+test.getName(),
+                                    "Please change the name or description of " + test.getName(),
                                     Toast.LENGTH_LONG);
                             LinearLayout layout = (LinearLayout) t.getView();
                             if (layout.getChildCount() > 0) {
@@ -447,7 +474,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                                 board.getAdmins().containsKey(mFirebaseUser.getUid())) {
 
                             Toast t = Toast.makeText(v.getContext(),
-                                    mboardname.getText() + " deleted.",
+                                    mlistname.getText() + " deleted.",
                                     Toast.LENGTH_LONG);
                             LinearLayout layout = (LinearLayout) t.getView();
                             if (layout.getChildCount() > 0) {
@@ -481,6 +508,9 @@ public class SingleBoardActivity extends AppCompatActivity {
     }
 
     public void deleteList(final ListofTasks list) {
+        String updateText = ("List: " + list.getName() + " deleted");
+        update(updateText);
+
         // Delete Tasks
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/tasks").addValueEventListener(new ValueEventListener() {
@@ -506,6 +536,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                 child(list.getKey()).removeValue();
         mDatabase.child(root).child("boards").child(board.getBoardKey()).
                 child("lists").child(list.getKey()).removeValue();
+
     }
 
     class UpdatesRecycleAdapter extends RecyclerView.Adapter {

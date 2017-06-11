@@ -587,7 +587,7 @@ public class ChatActivity extends AppCompatActivity {
         channel.setKey(key);
         channel.setType("public");
 
-        String updateText = ("Channel:" + name + " created");
+        String updateText = ("Channel: " + name + " created");
         update(updateText);
 
         Map<String, Object> channelUpdates = new HashMap<>();
@@ -629,7 +629,7 @@ public class ChatActivity extends AppCompatActivity {
         mDatabase.updateChildren(channelUpdates);
 
         if(channel.getType().equals("public")){
-            String updateText = ("Channel:" + channel.getName() + " renamed to " + name);
+            String updateText = ("Channel: " + channel.getName() + " renamed to " + name);
             update(updateText);
         }
     }
@@ -638,7 +638,7 @@ public class ChatActivity extends AppCompatActivity {
         mDatabase.child(root).child("channels").child(board.getBoardKey()).
                 child(channel.getKey()).removeValue();
 
-        String updateText = ("Channel:" + channel.getName() + " deleted");
+        String updateText = ("Channel: " + channel.getName() + " deleted");
         update(updateText);
     }
 

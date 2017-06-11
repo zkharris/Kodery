@@ -393,17 +393,18 @@ public class SingleListActivity extends AppCompatActivity {
 
         String updateText = null;
         if (!task.getName().equals(name)) {
-            updateText = ("Task:" + task.getName() + " renamed " + name + " in List:" +
+            updateText = ("Task: " + task.getName() + " renamed " + name + " in List:" +
                     list.getName());
         }
 
         if (!task.getDescription().equals(desc)) {
-            updateText = ("Task:" + task.getName() + " description " +
-                    "edited in List:" + list.getName());
+            updateText = ("Task: " + task.getName() + " description " +
+                    "changed in List:" + list.getName());
         }
 
         if(!task.getDescription().equals(desc) && !task.getName().equals(name)){
-            updateText = ("Task:" + task.getName() + " edited " + " in List:" + list.getName());
+            updateText = ("Task: " + task.getName() + " renamed to " + name +
+                    " and description changed in List: " + list.getName());
         }
         update(updateText);
 
