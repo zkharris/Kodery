@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,17 +38,12 @@ import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.R;
 
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.R.id.message;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class SingleListActivity extends AppCompatActivity {
@@ -145,7 +137,7 @@ public class SingleListActivity extends AppCompatActivity {
                             AlertDialog.Builder mBuilder = new AlertDialog.Builder(SingleListActivity.this);
                             View mview = getLayoutInflater().inflate(R.layout.addto_task_popup, null);
                             TextView popupTitle = (TextView) mview.findViewById(R.id.invite_title);
-                            popupTitle.setText("Add people to " + currTask.getName());
+                            popupTitle.setText("Add People to " + currTask.getName()+":");
                             Button doneb = (Button) mview.findViewById(R.id.finish_adding_btn);
                             RecyclerView memberrecyclerView = (RecyclerView) mview.findViewById(R.id.add_channel_RV);
                             LinearLayoutManager llm = new LinearLayoutManager(SingleListActivity.this);
@@ -491,6 +483,7 @@ public class SingleListActivity extends AppCompatActivity {
                 final EditText mtaskname = (EditText) mview.findViewById(R.id.taskname_edit);
                 final EditText mtaskdesc = (EditText) mview.findViewById(R.id.taskdesc_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createTsk);
+                addleboard.setBackgroundColor(Color.parseColor(board.getColor()));
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
 

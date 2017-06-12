@@ -1,6 +1,5 @@
 package com.zacharyharris.kodery.UI;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,7 +27,6 @@ import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.builders.Actions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,15 +38,12 @@ import com.zacharyharris.kodery.Model.Task;
 import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.R;
 
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
@@ -213,6 +207,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                 final EditText mlistname = (EditText) mview.findViewById(R.id.listname_edit);
                 final EditText mlistdesc = (EditText) mview.findViewById(R.id.listdesc_edit);
                 Button addleboard = (Button) mview.findViewById(R.id.createLst);
+                addleboard.setBackgroundColor(Color.parseColor(board.getColor()));
 
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
@@ -310,11 +305,15 @@ public class SingleBoardActivity extends AppCompatActivity {
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
         Log.w(TAG, currentDateTimeString);
 
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm aa");
+        String dateString = format.format(calendar.getTime());
+
         Update update = new Update();
         update.setText(updateText);
         update.setBoard(board.getBoardKey());
         update.setKey(key);
-        update.setDate(currentDateTimeString);
+        update.setDate(dateString);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
@@ -587,7 +586,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                     if(String.valueOf(mupdate.getDate().charAt(i)).equals(space)){
                         j++;
                     }
-                    if(j<3) {
+                    if(j<1) {
                         day += mupdate.getDate().charAt(i);
                     } else{
                         time += mupdate.getDate().charAt(i);
