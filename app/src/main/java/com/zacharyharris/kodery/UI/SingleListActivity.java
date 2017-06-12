@@ -511,7 +511,7 @@ public class SingleListActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }else{
                             Toast.makeText(SingleListActivity.this,
-                                    "Please name the list.",
+                                    "Please name the task.",
                                     Toast.LENGTH_SHORT).show();
 
                         }
@@ -558,12 +558,8 @@ public class SingleListActivity extends AppCompatActivity {
     }
 
     private void editTask(Task task, String name, String desc) {
-        Task newTask = new Task();
-        newTask.setKey(task.getKey());
-        newTask.setName(name);
-        newTask.setDescription(desc);
-        newTask.setBoard(board.getBoardKey());
-        newTask.setList(list.getKey());
+        task.setName(name);
+        task.setDescription(desc);
 
         String updateText = null;
         if (!task.getName().equals(name)) {
@@ -582,9 +578,8 @@ public class SingleListActivity extends AppCompatActivity {
         }
         update(updateText);
 
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/tasks/" + task.getKey(), newTask.toFirebaseObject());
-        mDatabase.updateChildren(childUpdates);
+        mDatabase.child(root).child("tasks").child(task.getKey()).child("name").setValue(name);
+        mDatabase.child(root).child("tasks").child(task.getKey()).child("description").setValue(desc);
 
         loadTaskFeed();
     }

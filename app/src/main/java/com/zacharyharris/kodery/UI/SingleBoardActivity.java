@@ -282,16 +282,13 @@ public class SingleBoardActivity extends AppCompatActivity {
     }
 
     private void editList(ListofTasks list, String name, String desc) {
-        ListofTasks newList = new ListofTasks();
-        newList.setKey(list.getKey());
-        newList.setBoard(board.getBoardKey());
-        newList.setName(name);
-        newList.setDescription(desc);
+        list.setName(name);
+        list.setDescription(desc);
 
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(root + "/lists/" + board.getBoardKey() + "/" + list.getKey(),
-                newList.toFirebaseObject());
-        mDatabase.updateChildren(childUpdates);
+        mDatabase.child(root).child("lists").child(board.getBoardKey()).
+                child(list.getKey()).child("name").setValue(name);
+        mDatabase.child(root).child("lists").child(board.getBoardKey()).
+                child(list.getKey()).child("description").setValue(desc);
 
         String updateText = null;
         if(!name.equals(list.getName())) {
@@ -540,7 +537,6 @@ public class SingleBoardActivity extends AppCompatActivity {
     }
 
     class UpdatesRecycleAdapter extends RecyclerView.Adapter {
-
 
         @Override
         public int getItemCount() {

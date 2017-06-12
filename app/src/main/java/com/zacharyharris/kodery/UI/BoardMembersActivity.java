@@ -284,10 +284,6 @@ public class BoardMembersActivity extends AppCompatActivity {
                 });
 
                 mydialog.show();
-
-
-
-
             }
         }
     }
@@ -540,6 +536,9 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         memberList.remove(user);
         adapter.notifyDataSetChanged();
+
+        String updateText = (user.getUsername() + " has left the board");
+        update(updateText);
         // no update Text for this action
     }
 }
