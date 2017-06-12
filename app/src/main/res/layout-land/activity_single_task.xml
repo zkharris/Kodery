@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100">
+
+    <!--  ffc99c This will be the activity when a user presses on a Task, It will let them change the name, add a description
+    and add members which will be displayed as a recycler view of users -->
+
+    <!-- THIS TASK IS FOR EDITS ffc99c-->
+
+    <TextView
+        android:id="@+id/task_name"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:ems="10"
+        android:padding="10dp"
+        android:text="Task Name"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/task_desc"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:scrollHorizontally="false"
+        android:text="Description Text goes here"
+        android:textAlignment="center"
+        android:textStyle="italic" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:text="Members:"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/member_list_task"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="60"/>
+
+</LinearLayout>
