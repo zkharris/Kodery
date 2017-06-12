@@ -1,5 +1,6 @@
 package com.zacharyharris.kodery.UI;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -22,8 +23,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.R;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 import com.google.android.gms.auth.api.Auth;
@@ -40,6 +43,11 @@ import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.R;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class InvitesActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
@@ -184,9 +192,29 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
         mDatabase.child(root).child("boards").child(board.getBoardKey()).child("peeps").child(uid).setValue(true);
         mDatabase.child(root).child("invites").child(uid).child(board.getBoardKey()).removeValue();
 
-        boardList.remove(board);
-        adapter.notifyDataSetChanged();
-        //loadInvites();
+        String updateText = (mFirebaseUser.getDisplayName() + " has joined");
+        update(board, updateText);
+
+        Intent intent = new Intent(this, SingleBoardActivity.class);
+        intent.putExtra("board", board);
+        startActivity(intent);
+    }
+
+    private void update(Board board, String updateText) {
+        String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
+
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Log.w(TAG, currentDateTimeString);
+
+        Update update = new Update();
+        update.setText(updateText);
+        update.setBoard(board.getBoardKey());
+        update.setKey(key);
+        update.setDate(currentDateTimeString);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
     }
 
     private void declineInvite(Board board, String uid) {
@@ -194,7 +222,6 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
 
         boardList.remove(board);
         adapter.notifyDataSetChanged();
-        //loadInvites();
     }
 
     @Override

@@ -144,9 +144,10 @@ public class SingleTaskActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         if(task != null){
-            database.getReference("tasks/" + task.getKey() + "/members").addValueEventListener(new ValueEventListener() {
+            database.getReference(root + "tasks/" + task.getKey() + "/members").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    memberList.clear();
                     for(DataSnapshot data : dataSnapshot.getChildren()) {
                         findUser(String.valueOf(data.getKey()));
                     }
@@ -226,7 +227,7 @@ public class SingleTaskActivity extends AppCompatActivity {
 
     private void findUser(String userUid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("users/" + userUid).addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "users/" + userUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
