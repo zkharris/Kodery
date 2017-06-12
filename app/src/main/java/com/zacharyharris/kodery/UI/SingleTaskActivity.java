@@ -77,10 +77,10 @@ public class SingleTaskActivity extends AppCompatActivity {
             SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
             viewHolder.position = position;
             User user = memberList.get(position);
-            ((SimpleItemViewHolder) holder).title.setText(user.getEmail());
+            ((SimpleItemViewHolder) holder).title.setText(user.getUsername());
             Glide.with(SingleTaskActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
         }
-
+        
         public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView title;
             ImageView image;
@@ -144,7 +144,7 @@ public class SingleTaskActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         if(task != null){
-            database.getReference(root + "tasks/" + task.getKey() + "/members").addValueEventListener(new ValueEventListener() {
+            database.getReference(root + "/tasks/" + task.getKey() + "/members").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     memberList.clear();
@@ -227,7 +227,7 @@ public class SingleTaskActivity extends AppCompatActivity {
 
     private void findUser(String userUid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "users/" + userUid).addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/users/" + userUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);

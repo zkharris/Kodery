@@ -20,11 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -66,6 +68,10 @@ public class SingleListActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+    public int tap_num = 0;
+    private ArrayList<User> memberList;
+    private memberRecyclerAdapter memberAdapter;
+    private Task currTask;
 
     class RecycleAdapter extends RecyclerView.Adapter {
 
@@ -95,7 +101,11 @@ public class SingleListActivity extends AppCompatActivity {
             }
             // set number of members in each task
             if(task.getNumMembers() != null) {
-                ((SimpleItemViewHolder) holder).memSubtitle.setText(task.getNumMembers() + " members");
+                if(task.getNumMembers().equals("1")){
+                    ((SimpleItemViewHolder) holder).memSubtitle.setText(task.getNumMembers() + " member");
+                }else {
+                    ((SimpleItemViewHolder) holder).memSubtitle.setText(task.getNumMembers() + " members");
+                }
             } else {
                 ((SimpleItemViewHolder) holder).memSubtitle.setText("No Members");
             }
@@ -118,14 +128,54 @@ public class SingleListActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: sdfkjgshljgh");
-                Intent newIntent = new Intent(SingleListActivity.this, SingleTaskActivity.class);
-                newIntent.putExtra("task", taskList.get(position));
-                newIntent.putExtra("list", list);
-                newIntent.putExtra("board", board);
-                SingleListActivity.this.startActivity(newIntent);
+                tap_num++;
+                android.os.Handler mHandler = new android.os.Handler();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (tap_num == 1) {
+                            Log.d(TAG, "onClick: sdfkjgshljgh");
+                            Intent newIntent = new Intent(SingleListActivity.this, SingleTaskActivity.class);
+                            newIntent.putExtra("task", taskList.get(position));
+                            newIntent.putExtra("list", list);
+                            newIntent.putExtra("board", board);
+                            SingleListActivity.this.startActivity(newIntent);
+                        } else if (tap_num == 2) {
+                            currTask = taskList.get(position);
+                            Log.d(TAG, "clickedTwice:" + taskList.get(position).getName());
+                            AlertDialog.Builder mBuilder = new AlertDialog.Builder(SingleListActivity.this);
+                            View mview = getLayoutInflater().inflate(R.layout.addto_task_popup, null);
+                            TextView popupTitle = (TextView) mview.findViewById(R.id.invite_title);
+                            popupTitle.setText("Add people to " + currTask.getName());
+                            Button doneb = (Button) mview.findViewById(R.id.finish_adding_btn);
+                            RecyclerView memberrecyclerView = (RecyclerView) mview.findViewById(R.id.add_channel_RV);
+                            LinearLayoutManager llm = new LinearLayoutManager(SingleListActivity.this);
+                            memberrecyclerView.setLayoutManager(llm);
+                            memberList = new ArrayList();
+                            memberAdapter = new memberRecyclerAdapter();
+                            memberrecyclerView.setAdapter(memberAdapter);
+                            memberAdapter.notifyDataSetChanged();
 
+                            loadMembers();
+
+                            mBuilder.setView(mview);
+                            final AlertDialog dialog = mBuilder.create();
+
+                            doneb.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    loadTaskFeed();
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
+                        }
+                        tap_num = 0;
+                    }
+                }, 500);
             }
+
+
 
             @Override
             public boolean onLongClick(View v) {
@@ -212,6 +262,124 @@ public class SingleListActivity extends AppCompatActivity {
         }
     }
 
+    class memberRecyclerAdapter extends RecyclerView.Adapter {
+
+        @Override
+        public int getItemCount() {
+            return memberList.size();
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
+            SimpleItemViewHolder pvh = new SimpleItemViewHolder(v);
+            return pvh;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
+            viewHolder.position = position;
+            User user = memberList.get(position);
+            ((SimpleItemViewHolder) holder).title.setText(user.getUsername());
+            Glide.with(SingleListActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
+            if (user.getUid().equals(board.getOwnerUid())) {
+                // set an icon on the item user
+            }
+        }
+
+        public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            ImageView image;
+            TextView title;
+            ImageView ownerBadge;
+            public int position;
+
+            public SimpleItemViewHolder(View itemView) {
+                super(itemView);
+                itemView.setOnClickListener(this);
+                title = (TextView) itemView.findViewById(R.id.usr_name);
+                image = (ImageView) itemView.findViewById(R.id.usr_pic);
+                //ownerBadge = (ImageView) itemView.findViewById(R.id.owner_badge);
+            }
+
+            @Override
+            public void onClick(View v) {
+                mDatabase.child(root).child("tasks").child(currTask.getKey()).
+                        child("members").child(memberList.get(position).getUid()).
+                        setValue(true);
+
+                Toast.makeText(SingleListActivity.this,
+                        memberList.get(position).getUsername()+" added to Task: "
+                                + currTask.getName(),
+                        Toast.LENGTH_SHORT).show();
+
+                String updateText = (memberList.get(position).getUsername() + " added to Task: " +
+                    currTask.getName());
+                update(updateText);
+
+            }
+        }
+
+    }
+
+    private void loadMembers() {
+        // Member feed
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                memberList.clear();
+                findOwner(String.valueOf(dataSnapshot.child("ownerUid").getValue()));
+                DataSnapshot peepsRef = dataSnapshot.child("peeps");
+                for(DataSnapshot data : peepsRef.getChildren()) {
+                    findUser(String.valueOf(data.getKey()));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "memberFeed:onCancelled", databaseError.toException());
+            }
+        });
+
+    }
+
+    private void findUser(String peepUid) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                memberList.add(user);
+                memberAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "findUser:onCancelled", databaseError.toException());
+
+            }
+        });
+    }
+
+    private void findOwner(String ownerUid) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User owner = dataSnapshot.getValue(User.class);
+                memberList.add(owner);
+                memberAdapter.notifyDataSetChanged();
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "findOwner:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,6 +411,7 @@ public class SingleListActivity extends AppCompatActivity {
         listDesc.setText(list.getDescription());
 
         taskList = new ArrayList<>();
+        memberList = new ArrayList<>();
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.tasks_list);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -265,6 +434,11 @@ public class SingleListActivity extends AppCompatActivity {
                     Log.w(TAG, String.valueOf(data.getKey()));
                     Task task = data.getValue(Task.class);
                     if(task.getList().equals(list.getKey())) {
+                        if(data.hasChild("members")){
+                            String numMembers = String.valueOf(data.child("members").getChildrenCount());
+                            Log.w(TAG, numMembers);
+                            task.setNumMembers(numMembers);
+                        }
                         taskList.add(task);
                     }
                 }
@@ -446,6 +620,7 @@ public class SingleListActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Task task = dataSnapshot.getValue(Task.class);
                 if(dataSnapshot.hasChild("members")) {
+                    Log.w(TAG, "has members");
                     String numMembers = String.valueOf(dataSnapshot.child("members").getChildrenCount());
                     task.setNumMembers(numMembers);
                 }
