@@ -39,7 +39,6 @@ import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.ListofTasks;
 import com.zacharyharris.kodery.Model.Task;
 import com.zacharyharris.kodery.Model.Update;
-import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
 
 import org.w3c.dom.Text;
@@ -56,7 +55,7 @@ import java.util.Map;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class SingleBoardActivity extends AppCompatActivity {
-
+    
     public static final String TAG = "SingleBoardActivity";
 
     ListsRecycleAdapter listAdapter;

@@ -35,7 +35,6 @@ import com.zacharyharris.kodery.Model.ListofTasks;
 import com.zacharyharris.kodery.Model.Task;
 import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
-import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
 
 import org.w3c.dom.Text;
