@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -80,7 +81,7 @@ public class SingleTaskActivity extends AppCompatActivity {
             ((SimpleItemViewHolder) holder).title.setText(user.getUsername());
             Glide.with(SingleTaskActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
         }
-        
+
         public final class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView title;
             ImageView image;
@@ -97,6 +98,7 @@ public class SingleTaskActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.w(TAG, memberList.get(position).getEmail());
             }
+
         }
     }
 
@@ -141,6 +143,27 @@ public class SingleTaskActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                mDatabase.child(root).child("tasks").child(task.getKey()).child("members").
+                        child(memberList.get(viewHolder.getAdapterPosition()).
+                                getUid()).removeValue();
+                memberList.remove(viewHolder.getAdapterPosition());
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         if(task != null){
@@ -178,6 +201,9 @@ public class SingleTaskActivity extends AppCompatActivity {
                 Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
             }
         });
+
+        Toast swpToast = Toast.makeText(this, "Swipe to remove members from task", Toast.LENGTH_LONG);
+        swpToast.show();
     }
 
     @Override
