@@ -33,14 +33,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.zacharyharris.kodery.Model.Board;
 import com.zacharyharris.kodery.Model.ListofTasks;
 import com.zacharyharris.kodery.Model.Task;
+import com.zacharyharris.kodery.Model.Update;
 import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.Model.boardList;
 import com.zacharyharris.kodery.R;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
@@ -153,10 +158,16 @@ public class SingleTaskActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                String updateText = (memberList.get(viewHolder.getAdapterPosition()).getUsername() +
+                        " removed from " + task.getName() + " in List: " + list.getName());
+                update(updateText);
+
                 mDatabase.child(root).child("tasks").child(task.getKey()).child("members").
                         child(memberList.get(viewHolder.getAdapterPosition()).
                                 getUid()).removeValue();
                 memberList.remove(viewHolder.getAdapterPosition());
+
+
             }
         };
 
@@ -280,6 +291,23 @@ public class SingleTaskActivity extends AppCompatActivity {
         }
     }
  */
+
+    private void update(String updateText) {
+        String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
+
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Log.w(TAG, currentDateTimeString);
+
+        Update update = new Update();
+        update.setText(updateText);
+        update.setBoard(board.getBoardKey());
+        update.setKey(key);
+        update.setDate(currentDateTimeString);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
+        mDatabase.updateChildren(childUpdates);
+    }
 
     @Override
     public void onBackPressed(){
