@@ -28,6 +28,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
@@ -41,6 +42,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 //import com.zacharyharris.kodery.Adapter.MainAdapter;
 import com.zacharyharris.kodery.Model.Board;
@@ -59,6 +61,7 @@ import java.util.Map;
 
 import static com.zacharyharris.kodery.R.id.board;
 import static com.zacharyharris.kodery.R.id.start;
+import static com.zacharyharris.kodery.R.id.view;
 import static java.lang.String.valueOf;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -67,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mlayoutManager;
+
+    public int tap_num = 0;
 
 
     private SharedPreferences mSharedPreferences;
@@ -92,21 +97,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        //android.support.v7.app.ActionBar menu = getSupportActionBar();
-        //menu.setDisplayShowHomeEnabled(true);
-        //menu.setLogo(R.drawable.koderyborder2);
-        //menu.setDisplayUseLogoEnabled(true);
-
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#245a7a")));
-
-        /* Implementation of Horizontal Card & Recycler view */
-
-        /*mDataSet = new ArrayList<>();
-        for(int i=1; i<10; i++){
-            mDataSet.add("Project: "+i);
-        }*/
 
         boardsList = new ArrayList<>();
 
@@ -116,8 +108,48 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new MainAdapter(boardsList);
         mRecyclerView.setAdapter(mAdapter);
-       // mtoolbar =(Toolbar) findViewById(R.id.nav_drwr);
-       // setSupportActionBar(mtoolbar);
+
+
+        final FirebaseDatabase mdatabase = FirebaseDatabase.getInstance();
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, 0){
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                /*
+                int oldPos = viewHolder.getAdapterPosition();
+                int newPos = target.getAdapterPosition();
+                Board mboard = (Board) boardsList.get(oldPos);
+                boardsList.remove(oldPos);
+                boardsList.add(newPos, mboard);
+                mAdapter.notifyItemMoved(oldPos, newPos);
+                */
+                final int firstPosition = viewHolder.getAdapterPosition();;
+                final int secondPosition = target.getAdapterPosition();
+                DatabaseReference firstItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(viewHolder.getAdapterPosition()).getBoardKey());
+                DatabaseReference secondItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(target.getAdapterPosition()).getBoardKey());
+
+                HashMap<String, Object> updateFirstItemOrderNumber = new HashMap<>();
+                updateFirstItemOrderNumber.put("orderNumber", secondPosition);
+                firstItemRef.updateChildren(updateFirstItemOrderNumber);
+
+                HashMap<String, Object> updateSecondItemOrderNumber = new HashMap<>();
+                updateSecondItemOrderNumber.put("orderNumber", firstPosition);
+                secondItemRef.updateChildren(updateSecondItemOrderNumber);
+
+                mAdapter.notifyItemMoved(firstPosition, secondPosition);
+
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        };
+
+        ItemTouchHelper mITH = new ItemTouchHelper(simpleItemTouchCallback);
+        mITH.attachToRecyclerView(mRecyclerView);
 
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -146,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
         // Check new user
         database.getReference(root + "/users").addValueEventListener(new ValueEventListener() {
             @Override
@@ -176,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boardsList.clear();
+                Query orderedistQuery = database.getReference(root + "/boards").orderByChild("orderNumber");
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Board boards = data.getValue(Board.class);
                     Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
@@ -319,7 +352,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 TextView mtitlep = (TextView) mview.findViewById(R.id.tag_popup_title);
                 Button saveupdate = (Button) mview.findViewById(R.id.tag_popup_button);
                 mCompName.setText(currentUser.getNetwork());
-
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
 
@@ -375,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                             }else if(yellRB.isChecked()){
                                 Log.d(TAG, "onClick: yellow");
-                                saveBoard(mboardname.getText().toString(), "#f6ff4e");
+                                saveBoard(mboardname.getText().toString(), "#ffe138");
 
                             }else if(orngRB.isChecked()){
                                 Log.d(TAG, "onClick: orange");
@@ -419,6 +451,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             this.boardsList = boardsList;
         }
 
+        //@Override
+        public DatabaseReference getRef(int position){
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference mDref = database.getReference(root + "/boards/" + boardsList.get(position).getBoardKey());
+            //DatabaseReference mDref = mDatabase.child(root).child("boards").child(boardsList.get(position).getBoardKey());
+            return mDref;
+        }
+
         @Override
         public MainAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             // create a new view
@@ -445,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             return boardsList.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener/*,View.OnLongClickListener*/{
 
             public TextView mBoard;
             public int position;
@@ -454,7 +494,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public ViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
-                itemView.setOnLongClickListener(this);
+                //itemView.setOnLongClickListener(this);
                 mBoard =(TextView) itemView.findViewById(board);
                 mCV = (CardView) itemView.findViewById(R.id.board_cv);
             }
@@ -463,13 +503,80 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Clicked!");
                 //Toast.makeText(v.getContext(), "Clicked",Toast.LENGTH_SHORT).show();
+                final View myView = v;
+                tap_num++;
+                android.os.Handler mHandler = new android.os.Handler();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(tap_num==1){
+                            Intent i = new Intent(myView.getContext(), SingleBoardActivity.class);
+                            i.putExtra("board", boardsList.get(position));
+                            myView.getContext().startActivity(i);
+                        } else if(tap_num==2){
 
-                Intent i = new Intent(v.getContext(), SingleBoardActivity.class);
-                i.putExtra("board", boardsList.get(position));
-                v.getContext().startActivity(i);
+                            AlertDialog.Builder mBuilder = new AlertDialog.Builder(myView.getContext());
+                            View mview = LayoutInflater.from(myView.getContext()).inflate(R.layout.edit_board, null);
+                            final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
+                            final Board test = boardsList.get(position);
+                            final TextView mtextview = (TextView) mview.findViewById(R.id.edit_board_title);
+                            mtextview.setText("Edit "+test.getName());
+                            mboardname.setText(test.getName());
+                            Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
+                            Button delboard = (Button) mview.findViewById(R.id.delBoard);
+
+                            mBuilder.setView(mview);
+                            final AlertDialog dialog = mBuilder.create();
+
+                            saveleboard.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if(!mboardname.getText().toString().isEmpty()
+                                            && !(mboardname.getText().toString().equals(test.getName()))){
+                                        Toast.makeText(v.getContext(),
+                                                test.getName()+" renamed to "+mboardname.getText()+"!",
+                                                Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                        updateBoard(boardsList.get(position), mboardname.getText().toString());
+                                        // Get rid of the pop up go back to main activity
+                                    }else{
+                                        Toast.makeText(v.getContext(),
+                                                "Please rename the board.",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                            delboard.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    if(mFirebaseUser.getUid().equals(boardsList.get(position).getOwnerUid())) {
+                                        deleteBoard(boardsList.get(position));
+                                        Toast.makeText(v.getContext(),
+                                                test.getName()+" deleted.",
+                                                Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                    } else {
+                                        Toast.makeText(v.getContext(), "Only owner can delete boards",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            });
+
+                            dialog.show();
+
+
+
+                        }
+                        tap_num = 0;
+                    }
+                }, 250);
 
             }
 
+            /*
             @Override
             public boolean onLongClick(View v) {
                 //Toast.makeText(v.getContext(), "Edit Board",Toast.LENGTH_SHORT).show();
@@ -527,7 +634,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 dialog.show();
 
                 return true;
-            }
+            }*/
         }
     }
 
