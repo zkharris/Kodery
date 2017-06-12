@@ -29,7 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight=".20"
-            android:background="@android:color/holo_green_light"
+            android:background="@android:color/holo_green_dark"
             android:textColor="@android:color/white"
             android:layout_marginRight="10dp"
             android:layout_gravity="center_vertical"
@@ -41,7 +41,7 @@
             android:layout_height="40dp"
             android:layout_weight=".20"
             android:textColor="@android:color/white"
-            android:background="@android:color/holo_red_light"
+            android:background="@android:color/holo_red_dark"
             android:layout_gravity="center_vertical"
             android:text="@string/decline" />
     </LinearLayout>

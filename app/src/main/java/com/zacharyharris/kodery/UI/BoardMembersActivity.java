@@ -252,16 +252,17 @@ public class BoardMembersActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 //memberList.get(position).getUsername()+" removed from "+board.getName()+"."
-                                kickUser(memberList.get(position));
-                                Toast t = Toast.makeText(v.getContext(),
-                                        memberList.get(position).getUsername()+" removed from "+board.getName()+".",
-                                        Toast.LENGTH_LONG);
-                                LinearLayout layout = (LinearLayout) t.getView();
-                                if (layout.getChildCount() > 0) {
-                                    TextView tv = (TextView) layout.getChildAt(0);
-                                    tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                if(!memberList.get(position).getUid().equals(board.getOwnerUid())) {
+                                    Toast t = Toast.makeText(v.getContext(),
+                                            memberList.get(position).getUsername()+" removed from "+board.getName()+".",
+                                            Toast.LENGTH_LONG);
+                                    kickUser(memberList.get(position));
+                                    t.show();
+                                } else {
+                                    Toast t = Toast.makeText(v.getContext(),
+                                            "Can't kick the owner",
+                                            Toast.LENGTH_LONG);
                                 }
-                                t.show();
                                 my2dialog.dismiss();
                             }
                         });
@@ -326,19 +327,11 @@ public class BoardMembersActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(llm);
         adapter = new RecycleAdapter();
         recyclerView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
 
+        //loadFeed();
+        memberList.clear();
         findOwner(board.getOwnerUid());
-        loadFeed();
-        Log.w(TAG, String.valueOf(memberList));
-
-        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
-
-
-    }
-
-    private void loadFeed() {
         // Peep reference
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
@@ -376,6 +369,10 @@ public class BoardMembersActivity extends AppCompatActivity {
         Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
     }
 
+    private void loadFeed() {
+
+    }
+
     private void findUser(String peepUid) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
@@ -399,7 +396,6 @@ public class BoardMembersActivity extends AppCompatActivity {
         database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                memberList.clear();
                 User owner = dataSnapshot.getValue(User.class);
                 Log.w(TAG, owner.getEmail());
                 memberList.add(owner);
@@ -542,9 +538,8 @@ public class BoardMembersActivity extends AppCompatActivity {
         mDatabase.child(root).child("boards").child(board.getBoardKey()).
                 child("peeps").child(user.getUid()).removeValue();
 
+        memberList.remove(user);
+        adapter.notifyDataSetChanged();
         // no update Text for this action
     }
-
-
-
 }

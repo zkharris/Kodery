@@ -140,12 +140,13 @@ public class ChatActivity extends AppCompatActivity {
 
                             android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
                             if (channelList.get(position).getType().equals("public")) {
-                                mActionBar.setTitle(board.getName() + " #" + channelList.get(position).getName() + " Public Chat");
+                                mActionBar.setTitle(board.getName() + " #" + currChannel.getName() + " Public Chat");
                             } else {
-                                mActionBar.setTitle(board.getName() + " #" + channelList.get(position).getName() + " Private Chat");
+                                mActionBar.setTitle(board.getName() + " #" + currChannel.getName() + " Private Chat");
                             }
 
                         } else if (tap_num == 2) {
+                            currChannel = channelList.get(position);
                             if (channelList.get(position).getType().equals("private")) {
                                 //Toast.makeText(ChatActivity.this, "double clicked", Toast.LENGTH_SHORT).show();
 
@@ -457,7 +458,6 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User owner = dataSnapshot.getValue(User.class);
-                Log.w(TAG, owner.getEmail());
                 memberList.add(owner);
                 memberAdapter.notifyDataSetChanged();
             }
@@ -638,6 +638,9 @@ public class ChatActivity extends AppCompatActivity {
         mDatabase.child(root).child("channels").child(board.getBoardKey()).
                 child(channel.getKey()).removeValue();
 
+        channelList.remove(channel);
+        channelAdapter.notifyDataSetChanged();
+
         String updateText = ("Channel: " + channel.getName() + " deleted");
         update(updateText);
     }
@@ -704,12 +707,12 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mDatabase.child(root).child("channels").child(board.getBoardKey()).
-                        child(channelList.get(position).getKey()).child("peeps").
+                        child(currChannel.getKey()).child("peeps").
                         child(memberList.get(position).getUid()).setValue(true);
 
                 Toast.makeText(ChatActivity.this,
                         memberList.get(position).getUsername()+" invited to channel "
-                                + channelList.get(position).getName(),
+                                + currChannel.getName(),
                         Toast.LENGTH_SHORT).show();
 
             }

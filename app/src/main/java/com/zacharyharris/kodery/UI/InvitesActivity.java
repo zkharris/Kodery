@@ -74,26 +74,6 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/invites/" + mFirebaseUser.getUid()).addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        boardList.clear();
-                        Log.w("Kodery", "getUser:onCancelled " + dataSnapshot.toString());
-                        Log.w("Kodery", "count = " + String.valueOf(dataSnapshot.getChildrenCount()) + " values " + dataSnapshot.getKey());
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            Log.w(TAG, String.valueOf(data.getKey()));
-                            findBoard(String.valueOf(data.getKey()));
-                        }
-
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w("Kodery", "getUser:onCancelled", databaseError.toException());
-                    }
-                });
-
         boardList = new ArrayList<>();
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.inviteRecycleView);
@@ -102,7 +82,27 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
         adapter = new RecycleAdapter();
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/invites/" + mFirebaseUser.getUid()).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        boardList.clear();
+                        for(DataSnapshot data : dataSnapshot.getChildren()) {
+                            findBoard(String.valueOf(data.getKey()));
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w("Kodery", "getUser:onCancelled", databaseError.toException());
+                    }
+                });
+
+        Log.w(TAG, "Invites: " + String.valueOf(boardList));
+
     }
+
 
     private void findBoard(final String boardKey) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -120,10 +120,12 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
                 Log.w(TAG, databaseError.toException());
             }
         });
+
+        Log.w(TAG, "Invites: " + String.valueOf(boardList));
+
     }
 
     class RecycleAdapter extends RecyclerView.Adapter {
-
 
         @Override
         public int getItemCount() {
@@ -164,28 +166,35 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
             @Override
             public void onClick(View v) {
                 if (v.getId() == accept.getId()){
-                    acceptInvite(mFirebaseUser.getUid(), boardList.get(position).getBoardKey());
                     Toast.makeText(v.getContext(), "Accepted invite to: " +
                             boardList.get(position).getName(), Toast.LENGTH_SHORT).show();
-                    boardList.remove(boardList.get(position));
+                    acceptInvite(boardList.get(position), mFirebaseUser.getUid());
+
                 }
                 if (v.getId() == decline.getId()) {
-                    declineInvite(mFirebaseUser.getUid(), boardList.get(position).getBoardKey());
                     Toast.makeText(v.getContext(), "Declined invite to: " +
                             boardList.get(position).getName(), Toast.LENGTH_SHORT).show();
-                    boardList.remove(boardList.get(position));
+                    declineInvite( boardList.get(position), mFirebaseUser.getUid());
                 }
             }
         }
     }
 
-    private void acceptInvite(String uid, String boardKey) {
-        mDatabase.child(root).child("boards").child(boardKey).child("peeps").child(uid).setValue(true);
-        mDatabase.child(root).child("invites").child(mFirebaseUser.getUid()).child(boardKey).removeValue();
+    private void acceptInvite(Board board, String uid) {
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).child("peeps").child(uid).setValue(true);
+        mDatabase.child(root).child("invites").child(uid).child(board.getBoardKey()).removeValue();
+
+        boardList.remove(board);
+        adapter.notifyDataSetChanged();
+        //loadInvites();
     }
 
-    private void declineInvite(String uid, String boardKey) {
-        mDatabase.child(root).child("invites").child(mFirebaseUser.getUid()).child(boardKey).removeValue();
+    private void declineInvite(Board board, String uid) {
+        mDatabase.child(root).child("invites").child(uid).child(board.getBoardKey()).removeValue();
+
+        boardList.remove(board);
+        adapter.notifyDataSetChanged();
+        //loadInvites();
     }
 
     @Override

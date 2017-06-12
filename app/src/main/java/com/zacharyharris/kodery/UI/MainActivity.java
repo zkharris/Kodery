@@ -330,11 +330,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             Toast.makeText(MainActivity.this,
                                     mCompName.getText() + " added!",
                                     Toast.LENGTH_SHORT).show();
-                            //Add save here
                         }
-                            saveNetwork(mCompName.getText().toString());
-                            dialog.dismiss();
-
+                        saveNetwork(mCompName.getText().toString());
+                        dialog.dismiss();
                     }
                 });
                 dialog.show();
