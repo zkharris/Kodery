@@ -153,6 +153,8 @@ public class ChatActivity extends AppCompatActivity {
                                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(ChatActivity.this);
                                 View mview = getLayoutInflater().inflate(R.layout.addto_channel_popup, null);
                                 Button doneb = (Button) mview.findViewById(R.id.finish_adding_btn);
+                                TextView title_p = (TextView) mview.findViewById(R.id.invite_title);
+                                title_p.setText("Invite to #"+currChannel.getName()+":");
                                 RecyclerView memberrecyclerView = (RecyclerView) mview.findViewById(R.id.add_channel_RV);
                                 LinearLayoutManager llm = new LinearLayoutManager(ChatActivity.this);
                                 memberrecyclerView.setLayoutManager(llm);
@@ -530,7 +532,6 @@ public class ChatActivity extends AppCompatActivity {
                 final EditText mboardname = (EditText) mview.findViewById(R.id.Channelname);
                 Button addleboard = (Button) mview.findViewById(R.id.createChannel);
                 final ToggleButton mswitch = (ToggleButton) mview.findViewById(R.id.switchtog);
-               // mswitch.set
                 mBuilder.setView(mview);
                 final AlertDialog dialog = mBuilder.create();
 
