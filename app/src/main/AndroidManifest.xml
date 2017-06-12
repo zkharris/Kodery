@@ -17,8 +17,8 @@
         <activity android:name=".UI.SingleListActivity" />
         <activity android:name=".UI.BoardMembersActivity" />
         <activity android:name=".UI.SingleTaskActivity" />
-        <activity android:name=".UI.CreateBoardActivity" />
-        <activity android:name=".UI.ChatActivity" />
+        <activity android:name=".UI.ChatActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".UI.MoveTaskActivity" />
         <activity android:name=".UI.LoadActivity">
             <intent-filter>
