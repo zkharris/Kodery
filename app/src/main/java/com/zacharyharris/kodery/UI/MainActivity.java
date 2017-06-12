@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
 
-        // Board feed
+        /*// Board feed
         database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -227,7 +227,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
-        });
+        });*/
+
+        Query orderedListQuery = database.getReference(root + "/boards").orderByChild("orderNumber");
+        orderedListQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boardsList.clear();
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Board boards = data.getValue(Board.class);
+                    Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
+                    if (boards.getOwnerUid().equals(mFirebaseUser.getUid())) {
+                        boardsList.add(boards);
+                    }
+                    if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
+                            .getValue() != null) {
+                        boardsList.add(boards);
+                    }
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "query:onCancelled", databaseError.toException());
+                }
+            });
+
 
 /*
         String name = mFirebaseUser.getDisplayName();
