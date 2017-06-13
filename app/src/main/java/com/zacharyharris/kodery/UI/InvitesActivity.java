@@ -194,6 +194,9 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
         mDatabase.child(root).child("boards").child(board.getBoardKey()).child("peeps").child(uid).setValue(true);
         mDatabase.child(root).child("invites").child(uid).child(board.getBoardKey()).removeValue();
 
+        boardList.remove(board);
+        adapter.notifyDataSetChanged();
+
         String updateText = (mFirebaseUser.getDisplayName() + " has joined");
         update(board, updateText);
 

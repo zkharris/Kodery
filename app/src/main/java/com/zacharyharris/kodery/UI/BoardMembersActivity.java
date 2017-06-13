@@ -43,7 +43,9 @@ import com.zacharyharris.kodery.Model.User;
 import com.zacharyharris.kodery.R;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -360,12 +362,11 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
 
-
-        findOwner(board.getOwnerUid());
-        // Peep reference
+        // User reference
         database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                memberList.clear();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     findUser(String.valueOf(data.getKey()));
                 }
@@ -386,6 +387,7 @@ public class BoardMembersActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 memberList.add(user);
                 adapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -396,7 +398,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         });
     }
 
-    private void findOwner(final String ownerUid) {
+    /*private void findOwner(final String ownerUid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
             @Override
@@ -415,7 +417,7 @@ public class BoardMembersActivity extends AppCompatActivity {
             }
         });
 
-    }
+    }*/
 
     private void makeAdmin(User user){
         mDatabase.child(root).child("boards").child(board.getBoardKey()).child("admins").
@@ -442,30 +444,19 @@ public class BoardMembersActivity extends AppCompatActivity {
     private void update(String updateText) {
         String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
 
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        Log.w(TAG, currentDateTimeString);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm aa");
+        String dateString = format.format(calendar.getTime());
 
         Update update = new Update();
         update.setText(updateText);
         update.setBoard(board.getBoardKey());
         update.setKey(key);
-        update.setDate(currentDateTimeString);
+        update.setDate(dateString);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
         mDatabase.updateChildren(childUpdates);
-    }
-
-
-    private void addTaskMembers(Task task, User user) {
-        mDatabase.child(root).child("tasks").child(task.getKey()).child("members").
-                child(user.getUid()).setValue(true);
-        //Intent to Single Task view
-    }
-
-    private void addChannelMembers(Channel channel, User user) {
-        mDatabase.child(root).child("channels").child(board.getBoardKey()).child(channel.getKey())
-                .child("peeps").child(user.getUid()).setValue(true);
     }
 
     @Override

@@ -93,15 +93,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final String root = "testRoot";
     private User currentUser;
 
-    public boolean has(ArrayList<Board> boardList, Board board){
-        for(Board b : boardList) {
-            if(b.getBoardKey().equals(board.getBoardKey())){
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
-        mswipe = (SwipeRefreshLayout) findViewById(R.id.refresh_pull);
+        /*mswipe = (SwipeRefreshLayout) findViewById(R.id.refresh_pull);
         mswipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -154,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 mswipe.setRefreshing(false);
             }
-        });
+        });*/
 
         final FirebaseDatabase mdatabase = FirebaseDatabase.getInstance();
 
@@ -258,22 +249,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                boardsList.clear();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Board boards = data.getValue(Board.class);
-                    if (!has(boardsList, boards)) {
-                        Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
-                        if (boards.getOwnerUid().equals(mFirebaseUser.getUid())) {
-                            boardsList.add(boards);
-                            mAdapter.notifyDataSetChanged();
-                        }
-                        if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
-                                .getValue() != null) {
-                            boardsList.add(boards);
-                            mAdapter.notifyDataSetChanged();
-                        }
+                    Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
+                    if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
+                            .getValue() != null) {
+                        boardsList.add(boards);
+                        mAdapter.notifyDataSetChanged();
                     }
                 }
-
             }
 
             @Override
@@ -346,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDatabase.child(root).child("channels").child(board.getBoardKey()).child(generalKey).setValue(generalchannel);
         mDatabase.child(root).child("boards").child(key).child("admins").
                 child(mFirebaseUser.getUid()).setValue(true);
+        mDatabase.child(root).child("boards").child(key).child("peeps").child(mFirebaseUser.getUid()).setValue(true);
 
         loadBoard();
     }

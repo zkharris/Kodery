@@ -40,7 +40,9 @@ import com.zacharyharris.kodery.R;
 import org.w3c.dom.Text;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -294,14 +296,15 @@ public class SingleTaskActivity extends AppCompatActivity {
     private void update(String updateText) {
         String key = mDatabase.child(root).child("updates").child(board.getBoardKey()).push().getKey();
 
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        Log.w(TAG, currentDateTimeString);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm aa");
+        String dateString = format.format(calendar.getTime());
 
         Update update = new Update();
         update.setText(updateText);
         update.setBoard(board.getBoardKey());
         update.setKey(key);
-        update.setDate(currentDateTimeString);
+        update.setDate(dateString);
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(root + "/updates/" + board.getBoardKey() + "/" + key, update.toFirebaseObject());
