@@ -547,8 +547,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         mDatabase.child(root).child("boards").child(board.getBoardKey()).
                 child("peeps").child(user.getUid()).removeValue();
 
-        memberList.remove(user);
-        adapter.notifyDataSetChanged();
+        loadFeed();
 
         String updateText = (user.getUsername() + " has left the board");
         update(updateText);
