@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
 
+
         final FirebaseDatabase mdatabase = FirebaseDatabase.getInstance();
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, 0){
@@ -432,7 +433,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Button addleboard = (Button) myview.findViewById(R.id.createB);
 
                 RadioGroup mRG = (RadioGroup) myview.findViewById(R.id.color_radio_group);
-                final int radioButtonid = mRG.getCheckedRadioButtonId();
                 final RadioButton purpRB = (RadioButton) myview.findViewById(R.id.purp_b);
                 final RadioButton blueRB = (RadioButton) myview.findViewById(R.id.blue_b);
                 final RadioButton greenRB = (RadioButton) myview.findViewById(R.id.green_b);

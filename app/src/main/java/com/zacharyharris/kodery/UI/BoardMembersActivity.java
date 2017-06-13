@@ -116,7 +116,9 @@ public class BoardMembersActivity extends AppCompatActivity {
             ((SimpleItemViewHolder) holder).title.setText(user.getUsername());
             Glide.with(BoardMembersActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
             if(user.getUid().equals(board.getOwnerUid())) {
-                // set an icon on the item user
+                ((SimpleItemViewHolder) holder).owner_im.setVisibility(View.VISIBLE);
+            }else if(board.getAdmins().containsKey(user.getUid())){
+                    ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.VISIBLE);
             }
         }
 
@@ -125,12 +127,16 @@ public class BoardMembersActivity extends AppCompatActivity {
             TextView title;
             ImageView ownerBadge;
             public int position;
+            ImageView owner_im;
+            ImageView admin_im;
 
             public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
                 title = (TextView) itemView.findViewById(R.id.usr_name);
                 image = (ImageView) itemView.findViewById(R.id.usr_pic);
+                owner_im = (ImageView) itemView.findViewById(R.id.owner_badge);
+                admin_im = (ImageView) itemView.findViewById(R.id.admin_badge);
                 //ownerBadge = (ImageView) itemView.findViewById(R.id.owner_badge);
             }
 
