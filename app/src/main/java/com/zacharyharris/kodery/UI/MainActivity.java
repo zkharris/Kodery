@@ -687,68 +687,74 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 saveleboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!mboardname.getText().toString().isEmpty()
-                                && !(mboardname.getText().toString().equals(test.getName()))) {
-                            Toast.makeText(v.getContext(),
-                                    test.getName() + " renamed to " + mboardname.getText() + "!",
-                                    Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                            if (purpRB.isChecked()) {
-                                Log.d(TAG, "onClick: purple");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#d1afff");
-
-                            } else if (blueRB.isChecked()) {
-                                Log.d(TAG, "onClick: blue");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#b2cefe");
-
-                            } else if (greenRB.isChecked()) {
-                                Log.d(TAG, "onClick: green");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#abe9a1");
-
-                            } else if (yellRB.isChecked()) {
-                                Log.d(TAG, "onClick: yellow");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffe77f");
-
-                            } else if (orngRB.isChecked()) {
-                                Log.d(TAG, "onClick: orange");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffc2a2");
-
-                            } else {
-                                Log.d(TAG, "onClick: red");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#fd9995");
-                            }
-                            //updateBoard(boardsList.get(position), mboardname.getText().toString());
-                            // Get rid of the pop up go back to main activity
-                        } else if (!mboardname.getText().toString().isEmpty()) {
-                            if (purpRB.isChecked() && check2 != R.id.purp_b) {
-                                Log.d(TAG, "onClick: purple");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#d1afff");
+                        if (boardsList.get(position).getAdmins().containsKey(mFirebaseUser.getUid())) {
+                            if (!mboardname.getText().toString().isEmpty()
+                                    && !(mboardname.getText().toString().equals(test.getName()))) {
+                                Toast.makeText(v.getContext(),
+                                        test.getName() + " renamed to " + mboardname.getText() + "!",
+                                        Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
+                                if (purpRB.isChecked()) {
+                                    Log.d(TAG, "onClick: purple");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#d1afff");
 
-                            } else if (blueRB.isChecked() && check2 != R.id.blue_b) {
-                                Log.d(TAG, "onClick: blue");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#b2cefe");
-                                dialog.dismiss();
+                                } else if (blueRB.isChecked()) {
+                                    Log.d(TAG, "onClick: blue");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#b2cefe");
 
-                            } else if (greenRB.isChecked() && check2 != R.id.green_b) {
-                                Log.d(TAG, "onClick: green");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#abe9a1");
-                                dialog.dismiss();
+                                } else if (greenRB.isChecked()) {
+                                    Log.d(TAG, "onClick: green");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#abe9a1");
 
-                            } else if (yellRB.isChecked() && check2 != R.id.yell_b) {
-                                Log.d(TAG, "onClick: yellow");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffe77f");
-                                dialog.dismiss();
+                                } else if (yellRB.isChecked()) {
+                                    Log.d(TAG, "onClick: yellow");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffe77f");
 
-                            } else if (orngRB.isChecked() && check2 != R.id.orng_b) {
-                                Log.d(TAG, "onClick: orange");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffc2a2");
-                                dialog.dismiss();
+                                } else if (orngRB.isChecked()) {
+                                    Log.d(TAG, "onClick: orange");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffc2a2");
 
-                            } else if (redRB.isChecked() && check2 != R.id.red_b) {
-                                Log.d(TAG, "onClick: red");
-                                updateBoard(boardsList.get(position), mboardname.getText().toString(), "#fd9995");
-                                dialog.dismiss();
+                                } else {
+                                    Log.d(TAG, "onClick: red");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#fd9995");
+                                }
+                                //updateBoard(boardsList.get(position), mboardname.getText().toString());
+                                // Get rid of the pop up go back to main activity
+                            } else if (!mboardname.getText().toString().isEmpty()) {
+                                if (purpRB.isChecked() && check2 != R.id.purp_b) {
+                                    Log.d(TAG, "onClick: purple");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#d1afff");
+                                    dialog.dismiss();
+
+                                } else if (blueRB.isChecked() && check2 != R.id.blue_b) {
+                                    Log.d(TAG, "onClick: blue");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#b2cefe");
+                                    dialog.dismiss();
+
+                                } else if (greenRB.isChecked() && check2 != R.id.green_b) {
+                                    Log.d(TAG, "onClick: green");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#abe9a1");
+                                    dialog.dismiss();
+
+                                } else if (yellRB.isChecked() && check2 != R.id.yell_b) {
+                                    Log.d(TAG, "onClick: yellow");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffe77f");
+                                    dialog.dismiss();
+
+                                } else if (orngRB.isChecked() && check2 != R.id.orng_b) {
+                                    Log.d(TAG, "onClick: orange");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffc2a2");
+                                    dialog.dismiss();
+
+                                } else if (redRB.isChecked() && check2 != R.id.red_b) {
+                                    Log.d(TAG, "onClick: red");
+                                    updateBoard(boardsList.get(position), mboardname.getText().toString(), "#fd9995");
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(v.getContext(),
+                                            "Please change the Board name or color.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
                             } else {
                                 Toast.makeText(v.getContext(),
                                         "Please change the Board name or color.",
@@ -756,10 +762,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             }
                         } else {
                             Toast.makeText(v.getContext(),
-                                    "Please change the Board name or color.",
-                                    Toast.LENGTH_SHORT).show();
+                                    "Only owners and admins can edit the board.", Toast.LENGTH_LONG).show();
                         }
                     }
+
                 });
 
                 delboard.setOnClickListener(new View.OnClickListener() {
