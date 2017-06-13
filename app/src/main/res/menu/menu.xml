@@ -6,7 +6,7 @@
         android:id="@+id/invites"
         android:orderInCategory="100"
         android:title="Invites"
-        android:icon="@drawable/ic_mail_white_48dp"
+        android:icon="@drawable/ic_drafts_white_48dp"
         app:showAsAction="always" />
 
     <item
