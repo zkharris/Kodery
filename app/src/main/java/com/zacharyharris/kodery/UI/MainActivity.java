@@ -860,7 +860,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-        loadBoard();
+        // Delete Invites
+        database.getReference(root + "/invites").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()){
+                    if (data.hasChild(board.getBoardKey())) {
+                        mDatabase.child(root).child("invites").child(data.getKey()).child(board.getBoardKey()).removeValue();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "deleteInvites:onCancelled", databaseError.toException());
+            }
+        });
+
+        boardsList.remove(board);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
