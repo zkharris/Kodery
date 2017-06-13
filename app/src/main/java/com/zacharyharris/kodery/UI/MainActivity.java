@@ -3,6 +3,7 @@ package com.zacharyharris.kodery.UI;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mlayoutManager;
+    public SwipeRefreshLayout mswipe;
 
     public int tap_num = 0;
 
@@ -108,6 +110,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new MainAdapter(boardsList);
         mRecyclerView.setAdapter(mAdapter);
+
+        mswipe = (SwipeRefreshLayout) findViewById(R.id.refresh_pull);
+        mswipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                
+            }
+        });
 
 
         final FirebaseDatabase mdatabase = FirebaseDatabase.getInstance();
