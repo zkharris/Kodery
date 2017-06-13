@@ -363,7 +363,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        loadMembers();
+        loadFeed();
     }
 
     private void loadFeed() {
@@ -389,7 +389,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
 
         // User reference
-        /*database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
+        database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 memberList.clear();
@@ -418,6 +418,7 @@ public class BoardMembersActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "memberList", databaseError.toException());
             }
+        });
 
             /*private void findUser(String peepUid) {
                 database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
@@ -442,12 +443,32 @@ public class BoardMembersActivity extends AppCompatActivity {
                 Log.w(TAG, "peepReference:onCancelled", databaseError.toException());
             }
         });*/
-        //});
+
     }
 
     private void loadMembers() {
-        // Member feed
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+        // Admins Feed
+        board.getAdmins().clear();
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("admins")){
+                    for(DataSnapshot data : dataSnapshot.child("admins").getChildren()) {
+                        board.addAdmin(data.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
+            }
+        });
+
+        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
+
+        // Member feed
         database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -515,7 +536,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         String updateText = (user.getUsername() + " is now an Admin");
         update(updateText);
 
-        loadMembers();
+        loadFeed();
     }
 
     private void removeAdmin(User user) {
@@ -525,7 +546,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
 
         // no update text for this action
-        loadMembers();
+        loadFeed();
     }
 
     private void update(String updateText) {
@@ -634,7 +655,7 @@ public class BoardMembersActivity extends AppCompatActivity {
                 child("peeps").child(user.getUid()).removeValue();
 
         //loadFeed();
-        loadMembers();
+        //loadMembers();
         String updateText = (user.getUsername() + " has left the board");
         update(updateText);
         // no update Text for this action
