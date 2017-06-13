@@ -385,9 +385,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     Log.w(TAG, "This person has invites");
                     //Set Icon if they have invites here
                     optionsmenu.findItem(R.id.invites).setIcon(R.drawable.ic_mail_white_48dp);
-                } else {
-                    // Leave Blank or remove else statement
-                    optionsmenu.findItem(R.id.invites).setIcon(R.drawable.ic_drafts_white_48dp);
                 }
             }
 

@@ -47,8 +47,8 @@ public class Board implements Serializable {
 
     public void removeAdmin(String admin) { this.admins.remove(admin); }
 
-    public HashMap<String,String> toFirebaseObject() {
-        HashMap<String, String> board = new HashMap<>();
+    public HashMap<String,Object> toFirebaseObject() {
+        HashMap<String, Object> board = new HashMap<>();
         board.put("name", name);
         board.put("owner", owner);
         board.put("ownerUid", ownerUid);

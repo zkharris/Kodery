@@ -580,6 +580,13 @@ public class BoardMembersActivity extends AppCompatActivity {
     }
 
     private void kickUser(User user) {
+        Intent intent = new Intent(this, SingleBoardActivity.class);
+        intent.putExtra("board", board);
+        startActivity(intent);
+
+        memberList.remove(user);
+        adapter.notifyDataSetChanged();
+
         mDatabase.child(root).child("boards").child(board.getBoardKey()).
                 child("peeps").child(user.getUid()).removeValue();
 
@@ -589,8 +596,6 @@ public class BoardMembersActivity extends AppCompatActivity {
         update(updateText);
         // no update Text for this action
 
-        Intent intent = new Intent(this, SingleBoardActivity.class);
-        intent.putExtra("board", board);
-        startActivity(intent);
+
     }
 }
