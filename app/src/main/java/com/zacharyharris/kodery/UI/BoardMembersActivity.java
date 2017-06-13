@@ -622,9 +622,10 @@ public class BoardMembersActivity extends AppCompatActivity {
     }
 
     private void kickUser(User user) {
-        Intent intent = new Intent(this, SingleBoardActivity.class);
-        intent.putExtra("board", board);
-        startActivity(intent);
+        //Intent intent = new Intent(this, SingleBoardActivity.class);
+        //intent.putExtra("board", board);
+        //startActivity(intent);
+        finish();
 
         memberList.remove(user);
         adapter.notifyDataSetChanged();
