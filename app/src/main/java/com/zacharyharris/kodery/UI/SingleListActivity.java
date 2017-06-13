@@ -322,7 +322,7 @@ public class SingleListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 memberList.clear();
-                findOwner(String.valueOf(dataSnapshot.child("ownerUid").getValue()));
+                //findOwner(String.valueOf(dataSnapshot.child("ownerUid").getValue()));
                 DataSnapshot peepsRef = dataSnapshot.child("peeps");
                 for(DataSnapshot data : peepsRef.getChildren()) {
                     findUser(String.valueOf(data.getKey()));
@@ -355,7 +355,7 @@ public class SingleListActivity extends AppCompatActivity {
         });
     }
 
-    private void findOwner(String ownerUid) {
+    /*private void findOwner(String ownerUid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
             @Override
@@ -371,7 +371,7 @@ public class SingleListActivity extends AppCompatActivity {
                 Log.w(TAG, "findOwner:onCancelled", databaseError.toException());
             }
         });
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
