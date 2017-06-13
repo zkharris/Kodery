@@ -117,8 +117,12 @@ public class BoardMembersActivity extends AppCompatActivity {
             Glide.with(BoardMembersActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
             if(user.getUid().equals(board.getOwnerUid())) {
                 ((SimpleItemViewHolder) holder).owner_im.setVisibility(View.VISIBLE);
-            }else if(board.getAdmins().containsKey(user.getUid())){
+            } else {
+                if(board.getAdmins().containsKey(user.getUid())){
                     ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.VISIBLE);
+                } else {
+                    ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.GONE);
+                }
             }
         }
 
@@ -164,18 +168,18 @@ public class BoardMembersActivity extends AppCompatActivity {
                                 board.getAdmins().containsKey(mFirebaseUser.getUid())) {
 
                             if(!board.getAdmins().containsKey(memberList.get(position).getUid())){
-                            makeAdmin(memberList.get(position));
-                            Toast t = Toast.makeText(v.getContext(),
+
+                                Toast t = Toast.makeText(v.getContext(),
                                     memberList.get(position).getUsername() + " is now an Admin.",
                                     Toast.LENGTH_LONG);
-                            LinearLayout layout = (LinearLayout) t.getView();
-                            if (layout.getChildCount() > 0) {
-                                TextView tv = (TextView) layout.getChildAt(0);
-                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-                            }
-                            t.show();
-                            mydialog.dismiss();
-
+                                LinearLayout layout = (LinearLayout) t.getView();
+                                if (layout.getChildCount() > 0) {
+                                    TextView tv = (TextView) layout.getChildAt(0);
+                                    tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                }
+                                t.show();
+                                mydialog.dismiss();
+                                makeAdmin(memberList.get(position));
                             } else {
                                 Toast t = Toast.makeText(v.getContext(),
                                         memberList.get(position).getUsername() + " is already an admin",
@@ -210,7 +214,6 @@ public class BoardMembersActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if(mFirebaseUser.getUid().equals(board.getOwnerUid())) {
                             if(board.getAdmins().containsKey(memberList.get(position).getUid())) {
-                                removeAdmin(memberList.get(position));
                                 Toast t = Toast.makeText(v.getContext(),
                                         memberList.get(position).getUsername() + " is no longer an Admin.",
                                         Toast.LENGTH_LONG);
@@ -219,6 +222,7 @@ public class BoardMembersActivity extends AppCompatActivity {
                                     TextView tv = (TextView) layout.getChildAt(0);
                                     tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
                                 }
+                                removeAdmin(memberList.get(position));
                                 t.show();
                                 mydialog.dismiss();
                             } else {
@@ -331,30 +335,16 @@ public class BoardMembersActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        //loadFeed();
-        memberList.clear();
-        findOwner(board.getOwnerUid());
-        // Peep reference
+        loadFeed();
+    }
+
+    private void loadFeed() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    findUser(String.valueOf(data.getKey()));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "peepReference:onCancelled", databaseError.toException());
-            }
-        });
-
         // Admins Feed
+        board.getAdmins().clear();
         database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                board.getAdmins().clear();
                 if(dataSnapshot.hasChild("admins")){
                     for(DataSnapshot data : dataSnapshot.child("admins").getChildren()) {
                         board.addAdmin(data.getKey());
@@ -369,10 +359,23 @@ public class BoardMembersActivity extends AppCompatActivity {
         });
 
         Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
-    }
 
-    private void loadFeed() {
 
+        findOwner(board.getOwnerUid());
+        // Peep reference
+        database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    findUser(String.valueOf(data.getKey()));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "peepReference:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private void findUser(String peepUid) {
@@ -398,6 +401,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                memberList.clear();
                 User owner = dataSnapshot.getValue(User.class);
                 Log.w(TAG, owner.getEmail());
                 memberList.add(owner);
@@ -421,6 +425,8 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         String updateText = (user.getUsername() + " is now an Admin");
         update(updateText);
+
+        loadFeed();
     }
 
     private void removeAdmin(User user) {
@@ -430,6 +436,7 @@ public class BoardMembersActivity extends AppCompatActivity {
         Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
 
         // no update text for this action
+        loadFeed();
     }
 
     private void update(String updateText) {
