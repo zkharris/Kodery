@@ -71,6 +71,7 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
         setContentView(R.layout.activity_invites);
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#245a7a")));
+        mActionBar.setTitle("Invites");
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
