@@ -440,7 +440,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 memberList.clear();
-                findOwner(String.valueOf(dataSnapshot.child("ownerUid").getValue()));
+                //findOwner(String.valueOf(dataSnapshot.child("ownerUid").getValue()));
                 DataSnapshot peepsRef = dataSnapshot.child("peeps");
                 for(DataSnapshot data : peepsRef.getChildren()) {
                     findUser(String.valueOf(data.getKey()));
