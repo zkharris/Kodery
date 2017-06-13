@@ -413,6 +413,24 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        //Check if User is kicked
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!board.getOwnerUid().equals(mFirebaseUser.getUid())) {
+                    if (!dataSnapshot.child("peeps").hasChild(mFirebaseUser.getUid())) {
+                        Intent intent = new Intent(ChatActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "kickUser:onCancelled", databaseError.toException());
+            }
+        });
+
     }
 
     private void loadMembers() {

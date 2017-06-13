@@ -366,7 +366,7 @@ public class BoardMembersActivity extends AppCompatActivity {
     }
 
     private void loadFeed() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
         // Admins Feed
         board.getAdmins().clear();
         database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
@@ -392,9 +392,30 @@ public class BoardMembersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 memberList.clear();
+                Log.w(TAG, "MemberList 1: " + String.valueOf(memberList));
+
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     findUser(String.valueOf(data.getKey()));
                 }
+                Log.w(TAG, "MemberList 2: " + String.valueOf(memberList));
+            }
+
+            private void findUser(String peepUid) {
+                database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        memberList.add(user);
+                        adapter.notifyDataSetChanged();
+                        Log.w(TAG, "MemberList 3: " + String.valueOf(memberList));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "findUser:onCancelled", databaseError.toException());
+
+                    }
+                });
             }
 
             @Override
@@ -404,15 +425,14 @@ public class BoardMembersActivity extends AppCompatActivity {
         });
     }
 
-    private void findUser(String peepUid) {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    /*private void findUser(String peepUid) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 memberList.add(user);
                 adapter.notifyDataSetChanged();
-
             }
 
             @Override
@@ -421,7 +441,7 @@ public class BoardMembersActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
 
     /*private void findOwner(final String ownerUid) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -563,10 +583,14 @@ public class BoardMembersActivity extends AppCompatActivity {
         mDatabase.child(root).child("boards").child(board.getBoardKey()).
                 child("peeps").child(user.getUid()).removeValue();
 
-        loadFeed();
+        //loadFeed();
 
         String updateText = (user.getUsername() + " has left the board");
         update(updateText);
         // no update Text for this action
+
+        Intent intent = new Intent(this, SingleBoardActivity.class);
+        intent.putExtra("board", board);
+        startActivity(intent);
     }
 }

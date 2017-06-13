@@ -240,6 +240,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
         loadBoard();
+        loadInvites();
+    }
+
+    public void loadInvites() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        ValueEventListener valueEventListener = database.getReference(root + "/invites/" + mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Log.w(TAG, "This person has invites");
+                    //Set Icon if they have invites here
+                } else {
+                    // Leave Blank or remove else statement
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadInvites:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private void loadBoard() {

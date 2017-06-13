@@ -25,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -63,6 +65,8 @@ public class SingleTaskActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
     RecycleAdapter adapter;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
     class RecycleAdapter extends RecyclerView.Adapter {
 
@@ -129,6 +133,9 @@ public class SingleTaskActivity extends AppCompatActivity {
         }
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         fatask = this;
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
@@ -211,6 +218,24 @@ public class SingleTaskActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
+            }
+        });
+
+        //Check if User is kicked
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!board.getOwnerUid().equals(mFirebaseUser.getUid())) {
+                    if (!dataSnapshot.child("peeps").hasChild(mFirebaseUser.getUid())) {
+                        Intent intent = new Intent(SingleTaskActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "kickUser:onCancelled", databaseError.toException());
             }
         });
 

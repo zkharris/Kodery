@@ -415,6 +415,25 @@ public class SingleListActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         loadTaskFeed();
+
+        //Check if User is kicked
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!board.getOwnerUid().equals(mFirebaseUser.getUid())) {
+                    if (!dataSnapshot.child("peeps").hasChild(mFirebaseUser.getUid())) {
+                        Intent intent = new Intent(SingleListActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "kickUser:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private void loadTaskFeed() {
