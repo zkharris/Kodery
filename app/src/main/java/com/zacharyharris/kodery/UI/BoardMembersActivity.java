@@ -124,6 +124,7 @@ public class BoardMembersActivity extends AppCompatActivity {
                     ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.VISIBLE);
                 } else {
                     ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.GONE);
+                    ((SimpleItemViewHolder) holder).owner_im.setVisibility(View.GONE);
                 }
             }
         }
