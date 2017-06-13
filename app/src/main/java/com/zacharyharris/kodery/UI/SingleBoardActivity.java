@@ -623,7 +623,7 @@ public class SingleBoardActivity extends AppCompatActivity {
     public void onBackPressed(){
 
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_to_right, R.anim.slide_from_left);
+        //overridePendingTransition(R.anim.slide_to_right, R.anim.slide_from_left);
     }
 
 }

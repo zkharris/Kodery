@@ -216,17 +216,30 @@ public class BoardMembersActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if(mFirebaseUser.getUid().equals(board.getOwnerUid())) {
                             if(board.getAdmins().containsKey(memberList.get(position).getUid())) {
-                                Toast t = Toast.makeText(v.getContext(),
-                                        memberList.get(position).getUsername() + " is no longer an Admin.",
-                                        Toast.LENGTH_LONG);
-                                LinearLayout layout = (LinearLayout) t.getView();
-                                if (layout.getChildCount() > 0) {
-                                    TextView tv = (TextView) layout.getChildAt(0);
-                                    tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                if(!memberList.get(position).getUid().equals(board.getOwnerUid())) {
+                                    Toast t = Toast.makeText(v.getContext(),
+                                            memberList.get(position).getUsername() + " is no longer an Admin.",
+                                            Toast.LENGTH_LONG);
+                                    LinearLayout layout = (LinearLayout) t.getView();
+                                    if (layout.getChildCount() > 0) {
+                                        TextView tv = (TextView) layout.getChildAt(0);
+                                        tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                    }
+                                    removeAdmin(memberList.get(position));
+                                    t.show();
+                                    mydialog.dismiss();
+                                } else{
+                                    Toast t = Toast.makeText(v.getContext(),
+                                            "Cannot demote Owner.",
+                                            Toast.LENGTH_LONG);
+                                    LinearLayout layout = (LinearLayout) t.getView();
+                                    if (layout.getChildCount() > 0) {
+                                        TextView tv = (TextView) layout.getChildAt(0);
+                                        tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                                    }
+                                    t.show();
+                                    mydialog.dismiss();
                                 }
-                                removeAdmin(memberList.get(position));
-                                t.show();
-                                mydialog.dismiss();
                             } else {
                                 Toast t = Toast.makeText(v.getContext(),
                                         memberList.get(position).getUsername() + " is not an Admin.",
@@ -239,6 +252,18 @@ public class BoardMembersActivity extends AppCompatActivity {
                                 t.show();
                                 mydialog.dismiss();
                             }
+                        }else{
+                            Toast t = Toast.makeText(v.getContext(),
+                                    "Only Owners can demote Admins.",
+                                    Toast.LENGTH_LONG);
+                            LinearLayout layout = (LinearLayout) t.getView();
+                            if (layout.getChildCount() > 0) {
+                                TextView tv = (TextView) layout.getChildAt(0);
+                                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                            }
+                            removeAdmin(memberList.get(position));
+                            t.show();
+                            mydialog.dismiss();
                         }
                     }
                 });
