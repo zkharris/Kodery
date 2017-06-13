@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public static final String TAG = "MainActivity";
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    MainAdapter mAdapter;
     private RecyclerView.LayoutManager mlayoutManager;
     public SwipeRefreshLayout mswipe;
 
@@ -88,10 +88,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private String mUsername;
     private String mPhotoUrl;
     ArrayList<Update> updateList;
-    ArrayList<Board> boardsList;
+    ArrayList<Board> boardsList = new ArrayList<>();
 
     private static final String root = "testRoot";
     private User currentUser;
+
+    public boolean has(ArrayList<Board> boardList, Board board){
+        for(Board b : boardList) {
+            if(b.getBoardKey().equals(board.getBoardKey())){
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     @Override
@@ -102,20 +111,48 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#245a7a")));
 
-        boardsList = new ArrayList<>();
-
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        mAdapter = new MainAdapter(boardsList);
+        mAdapter = new MainAdapter();
         mRecyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
 
         mswipe = (SwipeRefreshLayout) findViewById(R.id.refresh_pull);
         mswipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.w(TAG, "Boards list: " + String.valueOf(boardsList));
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            Board boards = data.getValue(Board.class);
+                            if(!has(boardsList, boards)){
+                                Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
+                                if (boards.getOwnerUid().equals(mFirebaseUser.getUid())) {
+                                    boardsList.add(boards);
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                                if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
+                                        .getValue() != null) {
+                                    boardsList.add(boards);
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "refresh:onCancelled", databaseError.toException());
+                    }
+                });
+
+                mswipe.setRefreshing(false);
             }
         });
 
@@ -136,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 */
                 final int firstPosition = viewHolder.getAdapterPosition();;
                 final int secondPosition = target.getAdapterPosition();
-                DatabaseReference firstItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(viewHolder.getAdapterPosition()).getBoardKey());
+                /*DatabaseReference firstItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(viewHolder.getAdapterPosition()).getBoardKey());
                 DatabaseReference secondItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(target.getAdapterPosition()).getBoardKey());
 
                 HashMap<String, Object> updateFirstItemOrderNumber = new HashMap<>();
@@ -145,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 HashMap<String, Object> updateSecondItemOrderNumber = new HashMap<>();
                 updateSecondItemOrderNumber.put("orderNumber", firstPosition);
-                secondItemRef.updateChildren(updateSecondItemOrderNumber);
+                secondItemRef.updateChildren(updateSecondItemOrderNumber);*/
 
                 mAdapter.notifyItemMoved(firstPosition, secondPosition);
 
@@ -212,34 +249,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-
-        /*// Board feed
+        // Board feed
         database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                boardsList.clear();
-                Query orderedistQuery = database.getReference(root + "/boards").orderByChild("orderNumber");
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Board boards = data.getValue(Board.class);
-                    Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
-                    if (boards.getOwnerUid().equals(mFirebaseUser.getUid())) {
-                        boardsList.add(boards);
-                    }
-                    if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
-                            .getValue() != null) {
-                        boardsList.add(boards);
+                    if(!has(boardsList, boards)) {
+                        Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
+                        if (boards.getOwnerUid().equals(mFirebaseUser.getUid())) {
+                            boardsList.add(boards);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
+                                .getValue() != null) {
+                            boardsList.add(boards);
+                            mAdapter.notifyDataSetChanged();
+                        }
                     }
                 }
-                mAdapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
-        });*/
+        });
 
-        Query orderedListQuery = database.getReference(root + "/boards").orderByChild("orderNumber");
+        /*Query orderedListQuery = database.getReference(root + "/boards").orderByChild("orderNumber");
         orderedListQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -262,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 public void onCancelled(DatabaseError databaseError) {
                     Log.w(TAG, "query:onCancelled", databaseError.toException());
                 }
-            });
+            });*/
 
 
 /*
@@ -280,9 +318,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private void saveBoard(String name, String hc) {
         String key = mDatabase.child("board").push().getKey();
-
-        //Log.d(TAG, "saveBoard: "+hc);
-
         Board board = new Board();
         board.setName(name);
         board.setOwner(mFirebaseUser.getDisplayName());
@@ -290,11 +325,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         board.setOwnerUid(mFirebaseUser.getUid());
         board.setColor(hc);
 
-        Log.d(TAG, "saveBoard: "+board.getColor());
-
         Map<String, Object> boardUpdates = new HashMap<>();
         boardUpdates.put(root + "/boards/" + key, board.toFirebaseObject());
         mDatabase.updateChildren(boardUpdates);
+
+        Log.d(TAG, "saveBoard: "+board.getColor());
 
         // Create General Chat channel
         String generalKey = mDatabase.child(root).child("channels").child(board.getBoardKey()).push().getKey();
@@ -306,25 +341,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDatabase.child(root).child("channels").child(board.getBoardKey()).child(generalKey).setValue(generalchannel);
     }
 
-    public void goToInvites(View view){
-        Intent intent = new Intent(this, InvitesActivity.class);
-        startActivity(intent);
-    }
-
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
-    }
-
-    //bind the sign out button onClick here
-    public void signOut(View view){
-        mFirebaseAuth.signOut();
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-        mFirebaseUser = null;
-        mUsername = "anonymous";
-        mPhotoUrl = null;
-        startActivity(new Intent(this, SignInActivity.class));
     }
 
     /**
@@ -478,33 +497,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
+    public class MainAdapter extends RecyclerView.Adapter {
 
         public static final String TAG = "MainAdapter";
-        private ArrayList<Board> boardsList;
-
-        public MainAdapter(ArrayList<Board> boardsList) {
-            this.boardsList = boardsList;
-        }
-
-        //@Override
-        public DatabaseReference getRef(int position){
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference mDref = database.getReference(root + "/boards/" + boardsList.get(position).getBoardKey());
-            //DatabaseReference mDref = mDatabase.child(root).child("boards").child(boardsList.get(position).getBoardKey());
-            return mDref;
-        }
 
         @Override
-        public MainAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             // create a new view
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_board, parent, false);
-            ViewHolder vh = new ViewHolder(v);
+            SimpleItemViewHolder vh = new SimpleItemViewHolder(v);
             return vh;
         }
 
         @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            SimpleItemViewHolder viewHolder = (SimpleItemViewHolder) holder;
+            viewHolder.position = position;
+            Board board = boardsList.get(position);
+            ((SimpleItemViewHolder) holder).mBoard.setText(board.getName());
+            ((SimpleItemViewHolder) holder).mCV.setCardBackgroundColor(Color.parseColor(board.getColor()));
+
+        }
+
+        /*@Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.mBoard.setText(boardsList.get(position).getName());
             holder.position = position;
@@ -513,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             //Color colorCV = new Color();
             //colorCV.parseColor(str);
             holder.mCV.setCardBackgroundColor(Color.parseColor(boardsList.get(position).getColor()));
-        }
+        }*/
 
 
         @Override
@@ -521,13 +537,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             return boardsList.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener/*,View.OnLongClickListener*/{
+        public class SimpleItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener/*,View.OnLongClickListener*/{
 
             public TextView mBoard;
             public int position;
             CardView mCV;
 
-            public ViewHolder(View itemView) {
+            public SimpleItemViewHolder(View itemView) {
                 super(itemView);
                 itemView.setOnClickListener(this);
                 //itemView.setOnLongClickListener(this);

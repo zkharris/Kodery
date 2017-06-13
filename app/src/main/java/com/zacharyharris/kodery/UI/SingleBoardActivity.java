@@ -49,7 +49,7 @@ import java.util.Map;
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 
 public class SingleBoardActivity extends AppCompatActivity {
-    
+
     public static final String TAG = "SingleBoardActivity";
 
     ListsRecycleAdapter listAdapter;
