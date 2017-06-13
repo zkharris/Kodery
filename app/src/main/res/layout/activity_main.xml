@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,23 +16,6 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-<!--  f0e5ff b d7baff b2 d1afff
-        <Button
-            android:id="@+id/test_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="[Test] Go to Invite Activity" />
 -->
     </LinearLayout>
-<!--
-    <android.support.design.widget.NavigationView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/nav_view"
-        android:layout_gravity="start"
-        app:menu="@menu/nav_menu"
-        android:fitsSystemWindows="true">
-
-
-    </android.support.design.widget.NavigationView>-->
-</android.support.v4.widget.DrawerLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

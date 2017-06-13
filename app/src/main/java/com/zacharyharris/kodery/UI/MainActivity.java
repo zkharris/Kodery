@@ -539,6 +539,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             Intent i = new Intent(myView.getContext(), SingleBoardActivity.class);
                             i.putExtra("board", boardsList.get(position));
                             myView.getContext().startActivity(i);
+                            overridePendingTransition(R.anim.slide_to_left, R.anim.slide_from_right);
                         } else if(tap_num==2){
 
                             AlertDialog.Builder mBuilder = new AlertDialog.Builder(myView.getContext());
