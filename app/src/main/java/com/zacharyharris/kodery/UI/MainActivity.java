@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#245a7a")));
 
-        mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         Log.w(TAG, "Boards list: " + String.valueOf(boardsList));
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             Board boards = data.getValue(Board.class);
-                            if(!has(boardsList, boards)){
+                            if (!has(boardsList, boards)) {
                                 Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
                                 if (boards.getOwnerUid().equals(mFirebaseUser.getUid())) {
                                     boardsList.add(boards);
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         final FirebaseDatabase mdatabase = FirebaseDatabase.getInstance();
 
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, 0){
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, 0) {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -172,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 boardsList.add(newPos, mboard);
                 mAdapter.notifyItemMoved(oldPos, newPos);
                 */
-                final int firstPosition = viewHolder.getAdapterPosition();;
+                final int firstPosition = viewHolder.getAdapterPosition();
+                ;
                 final int secondPosition = target.getAdapterPosition();
                 /*DatabaseReference firstItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(viewHolder.getAdapterPosition()).getBoardKey());
                 DatabaseReference secondItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(target.getAdapterPosition()).getBoardKey());
@@ -231,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         database.getReference(root + "/users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(mFirebaseUser.getUid())) {
+                if (!dataSnapshot.hasChild(mFirebaseUser.getUid())) {
                     User newUser = new User(mFirebaseUser.getDisplayName(), mFirebaseUser.getEmail(),
                             mFirebaseUser.getUid(), mFirebaseUser.getPhotoUrl().toString(), null);
                     Log.w(TAG, "user is new");
@@ -250,13 +251,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
+        loadBoard();
+    }
+
+    private void loadBoard() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         // Board feed
         database.getReference(root + "/boards").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Board boards = data.getValue(Board.class);
-                    if(!has(boardsList, boards)) {
+                    if (!has(boardsList, boards)) {
                         Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
                         if (boards.getOwnerUid().equals(mFirebaseUser.getUid())) {
                             boardsList.add(boards);
@@ -277,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
         });
+    }
 
         /*Query orderedListQuery = database.getReference(root + "/boards").orderByChild("orderNumber");
         orderedListQuery.addValueEventListener(new ValueEventListener() {
@@ -315,10 +322,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mActionBar.setTitle(displayname+"'s Kodery");
 */
-    }
 
     private void saveBoard(String name, String hc) {
-        String key = mDatabase.child("board").push().getKey();
+        String key = mDatabase.child(root).child("boards").push().getKey();
         Board board = new Board();
         board.setName(name);
         board.setOwner(mFirebaseUser.getDisplayName());
@@ -340,6 +346,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         generalchannel.setType("public");
 
         mDatabase.child(root).child("channels").child(board.getBoardKey()).child(generalKey).setValue(generalchannel);
+        mDatabase.child(root).child("boards").child(key).child("admins").
+                child(mFirebaseUser.getUid()).setValue(true);
+
+        loadBoard();
     }
 
     @Override
@@ -756,7 +766,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
 
-
+        loadBoard();
     }
 
     @Override
