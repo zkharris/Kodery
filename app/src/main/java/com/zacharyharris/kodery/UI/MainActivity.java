@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 mAdapter.notifyItemMoved(oldPos, newPos);
                 */
                 final int firstPosition = viewHolder.getAdapterPosition();
-                ;
                 final int secondPosition = target.getAdapterPosition();
                 /*DatabaseReference firstItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(viewHolder.getAdapterPosition()).getBoardKey());
                 DatabaseReference secondItemRef = mdatabase.getReference(root + "/boards/" + boardsList.get(target.getAdapterPosition()).getBoardKey());
@@ -470,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                             }else if(yellRB.isChecked()){
                                 Log.d(TAG, "onClick: yellow");
-                                saveBoard(mboardname.getText().toString(), "#ffe138");
+                                saveBoard(mboardname.getText().toString(), "#ffe77f");
 
                             }else if(orngRB.isChecked()){
                                 Log.d(TAG, "onClick: orange");
@@ -525,6 +524,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Board board = boardsList.get(position);
             ((SimpleItemViewHolder) holder).mBoard.setText(board.getName());
             ((SimpleItemViewHolder) holder).mCV.setCardBackgroundColor(Color.parseColor(board.getColor()));
+            if(board.getColor().equals("#ffff99")){
+                ((SimpleItemViewHolder) holder).mBoard.setTextColor(Color.GRAY);
+            }
 
         }
 
@@ -580,11 +582,32 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             View mview = LayoutInflater.from(myView.getContext()).inflate(R.layout.edit_board, null);
                             final EditText mboardname = (EditText) mview.findViewById(R.id.boardnme_edit);
                             final Board test = boardsList.get(position);
+                            String boardC = test.getColor();
                             final TextView mtextview = (TextView) mview.findViewById(R.id.edit_board_title);
                             mtextview.setText("Edit "+test.getName());
                             mboardname.setText(test.getName());
                             Button saveleboard = (Button) mview.findViewById(R.id.saveBoard);
                             Button delboard = (Button) mview.findViewById(R.id.delBoard);
+
+                            RadioGroup mRG = (RadioGroup) mview.findViewById(R.id.color_radio_group);
+                            final RadioButton purpRB = (RadioButton) mview.findViewById(R.id.purp_b);
+                            final RadioButton blueRB = (RadioButton) mview.findViewById(R.id.blue_b);
+                            final RadioButton greenRB = (RadioButton) mview.findViewById(R.id.green_b);
+                            final RadioButton yellRB = (RadioButton) mview.findViewById(R.id.yell_b);
+                            final RadioButton orngRB = (RadioButton) mview.findViewById(R.id.orng_b);
+                            final RadioButton redRB = (RadioButton) mview.findViewById(R.id.red_b);
+                            int check=0;
+
+                            if(boardC.equals("#d1afff")){purpRB.setChecked(true); check=R.id.purp_b;}
+                            else if(boardC.equals("#b2cefe")){blueRB.setChecked(true);check=R.id.blue_b;}
+                            else if(boardC.equals("#abe9a1")){greenRB.setChecked(true); check=R.id.green_b;}
+                            else if(boardC.equals("#ffe77f")){yellRB.setChecked(true); check=R.id.yell_b;}
+                            else if(boardC.equals("#ffc2a2")){orngRB.setChecked(true); check=R.id.orng_b;}
+                            else {redRB.setChecked(true); check=R.id.red_b;}
+                            final int check2 = check;
+
+
+
 
                             mBuilder.setView(mview);
                             final AlertDialog dialog = mBuilder.create();
@@ -593,16 +616,75 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 @Override
                                 public void onClick(View v) {
                                     if(!mboardname.getText().toString().isEmpty()
-                                            && !(mboardname.getText().toString().equals(test.getName()))){
+                                            && !(mboardname.getText().toString().equals(test.getName()))) {
                                         Toast.makeText(v.getContext(),
-                                                test.getName()+" renamed to "+mboardname.getText()+"!",
+                                                test.getName() + " renamed to " + mboardname.getText() + "!",
                                                 Toast.LENGTH_SHORT).show();
                                         dialog.dismiss();
+                                        if (purpRB.isChecked()) {
+                                            Log.d(TAG, "onClick: purple");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#d1afff");
+
+                                        } else if (blueRB.isChecked()) {
+                                            Log.d(TAG, "onClick: blue");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#b2cefe");
+
+                                        } else if (greenRB.isChecked()) {
+                                            Log.d(TAG, "onClick: green");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#abe9a1");
+
+                                        } else if (yellRB.isChecked()) {
+                                            Log.d(TAG, "onClick: yellow");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffe77f");
+
+                                        } else if (orngRB.isChecked()) {
+                                            Log.d(TAG, "onClick: orange");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffc2a2");
+
+                                        } else {
+                                            Log.d(TAG, "onClick: red");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#fd9995");
+                                        }
                                         updateBoard(boardsList.get(position), mboardname.getText().toString());
                                         // Get rid of the pop up go back to main activity
+                                    }else if(!mboardname.getText().toString().isEmpty()){
+                                        if (purpRB.isChecked() && check2!=R.id.purp_b) {
+                                            Log.d(TAG, "onClick: purple");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#d1afff");
+                                            dialog.dismiss();
+
+                                        } else if (blueRB.isChecked() && check2!=R.id.blue_b) {
+                                            Log.d(TAG, "onClick: blue");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#b2cefe");
+                                            dialog.dismiss();
+
+                                        } else if (greenRB.isChecked() && check2!=R.id.green_b) {
+                                            Log.d(TAG, "onClick: green");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#abe9a1");
+                                            dialog.dismiss();
+
+                                        } else if (yellRB.isChecked() && check2!=R.id.yell_b) {
+                                            Log.d(TAG, "onClick: yellow");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffe77f");
+                                            dialog.dismiss();
+
+                                        } else if (orngRB.isChecked() && check2!=R.id.orng_b) {
+                                            Log.d(TAG, "onClick: orange");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#ffc2a2");
+                                            dialog.dismiss();
+
+                                        } else if(redRB.isChecked() && check2!=R.id.red_b) {
+                                            Log.d(TAG, "onClick: red");
+                                            updateBoard(boardsList.get(position), mboardname.getText().toString(), "#fd9995");
+                                            dialog.dismiss();
+                                        } else{
+                                            Toast.makeText(v.getContext(),
+                                                    "Please change the Board name or color.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     }else{
                                         Toast.makeText(v.getContext(),
-                                                "Please rename the board.",
+                                                "Please change the Board name or color.",
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -697,6 +779,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 return true;
             }*/
         }
+    }
+
+    private void updateBoard(Board board, String boardName, String boardColor) {
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).child("name").setValue(boardName);
+        mDatabase.child(root).child("boards").child(board.getBoardKey()).child("color").setValue(boardColor);
+        String updateText = (board.getName() + " renamed " + boardName);
+        update(board, updateText);
     }
 
     private void updateBoard(Board board, String boardName) {
