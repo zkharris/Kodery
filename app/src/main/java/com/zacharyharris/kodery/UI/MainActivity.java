@@ -61,6 +61,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.zacharyharris.kodery.R.id.board;
+import static com.zacharyharris.kodery.R.id.recycler_view;
 import static com.zacharyharris.kodery.R.id.start;
 import static com.zacharyharris.kodery.R.id.view;
 import static java.lang.String.valueOf;
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private static final String root = "testRoot";
     private User currentUser;
+    private TextView mainIndicator;
 
 
     @Override
@@ -103,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#245a7a")));
 
+
+        mainIndicator = (TextView) findViewById(R.id.main_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -242,6 +246,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         loadBoard();
         loadInvites();
+
+
     }
 
     private void loadBoard() {
@@ -254,10 +260,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Board boards = data.getValue(Board.class);
                     if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
-                            .getValue() != null) {
+                            .getValue() != null && !has(boards.getBoardKey(), boardsList)) {
                         boardsList.add(boards);
                         mAdapter.notifyDataSetChanged();
                     }
+                }
+                if(boardsList.isEmpty()) {
+                    mRecyclerView.setVisibility(View.GONE);
+                    mainIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mainIndicator.setVisibility(View.GONE);
                 }
             }
 
@@ -266,8 +279,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.w(TAG, "boardFeed:onCancelled", databaseError.toException());
             }
         });
+
+        /*if(boardsList.isEmpty()) {
+            mRecyclerView.setVisibility(View.GONE);
+            mainIndicator.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mainIndicator.setVisibility(View.GONE);
+        }*/
     }
 
+    private boolean has(String boardKey, ArrayList<Board> boardList) {
+        for (Board board : boardList) {
+            if(board.getBoardKey().equals(boardKey)) {
+                return true;
+            }
+        }
+        return false;
+    }
         /*Query orderedListQuery = database.getReference(root + "/boards").orderByChild("orderNumber");
         orderedListQuery.addValueEventListener(new ValueEventListener() {
             @Override
