@@ -119,13 +119,11 @@ public class BoardMembersActivity extends AppCompatActivity {
             Glide.with(BoardMembersActivity.this).load(user.getPhotoURL()).into(viewHolder.image);
             if(user.getUid().equals(board.getOwnerUid())) {
                 ((SimpleItemViewHolder) holder).owner_im.setVisibility(View.VISIBLE);
+            } else if(board.getAdmins().containsKey(user.getUid())) {
+                ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.VISIBLE);
             } else {
-                if(board.getAdmins().containsKey(user.getUid())){
-                    ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.VISIBLE);
-                } else {
-                    ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.GONE);
-                    ((SimpleItemViewHolder) holder).owner_im.setVisibility(View.GONE);
-                }
+                ((SimpleItemViewHolder) holder).owner_im.setVisibility(View.GONE);
+                ((SimpleItemViewHolder) holder).admin_im.setVisibility(View.GONE);
             }
         }
 
@@ -367,7 +365,7 @@ public class BoardMembersActivity extends AppCompatActivity {
     }
 
     private void loadFeed() {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         // Admins Feed
         board.getAdmins().clear();
         database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
@@ -388,144 +386,48 @@ public class BoardMembersActivity extends AppCompatActivity {
 
         Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
 
-        // User reference
+        // Members Feed
+        board.getPeeps().clear();
         database.getReference(root + "/boards/" + board.getBoardKey() + "/peeps").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                memberList.clear();
-                Log.w(TAG, "MemberList 1: " + String.valueOf(memberList));
-
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    //findUser(String.valueOf(data.getKey()));
-                    database.getReference(root + "/users/" + String.valueOf(data.getKey())).addValueEventListener(new ValueEventListener() {
+                for (DataSnapshot data : dataSnapshot.getChildren()){
+                    board.addPeep(data.getKey());
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(root + "/users/" + data.getKey());
+                    userRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             User user = dataSnapshot.getValue(User.class);
-                            memberList.add(user);
-                            adapter.notifyDataSetChanged();
+                            if(!has(user.getUid(), memberList)) {
+                                memberList.add(user);
+                                adapter.notifyDataSetChanged();
+                            }
+
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-                            Log.w(TAG, "findUser:onCancelled", databaseError.toException());
+                            Log.w(TAG, "getMembers:onCancelled", databaseError.toException());
                         }
                     });
                 }
-                Log.w(TAG, "MemberList 2: " + String.valueOf(memberList));
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "memberList", databaseError.toException());
-            }
-        });
-
-            /*private void findUser(String peepUid) {
-                database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        memberList.add(user);
-                        adapter.notifyDataSetChanged();
-                        Log.w(TAG, "MemberList 3: " + String.valueOf(memberList));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "findUser:onCancelled", databaseError.toException());
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "peepReference:onCancelled", databaseError.toException());
-            }
-        });*/
-
-    }
-
-    private void loadMembers() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        // Admins Feed
-        board.getAdmins().clear();
-        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("admins")){
-                    for(DataSnapshot data : dataSnapshot.child("admins").getChildren()) {
-                        board.addAdmin(data.getKey());
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "getAdmins:onCancelled", databaseError.toException());
-            }
-        });
-
-        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
-
-        // Member feed
-        database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                memberList.clear();
-                //findOwner(String.valueOf(dataSnapshot.child("ownerUid").getValue()));
-                DataSnapshot peepsRef = dataSnapshot.child("peeps");
-                for(DataSnapshot data : peepsRef.getChildren()) {
-                    findUser(String.valueOf(data.getKey()));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "memberFeed:onCancelled", databaseError.toException());
-            }
-        });
-
-    }
-
-    private void findUser(String peepUid) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/users/" + peepUid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                memberList.add(user);
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "findUser:onCancelled", databaseError.toException());
-
+                Log.w(TAG, "getPeeps:onCancelled", databaseError.toException());
             }
         });
     }
 
-    /*private void findOwner(final String ownerUid) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(root + "/users/" + ownerUid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                memberList.clear();
-                User owner = dataSnapshot.getValue(User.class);
-                Log.w(TAG, owner.getEmail());
-                memberList.add(owner);
-                adapter.notifyDataSetChanged();
+    private boolean has(String uid, ArrayList<User> memberList) {
+        for(User user : memberList) {
+            if(user.getUid().equals(uid)){
+                return true;
             }
-
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "findOwner:onCancelled", databaseError.toException());
-            }
-        });
-
-    }*/
+        }
+        return false;
+    }
 
     private void makeAdmin(User user){
         mDatabase.child(root).child("boards").child(board.getBoardKey()).child("admins").
@@ -646,13 +548,18 @@ public class BoardMembersActivity extends AppCompatActivity {
         //Intent intent = new Intent(this, SingleBoardActivity.class);
         //intent.putExtra("board", board);
         //startActivity(intent);
-        finish();
+        //finish();
 
         memberList.remove(user);
         adapter.notifyDataSetChanged();
 
         mDatabase.child(root).child("boards").child(board.getBoardKey()).
                 child("peeps").child(user.getUid()).removeValue();
+
+        if(board.getAdmins().containsKey(user.getUid())){
+            mDatabase.child(root).child("boards").child(board.getBoardKey()).
+                    child("admins").child(user.getUid()).removeValue();
+        }
 
         //loadFeed();
         //loadMembers();

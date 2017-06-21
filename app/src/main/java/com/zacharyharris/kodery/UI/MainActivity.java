@@ -253,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 boardsList.clear();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Board boards = data.getValue(Board.class);
-                    Log.w(TAG, valueOf(data.child("peeps").child(mFirebaseUser.getUid()).getValue()));
                     if (data.hasChild("peeps") && data.child("peeps").child(mFirebaseUser.getUid())
                             .getValue() != null) {
                         boardsList.add(boards);
@@ -762,7 +761,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             }
                         } else {
                             Toast.makeText(v.getContext(),
-                                    "Only owners and admins can edit the board.", Toast.LENGTH_LONG).show();
+                                    "Only owners and admins can edit the board.",
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
 

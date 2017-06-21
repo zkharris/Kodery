@@ -13,7 +13,7 @@ public class Board implements Serializable {
     public String color = "#ffffff";
     public HashMap<String, Object> admins = new HashMap<>();
     //public String hc;
-    private HashMap<String, Object> peeps;
+    private HashMap<String, Object> peeps = new HashMap<>();
 
     public Board(){}
 
@@ -46,6 +46,12 @@ public class Board implements Serializable {
     public void addAdmin(String admin) { this.admins.put(admin, true); }
 
     public void removeAdmin(String admin) { this.admins.remove(admin); }
+
+    public HashMap<String, Object> getPeeps() { return peeps; }
+
+    public void addPeep(String peep) { this.peeps.put(peep, true); }
+
+    public void removePeep(String peep) { this.peeps.remove(peep); }
 
     public HashMap<String,Object> toFirebaseObject() {
         HashMap<String, Object> board = new HashMap<>();
