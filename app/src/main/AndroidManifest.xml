@@ -9,16 +9,25 @@
         android:logo="@drawable/kodery_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.MainActivity"/>
+        <activity android:name=".UI.MainActivity"
+            android:configChanges="orientation|screenSize">
+        </activity>
         <activity android:name=".UI.SignInActivity" />
         <activity android:name=".UI.UsersActivity" />
         <activity android:name=".UI.InvitesActivity" />
-        <activity android:name=".UI.SingleBoardActivity" />
-        <activity android:name=".UI.SingleListActivity" />
+        <activity android:name=".UI.SingleBoardActivity"
+            android:configChanges="orientation|screenSize">
+        </activity>
+        <activity android:name=".UI.SingleListActivity"
+            android:configChanges="orientation|screenSize">
+        </activity>
         <activity android:name=".UI.BoardMembersActivity" />
-        <activity android:name=".UI.SingleTaskActivity" />
+        <activity android:name=".UI.SingleTaskActivity"
+            android:configChanges="orientation|screenSize">
+        </activity>
         <activity android:name=".UI.ChatActivity"
-            android:screenOrientation="portrait"/>
+            android:configChanges="orientation|screenSize">
+        </activity>
         <activity android:name=".UI.MoveTaskActivity" />
         <activity android:name=".UI.LoadActivity">
             <intent-filter>
