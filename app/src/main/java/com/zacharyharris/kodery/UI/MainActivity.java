@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private static final String root = "testRoot";
     private User currentUser;
-    private TextView mainIndicator;
+    //private TextView mainIndicator;
 
 
     @Override
@@ -105,8 +107,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#245a7a")));
 
+        mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        View customView = getLayoutInflater().inflate(R.layout.actionbar_title, null);
+        TextView customTitle = (TextView) customView.findViewById(R.id.actionbarTitle);
+        ImageView customImage = (ImageView) customView.findViewById(R.id.actionbarImage);
+        mActionBar.setCustomView(customView);
 
-        mainIndicator = (TextView) findViewById(R.id.main_indicator);
+
+        //mainIndicator = (TextView) findViewById(R.id.main_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -267,10 +276,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
                 if(boardsList.isEmpty()) {
                     mRecyclerView.setVisibility(View.GONE);
-                    mainIndicator.setVisibility(View.VISIBLE);
+                    //mainIndicator.setVisibility(View.VISIBLE);
                 } else {
                     mRecyclerView.setVisibility(View.VISIBLE);
-                    mainIndicator.setVisibility(View.GONE);
+                    //mainIndicator.setVisibility(View.GONE);
                 }
             }
 
@@ -432,12 +441,41 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         switch(id){
             case R.id.signouts:
-                mFirebaseAuth.signOut();
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                mFirebaseUser = null;
-                mUsername = "anonymous";
-                mPhotoUrl = null;
-                startActivity(new Intent(this, SignInActivity.class));
+
+                AlertDialog.Builder my1Builder = new AlertDialog.Builder(MainActivity.this);
+                final View my1view = getLayoutInflater().inflate(R.layout.yes_no_popup, null);
+                TextView mTV = (TextView) my1view.findViewById(R.id.question_title);
+                TextView mTVs = (TextView) my1view.findViewById(R.id.question_text);
+                Button no = (Button) my1view.findViewById(R.id.no_ans);
+                Button yes = (Button) my1view.findViewById(R.id.yes_ans);
+                mTV.setText("Signing Out");
+                mTVs.setText("Are you sure?");
+
+                my1Builder.setView(my1view);
+                final AlertDialog my1dialog = my1Builder.create();
+
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //
+                        mFirebaseAuth.signOut();
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                        mFirebaseUser = null;
+                        mUsername = "anonymous";
+                        mPhotoUrl = null;
+                        startActivity(new Intent(MainActivity.this, SignInActivity.class));
+
+                        my1dialog.dismiss();
+                    }
+                });
+
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        my1dialog.dismiss();
+                    }
+                });
+                my1dialog.show();
                 break;
 
             case R.id.invites:
