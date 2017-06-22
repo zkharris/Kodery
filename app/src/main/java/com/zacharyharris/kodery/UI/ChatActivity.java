@@ -321,7 +321,23 @@ public class ChatActivity extends AppCompatActivity {
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
         mActionBar.setBackgroundDrawable(mColor);
-        mActionBar.setTitle(board.getName()+" Chats");
+        //mActionBar.setTitle(board.getName()+" Chats");
+
+        mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        View customView = getLayoutInflater().inflate(R.layout.actionbar_title, null);
+        TextView customTitle = (TextView) customView.findViewById(R.id.actionbarTitle);
+        customTitle.setText(board.getName()+" Chats");
+        customTitle.setTextSize(18);
+        ImageView customImage = (ImageView) customView.findViewById(R.id.actionbarImage);
+        customImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                SingleBoardActivity.faboard.finish();
+            }
+        });
+        mActionBar.setCustomView(customView);
 /*
 
 */

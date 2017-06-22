@@ -354,6 +354,22 @@ public class BoardMembersActivity extends AppCompatActivity {
         ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
         mActionBar.setBackgroundDrawable(mColor);
 
+        mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        View customView = getLayoutInflater().inflate(R.layout.actionbar_title, null);
+        TextView customTitle = (TextView) customView.findViewById(R.id.actionbarTitle);
+        customTitle.setText(board.getName()+" Members");
+        customTitle.setTextSize(18);
+        ImageView customImage = (ImageView) customView.findViewById(R.id.actionbarImage);
+        customImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                SingleBoardActivity.faboard.finish();
+            }
+        });
+        mActionBar.setCustomView(customView);
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.memberRecycleView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);

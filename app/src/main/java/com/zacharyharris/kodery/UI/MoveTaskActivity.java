@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,7 +74,25 @@ public class MoveTaskActivity extends AppCompatActivity {
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
         mActionBar.setBackgroundDrawable(mColor);
-        mActionBar.setTitle("Move "+task.getName()+" to...");
+        //mActionBar.setTitle("Move "+task.getName()+" to...");
+
+        mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        View customView = getLayoutInflater().inflate(R.layout.actionbar_title, null);
+        TextView customTitle = (TextView) customView.findViewById(R.id.actionbarTitle);
+        customTitle.setText("Move "+task.getName()+" to...");
+        customTitle.setTextSize(20);
+        ImageView customImage = (ImageView) customView.findViewById(R.id.actionbarImage);
+        customImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                SingleTaskActivity.fatask.finish();
+                SingleListActivity.falist.finish();
+                SingleBoardActivity.faboard.finish();
+            }
+        });
+        mActionBar.setCustomView(customView);
 
         boardsList = new ArrayList<>();
 

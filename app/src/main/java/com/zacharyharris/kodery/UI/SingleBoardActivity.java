@@ -1,5 +1,6 @@
 package com.zacharyharris.kodery.UI;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +53,7 @@ import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 public class SingleBoardActivity extends AppCompatActivity {
 
     public static final String TAG = "SingleBoardActivity";
+    public static Activity faboard;
 
     ListsRecycleAdapter listAdapter;
     UpdatesRecycleAdapter updateAdapter;
@@ -80,10 +83,26 @@ public class SingleBoardActivity extends AppCompatActivity {
                 addTaskToList = true;
             }
         }
+        faboard = this;
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         ColorDrawable mColor = new ColorDrawable(Color.parseColor((board.getColor())));
         mActionBar.setBackgroundDrawable(mColor);
-        mActionBar.setTitle(board.getName());
+        //mActionBar.setTitle(board.getName());
+
+        mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        View customView = getLayoutInflater().inflate(R.layout.actionbar_title, null);
+        TextView customTitle = (TextView) customView.findViewById(R.id.actionbarTitle);
+        customTitle.setText(board.getName());
+        customTitle.setTextSize(20);
+        ImageView customImage = (ImageView) customView.findViewById(R.id.actionbarImage);
+        customImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mActionBar.setCustomView(customView);
 
 
         final TextView boardTitle = (TextView) findViewById(R.id.boardname_view);

@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -71,7 +72,22 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
         setContentView(R.layout.activity_invites);
         android.support.v7.app.ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#245a7a")));
-        mActionBar.setTitle("Invites");
+        //mActionBar.setTitle("Invites");
+
+        mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        View customView = getLayoutInflater().inflate(R.layout.actionbar_title, null);
+        TextView customTitle = (TextView) customView.findViewById(R.id.actionbarTitle);
+        customTitle.setText("Invites");
+        customTitle.setTextSize(20);
+        ImageView customImage = (ImageView) customView.findViewById(R.id.actionbarImage);
+        customImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mActionBar.setCustomView(customView);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
