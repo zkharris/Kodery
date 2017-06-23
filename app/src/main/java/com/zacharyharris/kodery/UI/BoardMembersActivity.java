@@ -378,6 +378,9 @@ public class BoardMembersActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         loadFeed();
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
     }
 
     private void loadFeed() {

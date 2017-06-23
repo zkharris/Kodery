@@ -447,6 +447,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
     }
 
     private void loadMembers() {

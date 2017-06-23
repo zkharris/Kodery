@@ -258,6 +258,8 @@ public class SingleTaskActivity extends AppCompatActivity {
 
         Toast swpToast = Toast.makeText(this, "Swipe to remove members from task", Toast.LENGTH_LONG);
         swpToast.show();
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     @Override
@@ -306,6 +308,9 @@ public class SingleTaskActivity extends AppCompatActivity {
     }
 
     private void findUser(String userUid) {
+        final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.member_list_task);
+
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/users/" + userUid).addValueEventListener(new ValueEventListener() {
             @Override
@@ -313,6 +318,14 @@ public class SingleTaskActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 memberList.add(user);
                 adapter.notifyDataSetChanged();
+
+                if(memberList.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    //taskMembersIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    //taskMembersIndicator.setVisibility(View.GONE);
+                }
             }
 
             @Override

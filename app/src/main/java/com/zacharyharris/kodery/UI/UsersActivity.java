@@ -217,6 +217,8 @@ public class UsersActivity extends AppCompatActivity implements GoogleApiClient.
                 Log.w("TodoApp", "getUser:onCancelled", databaseError.toException());
             }
         });
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     public void addUser(User addedUser) {

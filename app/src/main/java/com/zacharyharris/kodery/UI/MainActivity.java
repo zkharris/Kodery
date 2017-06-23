@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private static final String root = "testRoot";
     private User currentUser;
-    //private TextView mainIndicator;
+    private TextView mainIndicator;
 
 
     @Override
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mActionBar.setCustomView(customView);
 
 
-        //mainIndicator = (TextView) findViewById(R.id.main_indicator);
+        mainIndicator = (TextView) findViewById(R.id.main_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });*/
 
-        final FirebaseDatabase mdatabase = FirebaseDatabase.getInstance();
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         /*ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, 0) {
 
@@ -276,10 +276,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
                 if(boardsList.isEmpty()) {
                     mRecyclerView.setVisibility(View.GONE);
-                    //mainIndicator.setVisibility(View.VISIBLE);
+                    mainIndicator.setVisibility(View.VISIBLE);
                 } else {
                     mRecyclerView.setVisibility(View.VISIBLE);
-                    //mainIndicator.setVisibility(View.GONE);
+                    mainIndicator.setVisibility(View.GONE);
                 }
             }
 

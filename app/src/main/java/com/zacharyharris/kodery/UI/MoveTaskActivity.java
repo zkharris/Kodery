@@ -104,6 +104,9 @@ public class MoveTaskActivity extends AppCompatActivity {
         listAdapter = new ListsRecycleAdapter();
         ListrecyclerView.setAdapter(listAdapter);
         listAdapter.notifyDataSetChanged();
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
     }
 
     @Override

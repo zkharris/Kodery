@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
@@ -69,11 +70,14 @@ public class SingleBoardActivity extends AppCompatActivity {
     private boolean addTaskToList;
 
     LinearLayout mll;
+    private TextView listsIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_board);
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
@@ -116,6 +120,8 @@ public class SingleBoardActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
+        listsIndicator = (TextView) findViewById(R.id.list_indicator);
+
         LinearLayoutManager listsllm = new LinearLayoutManager(this);
         RecyclerView ListrecyclerView = (RecyclerView) findViewById(R.id.board_lists_recyclerView);
         ListrecyclerView.setLayoutManager(listsllm);
@@ -137,6 +143,20 @@ public class SingleBoardActivity extends AppCompatActivity {
 
         Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
 
+
+
+
+
+    }
+
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        final RecyclerView ListrecyclerView = (RecyclerView) findViewById(R.id.board_lists_recyclerView);
+        final RecyclerView UpdaterecyclerView = (RecyclerView) findViewById(R.id.board_update_recyclerView);
+
         //Check if User is kicked
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/boards/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
@@ -155,14 +175,8 @@ public class SingleBoardActivity extends AppCompatActivity {
                 Log.w(TAG, "kickUser:onCancelled", databaseError.toException());
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         // Lists Feed
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/lists/" + board.getBoardKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -176,6 +190,14 @@ public class SingleBoardActivity extends AppCompatActivity {
                     }
                 }
                 listAdapter.notifyDataSetChanged();
+
+                if(boardsList.isEmpty()) {
+                    ListrecyclerView.setVisibility(View.GONE);
+                    listsIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    ListrecyclerView.setVisibility(View.VISIBLE);
+                    listsIndicator.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -194,6 +216,14 @@ public class SingleBoardActivity extends AppCompatActivity {
                     updateList.add(update);
                 }
                 updateAdapter.notifyDataSetChanged();
+
+                if(boardsList.isEmpty()) {
+                    UpdaterecyclerView.setVisibility(View.GONE);
+                    //updatesIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    UpdaterecyclerView.setVisibility(View.VISIBLE);
+                    //updatesIndicator.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -220,7 +250,7 @@ public class SingleBoardActivity extends AppCompatActivity {
             }
         });
 
-        //Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
+        Log.w(TAG, "Admins are: " + String.valueOf(board.getAdmins()));
     }
 
     @Override

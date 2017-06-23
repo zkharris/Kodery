@@ -22,6 +22,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 import com.zacharyharris.kodery.R;
 
 public class SignInActivity extends AppCompatActivity implements  GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -56,6 +57,9 @@ public class SignInActivity extends AppCompatActivity implements  GoogleApiClien
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
     }
 
     private void handleFirebaseAuthResult(AuthResult authResult) {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.zacharyharris.kodery.R;
 
 public class LoadActivity extends AppCompatActivity {
@@ -34,6 +35,9 @@ public class LoadActivity extends AppCompatActivity {
             }
         };
         welcomeThread.start();
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
 
     }
 }

@@ -410,7 +410,6 @@ public class SingleListActivity extends AppCompatActivity {
         });
         mActionBar.setCustomView(customView);
 
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         final TextView listTitle = (TextView) findViewById(R.id.list_name);
@@ -450,9 +449,13 @@ public class SingleListActivity extends AppCompatActivity {
                 Log.w(TAG, "kickUser:onCancelled", databaseError.toException());
             }
         });
+
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     private void loadTaskFeed() {
+        final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.tasks_list);
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/tasks").addValueEventListener(new ValueEventListener() {
             @Override
@@ -471,6 +474,14 @@ public class SingleListActivity extends AppCompatActivity {
                     }
                 }
                 adapter.notifyDataSetChanged();
+
+                if(taskList.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    //taskIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    //taskIndicator.setVisibility(View.GONE);
+                }
             }
 
             @Override

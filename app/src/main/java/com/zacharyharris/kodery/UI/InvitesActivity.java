@@ -128,6 +128,9 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
 
         Log.w(TAG, "Invites: " + String.valueOf(boardList));
 
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+
     }
 
 
