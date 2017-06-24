@@ -455,6 +455,7 @@ public class SingleListActivity extends AppCompatActivity {
 
     private void loadTaskFeed() {
         final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.tasks_list);
+        final TextView taskIndicator = (TextView)findViewById(R.id.task_indicator);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/tasks").addValueEventListener(new ValueEventListener() {
@@ -477,10 +478,10 @@ public class SingleListActivity extends AppCompatActivity {
 
                 if(taskList.isEmpty()) {
                     recyclerView.setVisibility(View.GONE);
-                    //taskIndicator.setVisibility(View.VISIBLE);
+                    taskIndicator.setVisibility(View.VISIBLE);
                 } else {
                     recyclerView.setVisibility(View.VISIBLE);
-                    //taskIndicator.setVisibility(View.GONE);
+                    taskIndicator.setVisibility(View.GONE);
                 }
             }
 

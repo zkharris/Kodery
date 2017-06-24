@@ -155,7 +155,7 @@ public class SingleBoardActivity extends AppCompatActivity {
         super.onResume();
 
         final RecyclerView ListrecyclerView = (RecyclerView) findViewById(R.id.board_lists_recyclerView);
-        final RecyclerView UpdaterecyclerView = (RecyclerView) findViewById(R.id.board_update_recyclerView);
+        //final RecyclerView UpdaterecyclerView = (RecyclerView) findViewById(R.id.board_update_recyclerView);
 
         //Check if User is kicked
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -192,7 +192,7 @@ public class SingleBoardActivity extends AppCompatActivity {
                 listAdapter.notifyDataSetChanged();
 
                 if(boardsList.isEmpty()) {
-                    ListrecyclerView.setVisibility(View.GONE);
+                    ListrecyclerView.setVisibility(View.INVISIBLE);
                     listsIndicator.setVisibility(View.VISIBLE);
                 } else {
                     ListrecyclerView.setVisibility(View.VISIBLE);
@@ -216,14 +216,6 @@ public class SingleBoardActivity extends AppCompatActivity {
                     updateList.add(update);
                 }
                 updateAdapter.notifyDataSetChanged();
-
-                if(boardsList.isEmpty()) {
-                    UpdaterecyclerView.setVisibility(View.GONE);
-                    //updatesIndicator.setVisibility(View.VISIBLE);
-                } else {
-                    UpdaterecyclerView.setVisibility(View.VISIBLE);
-                    //updatesIndicator.setVisibility(View.GONE);
-                }
             }
 
             @Override

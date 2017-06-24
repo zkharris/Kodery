@@ -31,6 +31,16 @@
         android:textAlignment="center"
         android:textStyle="italic" />
 
+    <TextView
+        android:id="@+id/task_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-smallcaps"
+        android:gravity="center"
+        android:text="Add a Task!"
+        android:textSize="24sp"
+        android:visibility="gone" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/tasks_list"
         android:layout_width="match_parent"

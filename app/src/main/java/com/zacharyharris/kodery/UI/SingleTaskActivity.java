@@ -306,10 +306,10 @@ public class SingleTaskActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    
     private void findUser(String userUid) {
         final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.member_list_task);
-
+        final TextView taskMembersIndicator = (TextView)findViewById(R.id.task_members_indicator);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference(root + "/users/" + userUid).addValueEventListener(new ValueEventListener() {
@@ -320,11 +320,11 @@ public class SingleTaskActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
 
                 if(memberList.isEmpty()) {
-                    recyclerView.setVisibility(View.GONE);
-                    //taskMembersIndicator.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    taskMembersIndicator.setVisibility(View.VISIBLE);
                 } else {
                     recyclerView.setVisibility(View.VISIBLE);
-                    //taskMembersIndicator.setVisibility(View.GONE);
+                    taskMembersIndicator.setVisibility(View.GONE);
                 }
             }
 
