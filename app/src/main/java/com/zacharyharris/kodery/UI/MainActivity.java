@@ -114,6 +114,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         ImageView customImage = (ImageView) customView.findViewById(R.id.actionbarImage);
         mActionBar.setCustomView(customView);
 
+        customImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                final View mview = getLayoutInflater().inflate(R.layout.help_popup, null);
+                Button done = (Button) mview.findViewById(R.id.i_got_it);
+                mBuilder.setView(mview);
+                final AlertDialog mDialog = mBuilder.create();
+
+                done.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDialog.dismiss();
+                    }
+                });
+
+                mDialog.show();
+
+            }
+        });
+
 
         mainIndicator = (TextView) findViewById(R.id.main_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
