@@ -6,7 +6,10 @@ Team-based project management application to allow collaborators to plan, build,
 ## Functionality
 Kodery's core functionality includes:
 * Create/Modify/Delete Project Boards, Lists, and Tasks
-* Invite members to Boards, assign specific members to Tasks, and support for hierarchical management (Owners & Admins)   vbscbo different Lists
+* Invite members to Boards
+* Assign specific members to Tasks
+* Supports hierarchical management i.e. Owner & Admins
+* Move Tasks to different Lists
 * Multichannel chat system for private and public group chats
 * Add network identifier to your name to add distinction
 * Updates feed for each Project Board
