@@ -15,5 +15,5 @@ Kodery's core functionality includes:
 * [Google Firebase](https://firebase.google.com)
 
 ## Authors
-* ** Alexander Lue** - University of California, Santa Cruz 2019
-* ** Zachary Harris** - University of California, Santa Cruz 2019
+* **Alexander Lue** - University of California, Santa Cruz 2019
+* **Zachary Harris** - University of California, Santa Cruz 2019
