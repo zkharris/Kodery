@@ -1,5 +1,6 @@
-# Kodery
+![kodery_icon](https://user-images.githubusercontent.com/26668680/27776868-11e11f2e-5f63-11e7-831a-1903fb689635.png)
 
+# Kodery
 Team-based project management application to allow collaborators to plan, build, and discuss ideas.
 
 ## Functionality
