@@ -56,6 +56,7 @@ public class SingleTaskActivity extends AppCompatActivity {
     public static Activity fatask;
 
     private static final String TAG = "test";
+    public static final String root = "liveRoot";
 
     public Task task;
     public ListofTasks list;
@@ -166,7 +167,7 @@ public class SingleTaskActivity extends AppCompatActivity {
 
         memberList = new ArrayList<>();
 
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.member_list_task);
+        final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.member_list_task);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
         adapter = new RecycleAdapter();
@@ -202,6 +203,8 @@ public class SingleTaskActivity extends AppCompatActivity {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
+        final TextView taskMembersIndicator = (TextView)findViewById(R.id.task_members_indicator);
+
         if(task != null){
             database.getReference(root + "/tasks/" + task.getKey() + "/members").addValueEventListener(new ValueEventListener() {
                 @Override
@@ -209,6 +212,13 @@ public class SingleTaskActivity extends AppCompatActivity {
                     memberList.clear();
                     for(DataSnapshot data : dataSnapshot.getChildren()) {
                         findUser(String.valueOf(data.getKey()));
+                        if(memberList.isEmpty()) {
+                            recyclerView.setVisibility(View.INVISIBLE);
+                            taskMembersIndicator.setVisibility(View.VISIBLE);
+                        } else {
+                            recyclerView.setVisibility(View.VISIBLE);
+                            taskMembersIndicator.setVisibility(View.GONE);
+                        }
                     }
                 }
 

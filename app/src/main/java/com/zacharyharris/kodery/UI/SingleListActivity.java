@@ -52,6 +52,7 @@ public class SingleListActivity extends AppCompatActivity {
     public static Activity falist;
 
     public static final String TAG = "SingleListActivity";
+    public static final String root = "liveRoot";
 
     RecycleAdapter adapter;
     ArrayList<Task> taskList;

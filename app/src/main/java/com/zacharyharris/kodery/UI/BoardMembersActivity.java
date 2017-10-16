@@ -53,7 +53,7 @@ import java.util.Map;
 public class BoardMembersActivity extends AppCompatActivity {
 
     public static final String TAG = "BoardMembersActivity";
-    public static final String root = "testRoot";
+    public static final String root = "liveRoot";
 
     RecycleAdapter adapter;
 
