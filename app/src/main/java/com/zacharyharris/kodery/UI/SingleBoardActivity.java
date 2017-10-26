@@ -54,7 +54,7 @@ import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 public class SingleBoardActivity extends AppCompatActivity {
 
     public static final String TAG = "SingleBoardActivity";
-    public static final String root = "liveRoot";
+    public static final String root = "testRoot";
     public static Activity faboard;
 
     ListsRecycleAdapter listAdapter;

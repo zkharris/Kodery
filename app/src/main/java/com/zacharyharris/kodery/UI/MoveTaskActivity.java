@@ -42,7 +42,7 @@ import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 public class MoveTaskActivity extends AppCompatActivity {
 
     public static final String TAG = "MoveTaskActivity";
-    public static final String root = "liveRoot";
+    public static final String root = "testRoot";
 
 
     ArrayList<ListofTasks> boardsList;

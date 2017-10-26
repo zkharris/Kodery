@@ -56,7 +56,7 @@ public class SingleTaskActivity extends AppCompatActivity {
     public static Activity fatask;
 
     private static final String TAG = "test";
-    public static final String root = "liveRoot";
+    public static final String root = "testRoot";
 
     public Task task;
     public ListofTasks list;

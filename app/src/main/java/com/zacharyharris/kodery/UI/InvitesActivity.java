@@ -64,7 +64,7 @@ public class InvitesActivity extends AppCompatActivity implements GoogleApiClien
     private FirebaseUser mFirebaseUser;
     private GoogleApiClient mGoogleApiClient;
     private DatabaseReference mDatabase;
-    private static final String root = "liveRoot";
+    private static final String root = "testRoot";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

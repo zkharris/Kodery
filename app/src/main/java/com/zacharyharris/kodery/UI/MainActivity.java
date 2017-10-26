@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     ArrayList<Update> updateList;
     ArrayList<Board> boardsList = new ArrayList<>();
 
-    private static final String root = "liveRoot";
+    private static final String root = "testRoot";
     private User currentUser;
     private TextView mainIndicator;
 

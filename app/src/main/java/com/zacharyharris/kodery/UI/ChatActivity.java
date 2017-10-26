@@ -67,7 +67,7 @@ import static com.zacharyharris.kodery.UI.BoardMembersActivity.root;
 public class ChatActivity extends AppCompatActivity {
 
     private String TAG = "ChatActivity";
-    public static final String root = "liveRoot";
+    public static final String root = "testRoot";
     private DatabaseReference mDatabase;
     public Board board;
     int tap_num = 0;
